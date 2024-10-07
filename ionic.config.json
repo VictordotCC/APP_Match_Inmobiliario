@@ -1,0 +1,7 @@
+{
+  "name": "Match_Inmobiliario",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
