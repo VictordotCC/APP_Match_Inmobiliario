@@ -26,7 +26,7 @@ export class RegistroPage implements OnInit {
   }
 
   async registrarse(){
-    //implementar la lógica para registrar al usuario
+    //TODO: implementar la lógica para registrar al usuario
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Registro',

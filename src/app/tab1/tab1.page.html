@@ -23,16 +23,13 @@
   </ion-item>
 </ion-toolbar>
 <ion-content [fullscreen]="true">
-  <ion-item id="map">
-    <ion-grid>
-      <ion-row>
-        <ion-col col-5>
-          <img width="100%" height="500px"   src="https://mspoweruser.com/wp-content/uploads/2023/11/Change-Google-Maps-to-Walking-1200x675.png" />
-
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
+  <ion-item >
+    <ion-fab vertical="bottom" horizontal="end" slot="start">
+      <ion-fab-button (click)="centrarMapa()" size="small" color="dark">
+        <ion-icon name="locate" style="z-index: 99;"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <div id="map" style = "width: 90vw; height: 50vh;"></div>
   </ion-item>
   <ion-item>
     <ion-card>

@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router} from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-import { AlertController, NavController} from '@ionic/angular';
+import { AlertController} from '@ionic/angular';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { IonSegment } from '@ionic/angular';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-login',
@@ -20,8 +20,8 @@ export class LoginPage  implements OnInit{
   constructor(
     //private api: ApiService,
     public fb: FormBuilder, public alertController: AlertController,private router: Router,
-    private datosGlobales: GlobalDataService
-
+    private datosGlobales: GlobalDataService,
+    private appComponent: AppComponent
   ) {
 
     this.formularioLogin = this.fb.group({
@@ -101,7 +101,6 @@ export class LoginPage  implements OnInit{
   limpiarFormulario(){
     this.formularioLogin.reset();
   }
-  /* Falta implementar tokens y mantenció de sesión */
 }
 
 
