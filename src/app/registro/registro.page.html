@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-icon name="home"></ion-icon>
+    <ion-title>Registrate en Match Inmobiliario</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-card-content class="form-group">
+    <form [formGroup]="formularioRegistro">
+      <ion-item>
+        <ion-label position="floating">Correo</ion-label>
+        <ion-input formControlName="correo" class="form-control" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Nombres</ion-label>
+        <ion-input formControlName="nombres" class="form-control" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Apellidos</ion-label>
+        <ion-input formControlName="apellidos" class="form-control" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">N° de Teléfono</ion-label>
+        <ion-input formControlName="telefono" class="form-control" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input formControlName="contrasena" type="password" class="form-control" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Repetir Contraseña</ion-label>
+        <ion-input formControlName="repContrasena" type="password"  class="form-control" ></ion-input>
+      </ion-item>
+    </form>
+  </ion-card-content> 
+  <div class="check">
+    <ion-checkbox slot="start" position="fixed">Leí y acepto los <a href="#" (click)="$event.stopPropagation()">Terminos y Condiciones</a></ion-checkbox>
+  </div>
+  <div class="btn-regis">
+    <ion-button name ="btn-registrarse" shape="round" color="primary" (click)="registrarse()">Registrarse</ion-button>
+  </div>
+</ion-content>

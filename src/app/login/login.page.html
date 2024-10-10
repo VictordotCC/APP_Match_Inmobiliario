@@ -1,0 +1,61 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-icon name="home" slot="start"></ion-icon>
+    <ion-title>
+      Match Inmobiliario
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card id="img-logo">
+          <!---<img alt="logo app" height="200" width="200"  src="/src/assets/icon/favicon.png"> -->
+          <img alt="logo app" height="200" width="200" src="https://digital55.com/wp-content/uploads/2022/01/Ionic-caracteri%CC%81sticas-novedades-y-proyectos-1.png">
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <br>
+  <div class="centrado" text-center>
+    <!----(ngModelChange)="segmentChanged($event)"--->
+    <ion-segment value ="Comprador" (ionChange) = segmentChanged($event)>
+      <ion-segment-button shape="round" color="primary" value="Comprador" >
+        <ion-label>Comprador</ion-label>
+      </ion-segment-button>
+      <ion-segment-button shape="round" color="primary" value="Vendedor" >
+        <ion-label>Vendedor</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  <ion-card class="formulario">
+    <ion-card-content class="form-group">
+      <form [formGroup]="formularioLogin">
+        <ion-item>
+          <ion-label position="floating">Usuario</ion-label>
+          <ion-input formControlName="correo" class="form-control"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input formControlName="contrasena" type="password" class="form-control" ></ion-input>
+        </ion-item>
+      </form>
+      <br>
+      <div >
+        <ion-button shape="round" color = "primary" [disabled]="formularioLogin.invalid" (click)="ingresar()">
+          Iniciar Sesión
+        </ion-button>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+  <ion-item button (click)="navigateToRegistro()">
+    <ion-label>¿No tienes una cuenta?</ion-label>
+  </ion-item>
+  <ion-item button (click)="navigateToRecuperarContrasena()">
+    <ion-label>Recuperar contraseña</ion-label>
+  </ion-item>
+</ion-content>
+

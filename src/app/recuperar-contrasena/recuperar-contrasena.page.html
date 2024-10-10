@@ -1,0 +1,17 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-icon name="key" slot="start"></ion-icon>
+    <ion-title>Recuperar contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="mensaje">
+    <h1>
+      La clave será enviada al correo registrado una vez que haga click en el botón de enviar
+    </h1>
+  </div>
+  <div class="btn-recuperar">
+    <ion-button name ="recuperarClave" shape="round" color="primary" [routerLink]="['/login']">Enviar Clave</ion-button>
+  </div>
+</ion-content>
