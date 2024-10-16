@@ -3,6 +3,9 @@ import { Platform } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
 import { GlobalDataService } from './servicios/global-data.service';
 
+import { register } from 'swiper/element/bundle';
+register();
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
