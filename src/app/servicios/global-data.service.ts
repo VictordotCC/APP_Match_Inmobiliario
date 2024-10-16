@@ -10,6 +10,7 @@ export class GlobalDataService {
   public lon: number  = 0;
   public timestamp  = 0;
   public mapZoom = 17;
+  public likeThreshold = 150;
 
   constructor() { }
 

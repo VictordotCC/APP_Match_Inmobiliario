@@ -11,10 +11,9 @@
     </ion-item>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true" scroll-y="true">
-  <div class="match-container" [class.center]="!showDetails">
-    <ion-card class="match-card" (click)="toggleDetails()">
+  <div #card class="match-container" [class.center]="!showDetails" style="z-index: -1;">
+    <ion-card class="match-card" (click)="toggleDetails()" style="z-index: 1;">
     <!--ion-card *ngFor="let propiedad of propiedades" class="match-card"-->
       <swiper-container [pagination]="paginationConfig">
         <!--swiper-slide *ngFor="let imagen of propiedad.imagenes">
@@ -67,15 +66,13 @@
         <div id="mapMatch" style = "width: 90vw; height: 50vh;"></div>
       </ion-card-content>
     </ion-card>
-    <div class="buttons">
-      <ion-button color="danger">
-      <!--ion-button color="danger" (click)="rechazarPref(propiedad)"-->
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
-      <ion-button color="success">
-      <!--ion-button color="success" (click)="guardarPref(propiedad)"-->
-        <ion-icon name="heart"></ion-icon>
-      </ion-button>
-    </div>
+  </div>
+  <div class="buttons">
+    <ion-button color="danger" (click)="rechazarPref('dislike')">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+    <ion-button color="success" (click)="guardarPref('like')">
+      <ion-icon name="heart"></ion-icon>
+    </ion-button>
   </div>
 </ion-content>
