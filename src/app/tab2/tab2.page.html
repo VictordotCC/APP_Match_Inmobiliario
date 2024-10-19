@@ -25,14 +25,14 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
 </ion-toolbar>
 <ion-toolbar>
   <ion-item>
-    <ion-segment value="filtros" class="filtros">
-      <ion-segment-button id="btn-precio" small>
+    <ion-segment value ="Precio"  (ionChange)="segmentPrecMtsHab($event)" #segmento1>
+      <ion-segment-button id="btn-precio" value="Precio"  small>
         <ion-label>Precio</ion-label>
       </ion-segment-button>
-      <ion-segment-button id="btn-metros" small>
+      <ion-segment-button id="btn-metros" value="mts"  small>
         <ion-label>mts</ion-label>
       </ion-segment-button>
-      <ion-segment-button id="btn-habitaciones" small>
+      <ion-segment-button id="btn-habitaciones" value="Habitaciones"  small>
         <ion-label>Habitaciones</ion-label>
       </ion-segment-button>
     </ion-segment>
@@ -40,47 +40,38 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
 </ion-toolbar>
 <ion-toolbar>
   <ion-item>
-    <ion-segment class="filtros2">
-      <ion-segment-button id="btn-venta"  small>
+    <ion-segment value="Todos"   (ionChange)="segmentVentArriendo($event)" #segmento2>
+      <ion-segment-button value="Todos">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button id="btn-venta" value="Venta" small>
         <ion-label>Venta</ion-label>
       </ion-segment-button>
-      <ion-segment-button id="btn-arriendo" small>
+      <ion-segment-button id="btn-arriendo" value="Arriendo"  small>
         <ion-label>Arriendo</ion-label>
       </ion-segment-button>
+      <!----
       <ion-button id="btn-mapa" shape="round">
         <ion-icon name="globe" slot="icon-only"></ion-icon>
       </ion-button>
+      ----->
     </ion-segment>
   </ion-item>
 </ion-toolbar>
 
 <!---Inicio del contenido y muestra de las cards con las viviendas-->
 <ion-content [fullscreen]="true">
-  <ion-item>
-    <ion-card>
-      <img alt="casa ejemplo" src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" />
-      <ion-card-header>
-        <ion-card-title>Card Title</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content>
-    </ion-card>
-  </ion-item>
-  <ion-item>
-    <ion-card>
-      <img alt="casa ejemplo" src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" />
-      <ion-card-header>
-        <ion-card-title>Card Title</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content>
-    </ion-card>
-  </ion-item>
+  <ion-list>
+    <ion-item *ngFor="let vivienda of filteredViviendas | async">
+      <ion-card>
+        <img alt="casa ejemplo" src= "" />
+        <ion-card-header>
+          <ion-card-title>{{vivienda.nombre_propiedad}}</ion-card-title>
+          <ion-card-subtitle>{{vivienda.condicion}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>{{vivienda.descripcion}}</ion-card-content>
+      </ion-card>
+    </ion-item>
+  </ion-list>
 
 </ion-content>
