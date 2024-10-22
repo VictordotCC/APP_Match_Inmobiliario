@@ -12,7 +12,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-toolbar>
-  <ion-searchbar placeholder="Buscar"></ion-searchbar>
+  <ion-searchbar placeholder="Buscar" (ionChange)="buscar( $event)"></ion-searchbar>
 </ion-toolbar>
 
 <!--- Aquí vamos a poner fuera del contenido esta toolbar con los filtros
@@ -40,7 +40,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
 </ion-toolbar>
 <ion-toolbar>
   <ion-item>
-    <ion-segment value="Todos"   (ionChange)="segmentVentArriendo($event)" #segmento2>
+    <ion-segment value="Todos" (ionChange)="segmentVentArriendo($event)" #segmento2>
       <ion-segment-button value="Todos">
         <ion-label>Todos</ion-label>
       </ion-segment-button>
@@ -62,13 +62,16 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
 <!---Inicio del contenido y muestra de las cards con las viviendas-->
 <ion-content [fullscreen]="true">
   <ion-list>
-    <ion-item *ngFor="let vivienda of filteredViviendas | async">
+    <!--<ion-item *ngFor="let search of serchVar | filtro:'textBuscar'"> -->
+    <ion-item *ngFor="let vivienda of viviendas | async" >
       <ion-card>
-        <img alt="casa ejemplo" src= "" />
+        <img alt="casa ejemplo" [src]= ""/>
         <ion-card-header>
-          <ion-card-title>{{vivienda.nombre_propiedad}}</ion-card-title>
-          <ion-card-subtitle>{{vivienda.condicion}}</ion-card-subtitle>
+          <ion-card-subtitle>[{{vivienda.tipo_propiedad}}]</ion-card-subtitle>
+          <ion-card-subtitle>{{vivienda.precio}}</ion-card-subtitle>
         </ion-card-header>
+        <ion-card-title>{{vivienda.nombre_propiedad}}</ion-card-title>
+        <ion-card-subtitle>{{vivienda.condicion}}</ion-card-subtitle>
         <ion-card-content>{{vivienda.descripcion}}</ion-card-content>
       </ion-card>
     </ion-item>

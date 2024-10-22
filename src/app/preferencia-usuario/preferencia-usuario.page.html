@@ -1,13 +1,203 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>preferencia-usuario</ion-title>
+    <ion-item>
+      <ion-title>preferencia-usuario</ion-title>
+      <ion-avatar slot="start">
+        <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" [routerLink]="['/preferencias']"/>
+      </ion-avatar>
+      <ion-icon name="notifications-outline" slot="end"></ion-icon>
+    </ion-item>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">preferencia-usuario</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<div>
+  <ion-item>
+    <ion-label>Aquí podrás definir tus parámetros de match para la búsqueda automática de propiedades</ion-label>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <ion-label>Activar búsqueda automática</ion-label>
+    <ion-checkbox labelPlacement="fixed" slot="start" [(ngModel)]="cheCked"  (ionClick)="habilitarBusqueda()"></ion-checkbox>
+  </ion-item>
+</div>
+<div><ion-item><ion-label>Distancia de búsqueda :</ion-label><ion-label>{{DistanciaRango}} km</ion-label></ion-item></div>
+<div>
+  <ion-item >
+    <ion-range aria-label="Custom range" [pin]="true"
+    [disabled]="!cheCked"
+    [(ngModel)]="DistanciaRango"
+    (ionChange)="IonChange($event)"></ion-range>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <ion-label> Selecciona operación </ion-label>
+    <ion-select placeholder="Selecciona una opción" [(ngModel)]="opPeracion" (ionChange)="selectedOperacion()">
+      <ion-select-option value="Compra"> Compra </ion-select-option>
+      <ion-select-option value="Arriendo">Arriendo</ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+
+<div>
+  <ion-item>
+    <ion-label>¿Qué tipo de propiedad buscas?</ion-label>
+    <ion-select placeholder="Selecciona una opción" [(ngModel)]="opPropiedad" (ionChange)="selectedPropiedad()">
+      <ion-select-option value="Casa">Casa</ion-select-option>
+      <ion-select-option value="Departamento">Departamento</ion-select-option>
+      <ion-select-option value="Otro">Otro</ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <ion-label> Condición del inmueble </ion-label>
+    <ion-select placeholder="Selecciona una opción" [(ngModel)]="opInmbueble" (ionChange)="selectedInmueble()">
+      <ion-select-option value="Nueva">Nueva</ion-select-option>
+      <ion-select-option value="Usada">Usada</ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+<ion-grid>
+  <ion-row>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric" maxlength="4" max="9999"
+        label= "mts Cuadrados"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"></ion-input>
+    </ion-col>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric" maxlength="3" max="999"
+        label="Antiguedad años"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"></ion-input>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<div>
+  <ion-radio-group value="UF" (ionChange)="inputTipoValor($event)">
+    <ion-item>
+      <ion-radio slot="start" value="UF"> UF </ion-radio>
+      <ion-radio slot="start" value="CLP" > CLP </ion-radio>
+    </ion-item>
+  </ion-radio-group>
+</div>
+<ion-grid>
+  <ion-row>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'UF'" max=9999 maxlength="4"
+        label= "Desde {{tipoValor}}"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        (ionChange)="ingresoValorViviendaMin($event)"
+        [(ngModel)]="valorMontoVivienda.min"></ion-input>
+    </ion-col>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'UF'" max=9999 maxlength="4"
+        label="Hasta {{tipoValor}}"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        (ionChange)="ingresoValorViviendaMax($event)"
+        [(ngModel)]="valorMontoVivienda.max"
+        (ionBlur)="validarMontoMax($event)"></ion-input>
+    </ion-col>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'CLP'" max="999999999" maxlength="9"
+        label= "Desde {{tipoValor}}"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        (ionChange)="ingresoValorViviendaMin($event)"
+        [(ngModel)]="valorMontoVivienda.min"></ion-input>
+    </ion-col>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'CLP'" max="999999999" maxlength="9"
+        label="Hasta {{tipoValor}}"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        (ionChange)="ingresoValorViviendaMax($event)"
+        [(ngModel)]="valorMontoVivienda.max"
+        (ionBlur)="validarMontoMax($event)"></ion-input>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<div>
+  <ion-item>
+    <ion-label>¿Subsidio?</ion-label>
+    <ion-checkbox slot="start" [(ngModel)]="checkSubsidio"  (ionClick)="habilitarSub()"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Selecciona el tipo de subsidio</ion-label>
+      <ion-select placeholder="Elija opción" [disabled]="!checkSubsidio" [(ngModel)]="opSubsidio" (ionChange)="selectedSubsidio()" multiple="true">
+        <ion-select-option *ngFor="let op of subSidio" [value]="op" > {{op}}</ion-select-option>
+      </ion-select>
+  </ion-item>
+</div>
+<ion-grid>
+  <ion-row>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric"  max="99" maxlength="99"
+        label= "Cant habitaciones"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        (ionInput)="ingresoHabitaciones()"
+        [(ngModel)]="cantHabitaciones"></ion-input>
+    </ion-col>
+    <ion-col size="6">
+      <ion-input fill="solid" type="numeric"  max="99" maxlength="99"
+        label="Cant baños"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        (ionChange)="ingresoBanos()"
+        [(ngModel)]="cantBanos"></ion-input>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<div>
+  <ion-item>
+    <ion-label>¿Estacionamiento?</ion-label>
+    <ion-checkbox id="estacionamiento" labelPlacement="fixed" slot="start" [(ngModel)]="estacionamiento"  (ionClick)="inEstacionamienot()" value="true"></ion-checkbox>
+    <ion-label>¿Bodega?</ion-label>
+    <ion-checkbox id="Bodega" labelPlacement="fixed" [(ngModel)]="bodega"  (ionClick)="inBodega()" value="true"></ion-checkbox>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <ion-label labelPlacement="float"> Región </ion-label>
+    <ion-select placeholder="Selecciona una opción" multiple="true" [(ngModel)]="opRegion" (ionChange)="selectedRegion()">
+      <ion-select-option value="Metropolitana" >Metropolitana</ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <ion-label labelPlacement="float"> Comuna </ion-label>
+    <ion-select placeholder="Selecciona una opción" multiple="true" [(ngModel)]="opComuna" (ionChange)="selectedComuna()">
+      <ion-select-option value="San Joaquín" >San Joaquín</ion-select-option>
+      <ion-select-option value="Ñuñoa" >Ñuñoa</ion-select-option>
+      <ion-select-option value="Macul" >Macul</ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <ion-button shape="round" (ionClick)="GuardarAjustes()" [routerLink]="['/preferencias']">Guardar Información</ion-button>
+  </ion-item>
+</div>
 </ion-content>

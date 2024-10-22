@@ -1,9 +1,7 @@
 import { DataServiceService } from './../servicios/data-service.service';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { IonSegment } from '@ionic/angular';
-import { Observable, of } from 'rxjs';
-//import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { Observable} from 'rxjs';
 
 @Component({
   selector: 'app-tab2',
@@ -14,20 +12,24 @@ export class Tab2Page implements OnInit {
 
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
+
   viviendas!: Observable<any>;
   imagenes!: Observable<any>;
-  filteredViviendas!: Observable<any>;
+  serchVar: any[] = []; // variable para buscar en el SearchBar
+  textoBuscar = "";
 
-  constructor(
-    private DataService: DataServiceService) {}
+  constructor(private DataService: DataServiceService) {}
+
   ngOnInit() {
-    /* // esta es la forma de obtener los datos de la api
-    this.DataServiceService.getVivivendas().subscribe((data: any) => {
-      console.log(data);
-    }); */
-    this.viviendas = this.DataService.getVivivendas();
+    /* // esta es la forma de obtener los datos de la api */
+
+    this.viviendas = this.DataService.getViviendas();
     this.imagenes = this.DataService.getImagenes();
-    this.filteredViviendas = this.viviendas;
+
+    this.DataService.getViviendaSearch().subscribe( serchVar => {
+      console.log(serchVar);
+      this.serchVar = serchVar;
+     });
   }
 
   segmentPrecMtsHab(event: CustomEvent){
@@ -40,17 +42,26 @@ export class Tab2Page implements OnInit {
   }
 
   segmentChanged(event: CustomEvent) {
-    const selectedValue = event.detail.value;
-    this.filteredViviendas = this.viviendas.pipe(
-      map((viviendas: any[]) => {
-        if (selectedValue === 'Todos') {
-          return viviendas;
-        } else {
-          return viviendas.filter((vivienda: any) => vivienda.type === selectedValue);
-        }
-      })
-    );
+    const valorSegment = event.detail.value;
+    return valorSegment;
+    /*
+    if(valorSegment === 'Todos'){
+      this.filteredViviendas = this.viviendas;
+      return;
+    }
+      */
   }
 
+  buscar( event: any){
+    //const texto = event.detail.value;
+    console.log(this.textoBuscar);
+    this.textoBuscar = event.detail.value;
+  }
 
 }
+
+
+  // datos de prueba
+
+
+
