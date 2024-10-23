@@ -20,8 +20,8 @@ export class PreferenciaUsuarioPage implements OnInit {
   opSubsidio: string = ''; //para capturar el tipo de subsidio
   cantHabitaciones: number = 0; //para capturar la cantidad de habitaciones
   cantBanos: number = 0; //para capturar la cantidad de baños
-  estacionamiento: boolean= false; //para capturar si hay estacionamientos
-  bodega: boolean= false; //para capturar si hay bodega
+  estacionamiento: number = 0; //para capturar si hay estacionamientos
+  bodega: number = 0; //para capturar si hay bodega
   opRegion: string[] = []; //para seleccionar la Región
   opComuna: string[] = []; //para seleccionar la Comuna
   opPeracion: string =''; //para seleccionar el tipo de operacion
@@ -133,15 +133,15 @@ export class PreferenciaUsuarioPage implements OnInit {
   }
 
   //para capturar si hay estacionamientos
-  inEstacionamienot(){
-    this.estacionamiento = !this.estacionamiento;
+  inEstacionamiento(){
+    //this.estacionamiento = !this.estacionamiento;
     //this.estacionamiento = (document.getElementById('estacionamiento') as HTMLInputElement).value;
     console.log('estacionamiento: ',this.estacionamiento);
   }
 
   //para capturar si hay bodega
   inBodega(){
-    this.bodega = !this.bodega;
+    //this.bodega = !this.bodega;
     //this.bodega = (document.getElementById('Bodega') as HTMLInputElement).value;
     console.log('bodega: ',this.bodega);
   }
