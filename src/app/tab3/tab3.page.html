@@ -11,63 +11,11 @@
     </ion-item>
   </ion-toolbar>
 </ion-header>
-<ion-content [fullscreen]="true" scroll-y="true">
-  <div class="match-container" [class.center]="!showDetails">
-    <ion-card #card class="match-card" (click)="toggleDetails($event.target)" style="z-index: 1;">
+<ion-content [fullscreen]="false">
+  <div class="match-container">
+    <ion-card #card class="match-card" (click)="toggleDetails($event.target)">
     <!--ion-card *ngFor="let propiedad of propiedades" class="match-card"-->
-      <swiper-container [pagination]="paginationConfig">
-        <!--swiper-slide *ngFor="let imagen of propiedad.imagenes">
-          <ion-img [src]="imagen" class="property-image"></ion-img>
-          ion-img [src]="propiedad.imagen" class="property-image"></ion-img>
-        </swiper-slide-->
-        <swiper-slide>
-          <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
-        </swiper-slide>
-        <swiper-slide>
-          <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
-        </swiper-slide>
-        <swiper-slide>
-          <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
-        </swiper-slide>
-      </swiper-container>
-      <div class="info" style="display: block;">
-        <ion-card-header>
-          <ion-card-title>propiedad.nombre </ion-card-title>
-          <ion-card-subtitle style="color:aliceblue">propiedad.ubicacion</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <p>propiedad.descripcion </p>
-          <p><strong>Precio:</strong> propiedad.precio | currency:'USD' </p>
-          <p><strong>Habitaciones:</strong> propiedad.habitaciones </p>
-        </ion-card-content>
-      </div>
-      <ion-card class="hidden-info" style="display: none;">
-        <ion-card-header>
-          <ion-card-title>Detalles</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p><strong>propiedad.nombre_propiedad</strong></p>
-          <p><strong>propiedad.descripcion</strong></p>
-          <p><strong>propiedad.tipo_operacion</strong></p>
-          <p><strong>Área Total: </strong> propiedad.area_total </p>
-          <p><strong>Pisos: </strong> propiedad.pisos </p>
-          <p><strong>Habitaciones: </strong> propiedad.habitaciones </p>
-          <p><strong>Precio (UF): </strong> propiedad.precio_uf </p>
-          <p><strong>Estacionamientos: </strong> propiedad.estaciona </p>
-          <p><strong>Bodegas: </strong> propiedad.bodega </p>
-          <p><strong>Antiguedad: </strong> propiedad.antiguedad </p>
-          <p><strong>Tipo de Vivienda: </strong> propiedad.tipo_vivienda </p><!-- Recordar 0:? 1:?-->
-          <p><strong>Condicion: </strong> propiedad.condicion </p>
-          <p><strong>Cantidad de Baños: </strong> propiedad.banos </p>
-          <p><strong>Área Construida: </strong> propiedad.area_construida </p>
-          <p><strong>Tipo Subsidio: </strong> propiedad.tipo_subsidio </p>
-          <p>Propiedad publicada el : propiedad.fecha_creacion </p>
-          <div id="mapMatch" style = "width: 90vw; height: 50vh;"></div>
-        </ion-card-content>
-      </ion-card>
-    </ion-card>
-    <ion-card #card class="match-card" (click)="toggleDetails($event.target)" style="z-index: 1;">
-      <!--ion-card *ngFor="let propiedad of propiedades" class="match-card"-->
+      <div class="slides-container">
         <swiper-container [pagination]="paginationConfig">
           <!--swiper-slide *ngFor="let imagen of propiedad.imagenes">
             <ion-img [src]="imagen" class="property-image"></ion-img>
@@ -91,8 +39,64 @@
           <ion-card-content>
             <p>propiedad.descripcion </p>
             <p><strong>Precio:</strong> propiedad.precio | currency:'USD' </p>
-            <p><strong>Habitaciones:</strong> propiedad.habitaciones </p>
           </ion-card-content>
+        </div>
+      </div>
+      <ion-card class="hidden-info" style="display: none;">
+        <ion-card-header>
+          <ion-card-title>Detalles</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p><strong>propiedad.nombre_propiedad</strong></p>
+          <p><strong>propiedad.descripcion</strong></p>
+          <p><strong>propiedad.tipo_operacion</strong></p>
+          <p><strong>Área Total: </strong> propiedad.area_total </p>
+          <p><strong>Pisos: </strong> propiedad.pisos </p>
+          <p><strong>Habitaciones: </strong> propiedad.habitaciones </p>
+          <p><strong>Precio (UF): </strong> propiedad.precio_uf </p>
+          <p><strong>Estacionamientos: </strong> propiedad.estaciona </p>
+          <p><strong>Bodegas: </strong> propiedad.bodega </p>
+          <p><strong>Antiguedad: </strong> propiedad.antiguedad </p>
+          <p><strong>Tipo de Vivienda: </strong> propiedad.tipo_vivienda </p><!-- Recordar 0:? 1:?-->
+          <p><strong>Condicion: </strong> propiedad.condicion </p>
+          <p><strong>Cantidad de Baños: </strong> propiedad.banos </p>
+          <p><strong>Área Construida: </strong> propiedad.area_construida </p>
+          <p><strong>Tipo Subsidio: </strong> propiedad.tipo_subsidio </p>
+          <p>Propiedad publicada el : propiedad.fecha_creacion </p>
+          <div id="mapMatch" style = "width: 80vw; height: 50vh;"></div>
+        </ion-card-content>
+      </ion-card>
+      <div class="choice nope">NOPE</div>
+      <div class="choice like">LIKE</div>
+    </ion-card>
+    <ion-card #card class="match-card" (click)="toggleDetails($event.target)">
+      <!--ion-card *ngFor="let propiedad of propiedades" class="match-card"-->
+        <div class="slides-container">
+          <swiper-container [pagination]="paginationConfig">
+            <!--swiper-slide *ngFor="let imagen of propiedad.imagenes">
+              <ion-img [src]="imagen" class="property-image"></ion-img>
+              ion-img [src]="propiedad.imagen" class="property-image"></ion-img>
+            </swiper-slide-->
+            <swiper-slide>
+              <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
+            </swiper-slide>
+            <swiper-slide>
+              <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
+            </swiper-slide>
+            <swiper-slide>
+              <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
+            </swiper-slide>
+          </swiper-container>
+          <div class="info" style="display: block;">
+            <ion-card-header>
+              <ion-card-title>propiedad.nombre </ion-card-title>
+              <ion-card-subtitle style="color:aliceblue">propiedad.ubicacion</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <p>propiedad.descripcion </p>
+              <p><strong>Precio:</strong> propiedad.precio | currency:'USD' </p>
+            </ion-card-content>
+          </div>
         </div>
         <ion-card class="hidden-info" style="display: none;">
           <ion-card-header>
@@ -101,7 +105,7 @@
           <ion-card-content>
             <p><strong>propiedad.nombre_propiedad</strong></p>
             <p><strong>propiedad.descripcion</strong></p>
-            <p><strong>propiedad.tipo_operacion</strong></p> <!--Recordad 0:? 1:?-->
+            <p><strong>propiedad.tipo_operacion</strong></p>
             <p><strong>Área Total: </strong> propiedad.area_total </p>
             <p><strong>Pisos: </strong> propiedad.pisos </p>
             <p><strong>Habitaciones: </strong> propiedad.habitaciones </p>
@@ -115,10 +119,71 @@
             <p><strong>Área Construida: </strong> propiedad.area_construida </p>
             <p><strong>Tipo Subsidio: </strong> propiedad.tipo_subsidio </p>
             <p>Propiedad publicada el : propiedad.fecha_creacion </p>
-            <div id="mapMatch" style = "width: 90vw; height: 50vh;"></div>
+            <div id="mapMatch" style = "width: 80vw; height: 50vh;"></div>
           </ion-card-content>
         </ion-card>
-      </ion-card>
+        <div class="choice nope">NOPE</div>
+        <div class="choice like">LIKE</div>
+    </ion-card>
+    <ion-card #card class="match-card" (click)="toggleDetails($event.target)">
+      <!--ion-card *ngFor="let propiedad of propiedades" class="match-card"-->
+        <div class="slides-container">
+          <swiper-container [pagination]="paginationConfig">
+            <!--swiper-slide *ngFor="let imagen of propiedad.imagenes">
+              <ion-img [src]="imagen" class="property-image"></ion-img>
+              ion-img [src]="propiedad.imagen" class="property-image"></ion-img>
+            </swiper-slide-->
+            <swiper-slide>
+              <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
+            </swiper-slide>
+            <swiper-slide>
+              <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
+            </swiper-slide>
+            <swiper-slide>
+              <ion-img src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" class="property-image"></ion-img>
+            </swiper-slide>
+          </swiper-container>
+          <div class="info" style="display: block;">
+            <ion-card-header>
+              <ion-card-title>propiedad.nombre </ion-card-title>
+              <ion-card-subtitle style="color:aliceblue">propiedad.ubicacion</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <p>propiedad.descripcion </p>
+              <p><strong>Precio:</strong> propiedad.precio | currency:'USD' </p>
+            </ion-card-content>
+          </div>
+        </div>
+        <ion-card class="hidden-info" style="display: none;">
+          <ion-card-header>
+            <ion-card-title>Detalles</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p><strong>propiedad.nombre_propiedad</strong></p>
+            <p><strong>propiedad.descripcion</strong></p>
+            <p><strong>propiedad.tipo_operacion</strong></p>
+            <p><strong>Área Total: </strong> propiedad.area_total </p>
+            <p><strong>Pisos: </strong> propiedad.pisos </p>
+            <p><strong>Habitaciones: </strong> propiedad.habitaciones </p>
+            <p><strong>Precio (UF): </strong> propiedad.precio_uf </p>
+            <p><strong>Estacionamientos: </strong> propiedad.estaciona </p>
+            <p><strong>Bodegas: </strong> propiedad.bodega </p>
+            <p><strong>Antiguedad: </strong> propiedad.antiguedad </p>
+            <p><strong>Tipo de Vivienda: </strong> propiedad.tipo_vivienda </p><!-- Recordar 0:? 1:?-->
+            <p><strong>Condicion: </strong> propiedad.condicion </p>
+            <p><strong>Cantidad de Baños: </strong> propiedad.banos </p>
+            <p><strong>Área Construida: </strong> propiedad.area_construida </p>
+            <p><strong>Tipo Subsidio: </strong> propiedad.tipo_subsidio </p>
+            <p>Propiedad publicada el : propiedad.fecha_creacion </p>
+            <div id="mapMatch" style = "width: 80vw; height: 50vh;"></div>
+          </ion-card-content>
+        </ion-card>
+        <div class="choice nope">NOPE</div>
+        <div class="choice like">LIKE</div>
+    </ion-card>
+    <span class="no-more">No hay más propiedades cerca de tí...
+      <br>Vuelve a intentarlo más tarde
+    </span>
   </div>
   <div class="buttons">
     <ion-button color="danger" (click)="rechazarPref('dislike')">

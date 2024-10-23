@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChildren, ViewChild, QueryList, ElementRef } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { Animation, GestureController, Gesture, AnimationController, GestureDetail, IonCard } from '@ionic/angular';
@@ -16,6 +16,8 @@ export class Tab3Page implements AfterViewInit{
   animStarted = false;
   initialStep = 0;
   readonly MAX_TRANSLATE = 344 - 100 - 32;
+  pullDeltaX = 0;
+  cardlist: ElementRef[] = [];
 
   showDetails = false;
   maps: Leaflet.Map[] = [];
@@ -26,10 +28,11 @@ export class Tab3Page implements AfterViewInit{
     el: '.swiper-pagination',  
   };
  
-  constructor(private datosGlobales: GlobalDataService, private gestureCtrl: GestureController, private animationCtrl: AnimationController) {}
+  constructor(private datosGlobales: GlobalDataService, private gestureCtrl: GestureController, private animationCtrl: AnimationController) { }
 
   ngAfterViewInit(){
     this.setupSwipeGesture();
+    this.cardlist = this.cards!.toArray();
   }
 
   //GESTOS
@@ -55,6 +58,8 @@ export class Tab3Page implements AfterViewInit{
 
   onMove(ev: GestureDetail, index: number){
     const container = ev.event.target as HTMLElement;
+    const actualCard = this.cards!.get(index)!.nativeElement;
+    this.pullDeltaX = ev.deltaX - this.initialStep;
     if (!this.animations[index] || container.tagName === 'ION-IMG' || container.tagName === 'SWIPER-CONTAINER' || container.tagName === 'DIV'
       || this.showDetails){
       return;
@@ -66,9 +71,16 @@ export class Tab3Page implements AfterViewInit{
     const step = this.getStep(ev);
     const translateXvalue = ev.deltaX
     this.animations[index].progressStep(step);
-    this.cards!.get(index)!.nativeElement.style.transform = `translateX(${translateXvalue}px)`;
-    this.cards!.get(index)!.nativeElement.style.rotate = `${translateXvalue/35}deg`;
-    this.cards!.get(index)!.nativeElement.style.filter = `brightness(${Math.max(1 - Math.abs(step)/2, 0.5)})`;
+    actualCard.style.transform = `translateX(${translateXvalue}px)`;
+    actualCard.style.rotate = `${translateXvalue/30}deg`;
+    //actualCard.style.filter = `brightness(${Math.max(1 - Math.abs(step)/2, 0.5)})`;
+
+     const choiceE1 = this.pullDeltaX > 0 ? 
+      actualCard.querySelector('.choice.like') 
+      : actualCard.querySelector('.choice.nope');
+
+    choiceE1!.style.opacity = `${Math.abs(this.pullDeltaX)/100}`;
+
   }
 
   onEnd(ev: GestureDetail, index: number){
@@ -77,20 +89,46 @@ export class Tab3Page implements AfterViewInit{
     }
     this.gesture?.enable(false)
     const step = this.getStep(ev);
+    const actualCard = this.cards!.get(index)!.nativeElement;
 
     this.animations[index].progressEnd(0, step).onFinish(() => {
-      this.cards!.get(index)!.nativeElement.style.transform = 'translateX(0)';
-      this.cards!.get(index)!.nativeElement.style.rotate = '0deg';
-      this.cards!.get(index)!.nativeElement.style.filter = '';
+      actualCard.style.transform = 'translateX(0)';
+      actualCard.style.rotate = '0deg';
+      actualCard.style.filter = '';
       //this.gesture?.enable(true);
     });
-    console.log(ev.deltaX)
-    if (ev.deltaX > this.datosGlobales.likeThreshold){
+    if (this.pullDeltaX> this.datosGlobales.likeThreshold){
+      actualCard.classList.add('go-right');
+      actualCard.addEventListener('transitionend', () => {
+        actualCard.remove();
+      });
       this.guardarPref('like');
-    } else if (ev.deltaX < -this.datosGlobales.likeThreshold){
+
+    } else if (this.pullDeltaX < -this.datosGlobales.likeThreshold){
+      actualCard.classList.add('go-left');
+      actualCard.addEventListener('transitionend', () => {
+        actualCard.remove();
+      });
       this.rechazarPref('dislike');
+
+    } else {
+      actualCard.classList.add('reset');
+      actualCard.classList.remove('go-right', 'go-left');
+      actualCard.querySelectorAll('.choice').forEach((choice:any) => {
+        choice.style.opacity = '0';
+      });
     }
-    this.animStarted = false;
+
+    actualCard.addEventListener('transitionend', () => {
+      actualCard.removeAttribute('style');
+      actualCard.classList.remove('reset');
+      this.pullDeltaX = 0;
+      this.animStarted = false;
+      this.gesture?.enable(true);
+    });
+    actualCard.querySelectorAll('.choice').forEach((choice:any) => {
+      choice.style.opacity = '0';
+    });
   }
 
   clamp(min: number, n: number, max: number){
@@ -120,6 +158,7 @@ export class Tab3Page implements AfterViewInit{
       popupAnchor: [1, -34],
       })}).addTo(map);
     this.markers.push(marker);
+    this.maps.push(map);
   }
 
   adduserMarker(map: Leaflet.Map, lat: number, lon: number, icon: Leaflet.Icon) {
@@ -138,12 +177,42 @@ export class Tab3Page implements AfterViewInit{
   //LIKE Y DISLIKE
 
   guardarPref(propiedad: string){
+    console.log(this.cardlist)
+    //get current card
+    const lastElement = this.cardlist.pop()?.nativeElement;
+    //TODO: save fav
+    //Like animation 
+    const choiceCard = lastElement!.querySelector('.choice.like');
+    choiceCard!.style.opacity = '1';
+    setTimeout(() => {
+      lastElement!.classList.add('go-right');
+    }, 500);
+    //remove card
+    lastElement?.addEventListener('transitionend', () => {
+      lastElement.remove();
+    });
+    
+    
     console.log('Like')
   }
 
   rechazarPref(propiedad: string){
+    const lastElement = this.cardlist.pop()?.nativeElement;   
+    const choiceCard = lastElement!.querySelector('.choice.nope');
+    choiceCard!.style.opacity = '1';
+    setTimeout(() => {
+      lastElement!.classList.add('go-left');
+    }, 500);
+
+    lastElement?.addEventListener('transitionend', () => {
+      lastElement.remove();
+    });
+    
     console.log('Dislike')
   }
+
+  //METODOS FETCH
+
 
   //MOSTRAR DETALLES
 
@@ -152,17 +221,20 @@ export class Tab3Page implements AfterViewInit{
     const hidden_info = match_card.querySelector('.hidden-info')
     const mapMatch = match_card.querySelector('#mapMatch') as HTMLElement;
     const info = match_card.querySelector('.info')
+    const match_container = match_card.closest('.match-container')
     this.showDetails = !this.showDetails;
 
     if (this.showDetails){
       hidden_info.style.display = 'block';
       info.style.display = 'none';
+      match_container.style.justifyContent = 'flex-start';
       setTimeout(() => {
         this.initializeMap(mapMatch);
       }, 0);
     } else {
       hidden_info.style.display = 'none';
       info.style.display = 'block';
+      match_container.style.justifyContent = 'center';
       const map = this.maps.pop();
       if (map){
         this.destroyMap(map);
