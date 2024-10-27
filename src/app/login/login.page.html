@@ -20,7 +20,7 @@
   <br>
   <div class="centrado" text-center>
     <!----(ngModelChange)="segmentChanged($event)"--->
-    <ion-segment value ="Comprador" (ionChange) = segmentChanged($event)>
+    <ion-segment value ="Comprador" (ionChange) = segmentChanged($event) [(ngModel)]="tipoUsuario">
       <ion-segment-button shape="round" color="primary" value="Comprador" >
         <ion-label>Comprador</ion-label>
       </ion-segment-button>

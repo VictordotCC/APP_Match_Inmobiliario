@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class GlobalDataService {
   public userGlobal: string = 'abc@def.com';
   public passGlobal: string = '1234';
+  public userTipoGlobal: string = 'Comprador';
   public lat: number = 0;
   public lon: number  = 0;
   public timestamp  = 0;

@@ -1,19 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import { GlobalDataService } from '../servicios/global-data.service';
-
+import { ActivatedRoute } from '@angular/router';
+import { NavController } from '@ionic/angular';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit {
   map: Leaflet.Map | undefined;
   markers: Leaflet.Marker[] = [];
-
-  constructor(private datosGlobales: GlobalDataService) {}
+  opcionFiltro: string = 'Todos';
+  user: string = '';
+  pass: string = '';
+  tipo: string = '';
+  constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController) {}
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.user = params['user'];
+      this.pass = params['pass'];
+      this.tipo = params['tipo'];
+      console.log('User:', this.user);
+      console.log('Pass:', this.pass);
+      console.log('Tipo:', this.tipo);
+    });
   }
 
   ionViewDidEnter() {
@@ -64,5 +76,11 @@ export class Tab1Page {
     if(this.map){
       this.map.remove();
     }
+  }
+  iraPreferencias(){
+    console.log('ir a preferencias');
+    this.navCtrl.navigateForward(['/preferencias'], {
+      queryParams: { user: this.user, pass: this.pass, tipo: this.tipo}
+  });
   }
 }

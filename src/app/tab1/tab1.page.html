@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-item>
-      <ion-avatar slot="start">
+      <ion-avatar slot="start" button (click)="iraPreferencias()">
         <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" [routerLink]="['/preferencias']"/>
       </ion-avatar>
       <ion-icon name="notifications-outline" slot="end"></ion-icon>
@@ -12,11 +12,14 @@
 <ion-toolbar>
   <ion-item>
     <ion-icon name="options" slot="start"></ion-icon>
-    <ion-segment class="filtros2">
-      <ion-segment-button id="btn-venta"  small>
+    <ion-segment class="filtros2" value="Venta" [(ngModel)]="opcionFiltro">
+      <ion-segment-button id="btn-todos" value="Todos"  small>
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button id="btn-venta" value="Venta"  small>
         <ion-label>Venta</ion-label>
       </ion-segment-button>
-      <ion-segment-button id="btn-arriendo" small>
+      <ion-segment-button id="btn-arriendo" value="Arriendo"  small>
         <ion-label>Arriendo</ion-label>
       </ion-segment-button>
     </ion-segment>

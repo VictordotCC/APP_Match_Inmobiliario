@@ -1,8 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-item>
-      <ion-title>preferencia-usuario</ion-title>
-      <ion-icon slot="start" style="margin-left: 2%; color:aliceblue"name="arrow-back-outline" size="large" [routerLink]="['/preferencias']"></ion-icon>
+      <ion-title>Preferencias</ion-title>
+      <ion-icon slot="start" style="margin-left: 2%; color:rgb(30, 103, 170)"name="arrow-back-outline" size="large" [routerLink]="['/preferencias']"></ion-icon>
       <!--
       <ion-avatar slot="start">
         <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" [routerLink]="['/preferencias']"/>
@@ -64,26 +64,54 @@
 </div>
 <ion-grid>
   <ion-row>
-    <ion-col size="6">
+    <ion-col size="6"> <!---- Metros cuadrados (area construida) -->
       <ion-input fill="solid" type="numeric" maxlength="4" max="9999"
-        label= "mts Cuadrados"
+        label= "mts2 Construidos"
         labelPlacement="floating"
         [clearInput]="true"
         helperText="ingrese número"
-        errorText="dato no válido"></ion-input>
+        errorText="dato no válido"
+        [(ngModel)]="areaConstruida"
+        (ionChange)="metrosConstruidos($event)"></ion-input>
     </ion-col>
-    <ion-col size="6">
+    <ion-col size="6"> <!---- años de antiguedad -->
       <ion-input fill="solid" type="numeric" maxlength="3" max="999"
         label="Antiguedad años"
         labelPlacement="floating"
         [clearInput]="true"
         helperText="ingrese número"
-        errorText="dato no válido"></ion-input>
+        errorText="dato no válido"
+        [(ngModel)]="antiguedad"
+        (ionChange)="ingresarAntiguedad($event)"></ion-input>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<ion-grid>
+  <ion-row>
+    <ion-col size="6"> <!---- Metros cuadrados (area Total) -->
+      <ion-input fill="solid" type="numeric" maxlength="4" max="9999"
+        label= "Area total mts2"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        [(ngModel)] ="areaTotal"
+        (ionChange)="metrosTotales($event)"></ion-input>
+    </ion-col>
+    <ion-col size="6"> <!---- cantidad de pisos -->
+      <ion-input fill="solid" type="numeric" maxlength="1" max="9"
+        label="Cantidad de pisos"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        [(ngModel)]="pisos"
+        (ionChange)="cantPisos($event)"></ion-input>
     </ion-col>
   </ion-row>
 </ion-grid>
 <div>
-  <ion-radio-group value="UF" (ionChange)="inputTipoValor($event)">
+  <ion-radio-group value="UF" (ionChange)="inputTipoValor($event)" [(ngModel)]="tipoValor">
     <ion-item>
       <ion-radio slot="start" value="UF"> UF </ion-radio>
       <ion-radio slot="start" value="CLP" > CLP </ion-radio>
@@ -143,7 +171,7 @@
   </ion-item>
   <ion-item>
     <ion-label>Selecciona el tipo de subsidio</ion-label>
-      <ion-select placeholder="Elija opción" [disabled]="!checkSubsidio" [(ngModel)]="opSubsidio" (ionChange)="selectedSubsidio()" multiple="true">
+      <ion-select placeholder="Elija opción" [disabled]="!checkSubsidio" [(ngModel)]="opSubsidio" (ionChange)="selectedSubsidio()" multiple="true" value="Ninguno">
         <ion-select-option *ngFor="let op of subSidio" [value]="op" > {{op}}</ion-select-option>
       </ion-select>
   </ion-item>
@@ -181,7 +209,7 @@
         helperText="ingrese número"
         errorText="dato no válido"
         (ionInput)="inEstacionamiento()"
-        [(ngModel)]="cantHabitaciones"></ion-input>
+        [(ngModel)]="estacionamiento"></ion-input>
     </ion-col>
     <ion-col size="6">
       <ion-input fill="solid" type="numeric"  max="99" maxlength="99"
@@ -191,7 +219,7 @@
         helperText="ingrese número"
         errorText="dato no válido"
         (ionChange)="inBodega()"
-        [(ngModel)]="cantBanos"></ion-input>
+        [(ngModel)]="bodega"></ion-input>
     </ion-col>
   </ion-row>
 </ion-grid>
@@ -227,7 +255,20 @@
 -->
 <div>
   <ion-item>
-    <ion-button slot="start" size="medium" shape="round" (ionClick)="GuardarAjustes()" [routerLink]="['/preferencias']">Guardar Información</ion-button>
+    <ion-label>¿ Desea ser contactado ?</ion-label>
+    <ion-checkbox labelPlacement="fixed" slot="start" [(ngModel)]="contactado"  (ionClick)="contactar()"></ion-checkbox>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <ion-label>¿ Recibir notificaciones ?</ion-label>
+    <ion-checkbox labelPlacement="fixed" slot="start" [(ngModel)]="notificaciones"  (ionClick)="notificar()"></ion-checkbox>
+  </ion-item>
+</div>
+<div>
+  <ion-item>
+    <!--<ion-button slot="start" size="medium" shape="round" (ionClick)="GuardarAjustes()" [routerLink]="['/preferencias']">Guardar Información</ion-button> -->
+    <ion-button slot="start" size="medium" shape="round" (click)="GuardarAjustes()">Guardar Información</ion-button>
   </ion-item>
 </div>
 </ion-content>

@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router} from '@angular/router';
-import { AlertController} from '@ionic/angular';
+import { AlertController, NavController} from '@ionic/angular';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { IonSegment } from '@ionic/angular';
 import { AppComponent } from '../app.component';
-
+import { TabsPage } from '../tabs/tabs.page';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -17,11 +17,14 @@ export class LoginPage  implements OnInit{
 
   logueado = false;
   formularioLogin: FormGroup;
+  tipoUsuario: string = 'Comprador';
+
   constructor(
     //private api: ApiService,
     public fb: FormBuilder, public alertController: AlertController,private router: Router,
     private datosGlobales: GlobalDataService,
-    private appComponent: AppComponent
+    private appComponent: AppComponent,
+    public navCtrl: NavController
   ) {
 
     this.formularioLogin = this.fb.group({
@@ -32,7 +35,7 @@ export class LoginPage  implements OnInit{
   }
 
   ngOnInit(){
-    
+
   }
 
   navigateToRegistro() {
@@ -45,7 +48,8 @@ export class LoginPage  implements OnInit{
 
   segmentChanged( event: any){
     const valorSegmento = event.detail.value;
-
+    this.tipoUsuario = valorSegmento;
+    console.log('tipo usuario',this.tipoUsuario);
   }
 
 
@@ -82,7 +86,11 @@ export class LoginPage  implements OnInit{
             buttons: ['Aceptar']
           });
           await alert.present();
-          this.router.navigate(['/tabs']);
+          //this.router.navigate(['/tabs']);
+          //con el siguiente código enviamos los datos de usuario y contraseña a la página de tabs
+          this.navCtrl.navigateForward(['/tabs'], {
+            queryParams: { user: userGlobal, pass: passGlobal, tipo: this.tipoUsuario }
+        });
 
         }
     if (usuario.nombre != userGlobal && usuario.clave != passGlobal ){

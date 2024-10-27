@@ -65,7 +65,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
     <!--<ion-item *ngFor="let search of serchVar | filtro:'textBuscar'"> -->
     <ion-item *ngFor="let vivienda of viviendas | async" >
       <ion-card>
-        <img alt="casa ejemplo" [src]= ""/>
+        <img id="imagen_casa" alt="casa ejemplo" src= "https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg"/>
         <ion-card-header>
           <ion-card-subtitle>[{{vivienda.tipo_propiedad}}]</ion-card-subtitle>
           <ion-card-subtitle>{{vivienda.precio}}</ion-card-subtitle>

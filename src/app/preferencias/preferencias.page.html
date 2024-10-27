@@ -7,7 +7,8 @@
     </ion-title>
     <ion-list>
       <ion-item>
-        <ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true">
+        <!--<ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true" value="Comprador"> -->
+        <ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true" value="{{tipo}}">
           <ion-select-option value="Comprador">Comprador</ion-select-option>
           <ion-select-option value="Vendedor">Vendedor</ion-select-option>
         </ion-select>
@@ -23,7 +24,7 @@
     </ion-avatar>
     <ion-label>
       <h2>Usuario</h2>
-      <p>correo</p>
+      <p>{{user}}</p>
     </ion-label>
   </ion-item>
   <ion-list>
@@ -60,7 +61,7 @@
   </ion-list>
   <ion-item>
     <ion-button name="cerrar" shape="round" id="btn-cerrar">
-      <ion-label>Cerrar Sesión</ion-label>
+      <ion-label (click)="cerrarSesion()" [routerLink]="['/login']">Cerrar Sesión</ion-label>
     </ion-button>
   </ion-item>
 </ion-content>
