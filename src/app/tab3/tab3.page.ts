@@ -1,7 +1,9 @@
 import { Component, AfterViewInit, ViewChildren, ViewChild, QueryList, ElementRef } from '@angular/core';
 import * as Leaflet from 'leaflet';
-import { GlobalDataService } from '../servicios/global-data.service';
 import { Animation, GestureController, Gesture, AnimationController, GestureDetail, IonCard } from '@ionic/angular';
+
+import { GlobalDataService } from '../servicios/global-data.service';
+import { DataServiceService } from '../servicios/data-service.service';
 
 @Component({
   selector: 'app-tab3',
@@ -20,19 +22,35 @@ export class Tab3Page implements AfterViewInit{
   cardlist: ElementRef[] = [];
 
   showDetails = false;
+  private defaultIcon = Leaflet.icon({
+    iconUrl: '../../assets/markers/marker-icon.png',
+    shadowUrl: '../../assets/markers/marker-shadow.png'})
   maps: Leaflet.Map[] = [];
   markers: Leaflet.Marker[] = [];
+  usermarkers: Leaflet.Marker[] = [];
 
   paginationConfig = {
     type: 'progressbar',
     el: '.swiper-pagination',  
   };
  
-  constructor(private datosGlobales: GlobalDataService, private gestureCtrl: GestureController, private animationCtrl: AnimationController) { }
+  constructor(private datosGlobales: GlobalDataService, private apiCon: DataServiceService,
+    private gestureCtrl: GestureController, private animationCtrl: AnimationController) { }
 
   ngAfterViewInit(){
+    this.maps.forEach((map) => {
+      if (map) {
+        this.destroyMap(map);
+      }
+    });
     this.setupSwipeGesture();
     this.cardlist = this.cards!.toArray();
+    this.datosGlobales.ubicacion$.subscribe((ubicacion) => {
+      if (ubicacion) {
+        this.updateMaps(ubicacion.lat, ubicacion.lon);
+      }
+    });
+    this.obtenerDatos();
   }
 
   //GESTOS
@@ -143,14 +161,11 @@ export class Tab3Page implements AfterViewInit{
   //MAPA
 
   initializeMap(mapTag : HTMLElement) {
-    const defaultIcon = Leaflet.icon({
-      iconUrl: '../../assets/markers/marker-icon.png',
-      shadowUrl: '../../assets/markers/marker-shadow.png'})
     const map = Leaflet.map(mapTag).setView([this.datosGlobales.lat, this.datosGlobales.lon], this.datosGlobales.mapZoom);
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
-    this.adduserMarker(map, this.datosGlobales.lat, this.datosGlobales.lon, defaultIcon);
+    this.adduserMarker(map, this.datosGlobales.lat, this.datosGlobales.lon, this.defaultIcon);
     const marker = Leaflet.marker([this.datosGlobales.lat -0.001, this.datosGlobales.lon -0.001], {icon: Leaflet.icon({ //TODO: obtener lat y lon del domicilio seleccionado
       iconUrl: '../../assets/markers/casa-with-shadow.png',
       iconSize: [36, 36],
@@ -161,10 +176,21 @@ export class Tab3Page implements AfterViewInit{
     this.maps.push(map);
   }
 
+  updateMaps(lat: number, lon: number) {
+    this.maps.forEach((map) => {
+      if (map && map.getContainer().style.display !== 'none') {
+        map.setView([lat, lon], this.datosGlobales.mapZoom);
+        this.usermarkers.forEach((marker) => {
+          marker.setLatLng([lat, lon]);
+        });       
+      }
+    });
+  }
+
   adduserMarker(map: Leaflet.Map, lat: number, lon: number, icon: Leaflet.Icon) {
     if (map) {
       const marker = Leaflet.marker([lat, lon], {icon: icon}).addTo(map);
-      this.markers.push(marker);
+      this.usermarkers.push(marker);
     }
   }
 
@@ -181,6 +207,7 @@ export class Tab3Page implements AfterViewInit{
     //get current card
     const lastElement = this.cardlist.pop()?.nativeElement;
     //TODO: save fav
+    
     //Like animation 
     const choiceCard = lastElement!.querySelector('.choice.like');
     choiceCard!.style.opacity = '1';
@@ -191,9 +218,6 @@ export class Tab3Page implements AfterViewInit{
     lastElement?.addEventListener('transitionend', () => {
       lastElement.remove();
     });
-    
-    
-    console.log('Like')
   }
 
   rechazarPref(propiedad: string){
@@ -208,12 +232,20 @@ export class Tab3Page implements AfterViewInit{
       lastElement.remove();
     });
     
+    //TODO: save dislike
     console.log('Dislike')
   }
 
   //METODOS FETCH
 
-
+  obtenerDatos(){
+    /*this.apiCon.getVivienda('MLC1012461227').subscribe((data) => {
+      console.log(data);
+    });*/
+    this.apiCon.getViviendasApi().subscribe((data) => {
+      console.log(data);
+    });
+  }
   //MOSTRAR DETALLES
 
   toggleDetails(ev: any){

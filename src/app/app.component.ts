@@ -24,8 +24,8 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.requestLocationPermission();
       this.watchLocation();
-    this.positionEmmitter.subscribe(() => this.getLocation());
-    this.clearWatchEmitter.subscribe(() => this.clearWatch());
+    this.datosGlobales.ubicacion$.subscribe(() => this.getLocation());
+    this.datosGlobales.clearWatch$.subscribe(() => this.clearWatch());
     this.watchEmitter.subscribe(() => this.watchLocation());
     });
   }
@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
   }
 
   watchLocation() {
-    const posWatch = Geolocation.watchPosition({ 
+    this.posWatch = Geolocation.watchPosition({ 
       enableHighAccuracy: true,
       timeout: 10000
       }, (position, err) => {
@@ -68,19 +68,22 @@ export class AppComponent implements OnInit {
         return;
       }
       if (!position) {
-        console.error('Error al obtener la ubicación', posWatch);
+        console.error('Error al obtener la ubicación', this.posWatch);
         return;
       }
       console.log('Ubicación actual posWatch:', position.coords.latitude, position.coords.longitude);
       this.datosGlobales.setUbicacion(position.coords.latitude, position.coords.longitude, position.timestamp);
-      //TODO: Logica de guardar ubicacion cada vez que cambie, evaluar necesidad de ASYNC AWAIT
-    });
+      //TODO: Logica de guardar ubicacion cada vez que cambie
+    }).toString();
   }
 
   clearWatch() {
+    console.log('Limpiando watch :', this.posWatch);
     if (this.posWatch){
+      console.log('Limpiando watch');
       Geolocation.clearWatch({ id: this.posWatch });
       this.posWatch = null;
+      console.log('this.posWatch:', this.posWatch); 
     }
   }
 }

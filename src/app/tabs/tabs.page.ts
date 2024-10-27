@@ -23,6 +23,6 @@ export class TabsPage implements OnInit {
     });
     this.navCtrl.navigateForward(['/tabs/tab1'], {
       queryParams: { user: this.user, pass: this.pass, tipo: this.tipo}
-  });
+    });
   }
 }

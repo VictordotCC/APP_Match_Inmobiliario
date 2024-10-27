@@ -11,6 +11,10 @@ import { NavController } from '@ionic/angular';
 export class Tab1Page implements OnInit {
   map: Leaflet.Map | undefined;
   markers: Leaflet.Marker[] = [];
+  private defaultIcon = Leaflet.icon({
+    iconUrl: '../../assets/markers/marker-icon.png',
+    shadowUrl: '../../assets/markers/marker-shadow.png'})
+
   opcionFiltro: string = 'Todos';
   user: string = '';
   pass: string = '';
@@ -29,18 +33,26 @@ export class Tab1Page implements OnInit {
   }
 
   ionViewDidEnter() {
+    if(this.map){
+      this.map.remove();
+    }
     this.initializeMap();
+    this.datosGlobales.ubicacion$.subscribe((ubicacion) => {
+      if (ubicacion) {
+        this.map?.setView([ubicacion.lat, ubicacion.lon], this.datosGlobales.mapZoom);
+        this.markers = [];
+        this.adduserMarker(ubicacion.lat, ubicacion.lon, this.defaultIcon);
+        this.nearbyMarker();
+      }
+    });
   }
 
   initializeMap() {
-    const defaultIcon = Leaflet.icon({
-      iconUrl: '../../assets/markers/marker-icon.png',
-      shadowUrl: '../../assets/markers/marker-shadow.png'})
     this.map = Leaflet.map('map').setView([this.datosGlobales.lat, this.datosGlobales.lon], this.datosGlobales.mapZoom);
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
-    this.adduserMarker(this.datosGlobales.lat, this.datosGlobales.lon, defaultIcon);
+    this.adduserMarker(this.datosGlobales.lat, this.datosGlobales.lon, this.defaultIcon);
     this.nearbyMarker();
   }
 
@@ -72,11 +84,7 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  ionViewWillLeave() {
-    if(this.map){
-      this.map.remove();
-    }
-  }
+
   iraPreferencias(){
     console.log('ir a preferencias');
     this.navCtrl.navigateForward(['/preferencias'], {

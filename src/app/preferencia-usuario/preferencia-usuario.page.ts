@@ -2,6 +2,7 @@ import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { RangeCustomEvent } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { GlobalDataService } from '../servicios/global-data.service';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { AlertController } from '@ionic/angular';
 })
 export class PreferenciaUsuarioPage implements OnInit {
 
-  DistanciaRango: any = 0; //para capturar el valor de la distancia
+  DistanciaRango: number = 0; //para capturar el valor de la distancia
   cheCked: boolean = false; //para validar si esta activado o no la busqueda por distancia
   tipoValor: string = 'UF'; //para seleccionar si es UF o CLP
   valorMontoVivienda = {min:0, max:0}; //para capturar el valor de la vivienda
@@ -34,12 +35,41 @@ export class PreferenciaUsuarioPage implements OnInit {
   pisos: number = 0; //para capturar la cantidad de pisos de la vivienda
   contactado: boolean = false; //para validar si el usuario desea ser contactado
   notificaciones: boolean = false; //para validar si el usuario desea recibir notificaciones
-  precioUF: number = 0; //para convertir el valor de la vivienda a UF
-  constructor( private alertController: AlertController, private router: Router ) {
+  precio_uf_desde: number = 0; //para convertir el valor de la vivienda a UF
+  precio_uf_hasta: number = 0; //para convertir el valor de la vivienda a UF
+
+  constructor( private alertController: AlertController, private router: Router, private datosGlobales: GlobalDataService) {
 
    }
 
   ngOnInit() {
+    window.scrollTo(0,0);
+    
+    if (this.datosGlobales.preferencias.usuario == this.datosGlobales.userGlobal){
+      this.preferenciaUsuario = this.datosGlobales.preferencias;
+
+      this.DistanciaRango = this.preferenciaUsuario.Distancia;
+      this.cheCked = this.preferenciaUsuario.busquedaAutomatica === 'true' ? true : false;
+      this.opPeracion = this.preferenciaUsuario.operacion;
+      this.opPropiedad = this.preferenciaUsuario.propiedadTipo;
+      this.opInmbueble = this.preferenciaUsuario.inmueble;
+      this.areaTotal = this.preferenciaUsuario.area_total;
+      this.pisos = this.preferenciaUsuario.pisos;
+      this.areaConstruida = this.preferenciaUsuario.area_construida;
+      this.antiguedad = this.preferenciaUsuario.antiguedad;
+      this.tipoValor = this.preferenciaUsuario.TipoValor;
+      this.valorMontoVivienda.min = this.preferenciaUsuario.ValorMinimo;
+      this.valorMontoVivienda.max = this.preferenciaUsuario.ValorMaximo;
+      this.precio_uf_desde = this.preferenciaUsuario.precio_uf_desde;
+      this.precio_uf_hasta = this.preferenciaUsuario.precio_uf_hasta;
+      this.opSubsidio = this.preferenciaUsuario.Subsidio;
+      this.cantHabitaciones = this.preferenciaUsuario.habitaciones;
+      this.cantBanos = this.preferenciaUsuario.banos;
+      this.estacionamiento = this.preferenciaUsuario.Estacionamiento;
+      this.bodega = this.preferenciaUsuario.bodega;
+      this.contactado = this.preferenciaUsuario.contactado === 'true' ? true : false;
+      this.notificaciones = this.preferenciaUsuario.notificaciones === 'true' ? true : false;
+    }
   }
 
   //para habilitar la busqueda por distancia y validar si esta activado o no
@@ -54,7 +84,7 @@ export class PreferenciaUsuarioPage implements OnInit {
   }
   //para capturar el valor de la distancia
   IonChange(ev:Event){
-    this.DistanciaRango = (ev as RangeCustomEvent).detail.value;
+    this.DistanciaRango = parseFloat((ev.target as HTMLInputElement).value);
     console.log('distancia: ',this.DistanciaRango);
 
   }
@@ -228,16 +258,21 @@ export class PreferenciaUsuarioPage implements OnInit {
     }
 
     if (this.tipoValor === 'CLP'){
-      this.precioUF = parseFloat((this.valorMontoVivienda.max / 38000).toFixed(1)); //para darle 1 decimal
+      this.precio_uf_hasta = parseFloat((this.valorMontoVivienda.max / 38000).toFixed(1)); //para darle 1 decimal
+      this.precio_uf_desde = parseFloat((this.valorMontoVivienda.min / 38000).toFixed(1)); //para darle 1 decimal
       //this.precioUF = Math.round(this.valorMontoVivienda.max / 38000); //para manejar el valor entero
-    } else { this.precioUF = this.valorMontoVivienda.max; }
+    } else { 
+      this.precio_uf_hasta = this.valorMontoVivienda.max;
+      this.precio_uf_desde = this.valorMontoVivienda.min;
+     }
 
     this.preferenciaUsuario = {
+      usuario : this.datosGlobales.userGlobal,
       busquedaAutomatica: this.cheCked.toString(),
-      Distancia: this.DistanciaRango,
-      operacion: this.opPeracion,
-      propiedadTipo: this.opPropiedad,
-      inmueble: this.opInmbueble,
+      distancia: this.DistanciaRango,
+      tipo_operacion: this.opPeracion,
+      tipo_vivienda: this.opPropiedad,
+      condicion: this.opInmbueble,
       area_total: parseFloat((this.areaTotal).toFixed(1)),
       pisos: Math.round(this.pisos),
       area_construida :parseFloat((this.areaConstruida).toFixed(1)),
@@ -245,11 +280,12 @@ export class PreferenciaUsuarioPage implements OnInit {
       TipoValor: this.tipoValor,
       ValorMinimo: parseFloat((this.valorMontoVivienda.min).toFixed(1)),
       ValorMaximo: parseFloat((this.valorMontoVivienda.max).toFixed(1)),
-      precio_uf: this.precioUF, //calculado en UF consuderancio la proyección a noviembre del 2024
-      Subsidio: this.opSubsidio,
+      precio_uf_desde: 0,
+      precio_uf_hasta: 0,
+      tipo_subsidio: this.opSubsidio,
       habitaciones: Math.round(this.cantHabitaciones),
       banos: Math.round(this.cantBanos),
-      Estacionamiento: Math.round(this.estacionamiento),
+      estaciona: Math.round(this.estacionamiento),
       bodega: Math.round(this.bodega),
       contactado: this.contactado.toString(),
       notificaciones: this.notificaciones.toString(),
@@ -257,6 +293,10 @@ export class PreferenciaUsuarioPage implements OnInit {
 
     //Para mostrar las preferencias del usuario en consola y usar este objketo más adelante
     console.log('preferencias del usuario: ',this.preferenciaUsuario);
+    // Guardar las preferencias del usuario en datos globales
+    this.datosGlobales.setPreferencias(this.preferenciaUsuario);
+    // TODO: Guardar las preferencias del usuario en la base de datos
+
     // Para navegra a la pagina de preferencias.
     this.router.navigate(['preferencias'], {state: {preferencias: this.preferenciaUsuario}});
 

@@ -6,6 +6,7 @@ import { GlobalDataService } from '../servicios/global-data.service';
 import { IonSegment } from '@ionic/angular';
 import { AppComponent } from '../app.component';
 import { TabsPage } from '../tabs/tabs.page';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -80,27 +81,27 @@ export class LoginPage  implements OnInit{
       this.limpiarFormulario();
     }
     if (JSON.stringify(usuario) == JSON.stringify(userCompletoGlobal)){
-          const alert = await this.alertController.create({
-            header: 'Bienvenido '+ userGlobal,
-            message: 'Acceso Autorizado',
-            buttons: ['Aceptar']
-          });
-          await alert.present();
-          //this.router.navigate(['/tabs']);
-          //con el siguiente código enviamos los datos de usuario y contraseña a la página de tabs
-          this.navCtrl.navigateForward(['/tabs'], {
-            queryParams: { user: userGlobal, pass: passGlobal, tipo: this.tipoUsuario }
+      const alert = await this.alertController.create({
+        header: 'Bienvenido '+ userGlobal,
+        message: 'Acceso Autorizado',
+        buttons: ['Aceptar']
+      });
+      await alert.present();
+      //this.router.navigate(['/tabs']);
+      //con el siguiente código enviamos los datos de usuario y contraseña a la página de tabs
+      this.navCtrl.navigateForward(['/tabs'], {
+        queryParams: { user: userGlobal, pass: passGlobal, tipo: this.tipoUsuario }
+      });
+    }
+    if (usuario.nombre != userGlobal || usuario.clave != passGlobal ){
+      console.log('error de login');
+      const alert = await this.alertController.create({
+        header: 'Usuario',
+        message: 'El usuario no existe o la contraseña es incorrecta',
+        buttons: ['Aceptar']
         });
-
-        }
-    if (usuario.nombre != userGlobal && usuario.clave != passGlobal ){
-        const alert = await this.alertController.create({
-            header: 'Usuario',
-            message: 'El usuario no existe',
-            buttons: ['Aceptar']
-            });
-            await alert.present();
-            this.limpiarFormulario();
+        await alert.present();
+        //this.limpiarFormulario();
 
         }
 
