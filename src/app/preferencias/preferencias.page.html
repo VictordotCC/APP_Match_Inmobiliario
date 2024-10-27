@@ -8,7 +8,9 @@
     <ion-list>
       <ion-item>
         <!--<ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true" value="Comprador"> -->
-        <ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true" value="{{tipo}}">
+        <ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true"
+          value="{{tipo}}"
+          [(ngModel)]="tipo">
           <ion-select-option value="Comprador">Comprador</ion-select-option>
           <ion-select-option value="Vendedor">Vendedor</ion-select-option>
         </ion-select>
@@ -27,7 +29,7 @@
       <p>{{user}}</p>
     </ion-label>
   </ion-item>
-  <ion-list>
+  <ion-list *ngIf="tipo === 'Comprador'">
     <ion-list-header>
       <ion-label>Configuración</ion-label>
     </ion-list-header>
@@ -38,7 +40,7 @@
       <ion-label [routerLink]="">Administración de la cuenta</ion-label>
     </ion-item>
     <ion-item button>
-      <ion-label [routerLink]="">Notificaciones</ion-label>
+      <ion-label [routerLink]="['/notificaciones']">Notificaciones</ion-label>
     </ion-item>
     <ion-item button>
       <ion-label [routerLink]="">Privacidad y Datos</ion-label>

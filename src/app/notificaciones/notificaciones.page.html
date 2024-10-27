@@ -1,0 +1,20 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-item>
+      <ion-back-button defaultHref="/preferencias"></ion-back-button>
+      <ion-title>notificaciones</ion-title>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-toolbar>
+    <ion-title size="small">¿ desea activar las notificaciones para cuando haya novedades?</ion-title>
+  </ion-toolbar>
+  <div>
+    <ion-item>
+      <ion-label>Activar notificaciones</ion-label>
+      <ion-toggle slot="end" (click)="activar()"></ion-toggle>
+    </ion-item>
+  </div>
+</ion-content>
