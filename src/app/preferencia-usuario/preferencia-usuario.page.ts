@@ -44,7 +44,7 @@ export class PreferenciaUsuarioPage implements OnInit {
 
   ngOnInit() {
     window.scrollTo(0,0);
-    
+
     if (this.datosGlobales.preferencias.usuario == this.datosGlobales.userGlobal){
       this.preferenciaUsuario = this.datosGlobales.preferencias;
 
@@ -261,7 +261,7 @@ export class PreferenciaUsuarioPage implements OnInit {
       this.precio_uf_hasta = parseFloat((this.valorMontoVivienda.max / 38000).toFixed(1)); //para darle 1 decimal
       this.precio_uf_desde = parseFloat((this.valorMontoVivienda.min / 38000).toFixed(1)); //para darle 1 decimal
       //this.precioUF = Math.round(this.valorMontoVivienda.max / 38000); //para manejar el valor entero
-    } else { 
+    } else {
       this.precio_uf_hasta = this.valorMontoVivienda.max;
       this.precio_uf_desde = this.valorMontoVivienda.min;
      }
@@ -280,8 +280,8 @@ export class PreferenciaUsuarioPage implements OnInit {
       TipoValor: this.tipoValor,
       ValorMinimo: parseFloat((this.valorMontoVivienda.min).toFixed(1)),
       ValorMaximo: parseFloat((this.valorMontoVivienda.max).toFixed(1)),
-      precio_uf_desde: 0,
-      precio_uf_hasta: 0,
+      precio_uf_desde: this.precio_uf_desde, //porqué setearlos en cero? se pierde el valor que se le asignó en el if
+      precio_uf_hasta: this.precio_uf_hasta, //porqué setearlos en cero? se pierde el valor que se le asignó en el if
       tipo_subsidio: this.opSubsidio,
       habitaciones: Math.round(this.cantHabitaciones),
       banos: Math.round(this.cantBanos),

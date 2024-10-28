@@ -19,9 +19,15 @@
     "target": "es2022",
     "module": "es2020",
     "lib": [
-      "es2018", 
+      "es2018",
       "dom"
+    ],//las siguientes lineas no estaba en el archivo original y tuve que agregarlas para usar @angular/router (manu 27-10-2024)
+    "typeRoots": [
+      "node_modules/@types"
     ],
+    "types": [
+      "node", "jasmine"
+    ],// aquí termina la parte que agregué (manu 27-10-2024)
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
