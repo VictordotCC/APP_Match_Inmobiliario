@@ -281,7 +281,7 @@ export class PreferenciaUsuarioPage implements OnInit {
       ValorMinimo: parseFloat((this.valorMontoVivienda.min).toFixed(1)),
       ValorMaximo: parseFloat((this.valorMontoVivienda.max).toFixed(1)),
       precio_uf_desde: this.precio_uf_desde, //porqué setearlos en cero? se pierde el valor que se le asignó en el if
-      precio_uf_hasta: this.precio_uf_hasta, //porqué setearlos en cero? se pierde el valor que se le asignó en el if
+      precio_uf_hasta: this.precio_uf_hasta, //Era por testeo, ya no es necesario
       tipo_subsidio: this.opSubsidio,
       habitaciones: Math.round(this.cantHabitaciones),
       banos: Math.round(this.cantBanos),
