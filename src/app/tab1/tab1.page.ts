@@ -3,6 +3,8 @@ import * as Leaflet from 'leaflet';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { DataServiceService } from '../servicios/data-service.service';
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -19,7 +21,7 @@ export class Tab1Page implements OnInit {
   user: string = '';
   pass: string = '';
   tipo: string = '';
-  constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController) {}
+  constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController, private apiCon: DataServiceService) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -63,11 +65,23 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  async nearbyMarker(){
-    let lat = -33.472472;
-    let lon = -70.910025;
-    //TODO: obtener la lista de domicilios cercanos
-    if (this.map) {
+  nearbyMarker() {
+    this.obtenerViviendas().subscribe((viviendas: any) => {
+      viviendas.forEach((vivienda: any) => {
+        if(this.map){
+          const marker = Leaflet.marker([vivienda.latitud, vivienda.longitud], {icon: Leaflet.icon({
+            iconUrl: '../../assets/markers/casa-with-shadow.png',
+            iconSize: [36, 36],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            })}).addTo(this.map).bindPopup(`<b>${vivienda.nombre_propiedad} </b> en <b>${vivienda.tipo_operacion == false ? 'Venta': 'Arriendo'}</b><br>${vivienda.precio_uf} UF`
+                                           + `<br><img src="${vivienda.imagenes[0].url}" style="width: 100px; height: 100px;">`
+                                           + `<br><a href="${JSON.parse(vivienda.links_contacto)[0]}" target="_blank">Contacto</a>`);
+          this.markers.push(marker);
+        }
+      });
+    });
+    /*if (this.map) {
       const marker = Leaflet.marker([this.datosGlobales.lat -0.001, this.datosGlobales.lon -0.001], {icon: Leaflet.icon({
         iconUrl: '../../assets/markers/casa-with-shadow.png',
         iconSize: [36, 36],
@@ -75,7 +89,7 @@ export class Tab1Page implements OnInit {
         popupAnchor: [1, -34],
         })}).addTo(this.map).bindPopup(`<b>Vivienda cercana</b><br>Otra información en HTML`);
       this.markers.push(marker);
-    }
+    }*/
   }
 
   centrarMapa(){
@@ -89,6 +103,12 @@ export class Tab1Page implements OnInit {
     console.log('ir a preferencias');
     this.navCtrl.navigateForward(['/preferencias'], {
       queryParams: { user: this.user, pass: this.pass, tipo: this.tipo}
-  });
+    });
+  }
+
+  //Metodos Fetch
+
+  obtenerViviendas(){
+    return this.apiCon.getViviendasCercanas()
   }
 }

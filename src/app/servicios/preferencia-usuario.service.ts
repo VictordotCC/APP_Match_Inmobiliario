@@ -7,8 +7,8 @@ export class PreferenciaUsuarioService {
   public usuario: string = '';
   public busquedaAutomatica: string = 'true';
   public distancia: number = 0;
-  public tipo_operacion: string = 'Compra';
-  public tipo_vivienda: string = 'Casa';
+  public tipo_operacion: boolean = false;
+  public tipo_vivienda: number = 1;
   public condicion: string = 'Nueva';
   public area_total: number = 0;
   public pisos: number = 0;

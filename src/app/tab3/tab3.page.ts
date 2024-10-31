@@ -4,13 +4,14 @@ import { Animation, GestureController, Gesture, AnimationController, GestureDeta
 
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DataServiceService } from '../servicios/data-service.service';
+import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
 
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss']
 })
-export class Tab3Page implements AfterViewInit{
+export class Tab3Page implements AfterViewInit {
   @ViewChildren('card', {read: ElementRef}) cards: QueryList<ElementRef> | undefined;
 
   animations: Animation[] = [];
@@ -29,6 +30,8 @@ export class Tab3Page implements AfterViewInit{
   markers: Leaflet.Marker[] = [];
   usermarkers: Leaflet.Marker[] = [];
 
+  preferencias: PreferenciaUsuarioService = this.datosGlobales.preferencias;
+
   paginationConfig = {
     type: 'progressbar',
     el: '.swiper-pagination',  
@@ -36,6 +39,14 @@ export class Tab3Page implements AfterViewInit{
  
   constructor(private datosGlobales: GlobalDataService, private apiCon: DataServiceService,
     private gestureCtrl: GestureController, private animationCtrl: AnimationController) { }
+
+  ionViewDidEnter(){
+    //Obtiene los datos si las preferencias han cambiado
+    if(this.preferencias != this.datosGlobales.preferencias){
+      this.preferencias = this.datosGlobales.preferencias;
+      this.obtenerDatos();
+    }
+  }
 
   ngAfterViewInit(){
     this.maps.forEach((map) => {
@@ -239,9 +250,6 @@ export class Tab3Page implements AfterViewInit{
   //METODOS FETCH
 
   obtenerDatos(){
-    /*this.apiCon.getVivienda('MLC1012461227').subscribe((data) => {
-      console.log(data);
-    });*/
     this.apiCon.getViviendasApi().subscribe((data) => {
       console.log(data);
     });

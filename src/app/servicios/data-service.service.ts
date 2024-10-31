@@ -35,7 +35,7 @@ export class DataServiceService {
     //return this.http.get(this.apiViviendasUrl);
   }
 
-  //API GETS
+  //API QUERYS
   getVivienda(id: string): Observable<any> {
     const url = this.apiMatch + 'viviendas';
     const params = new HttpParams().set('id_vivienda', id);
@@ -53,14 +53,17 @@ export class DataServiceService {
         return this.http.post<any>(url, postData, this.httpOptions);
       })
     );
-    /*let ubicacionValor: any;
-    this.datosGlobales.ubicacion$.subscribe((value => ubicacionValor = value));
+  }
 
-    //Prepare Post Data with Preferencias de Usuario
-    const postData = {
-      preferencias: this.datosGlobales.preferencias,
-      ubicacion: ubicacionValor
-    };
-    return this.http.post<any>(url, postData, this.httpOptions);*/
+  getViviendasCercanas(): Observable<any> {
+    const url = this.apiMatch + 'viviendas_cercanas';
+    return this.datosGlobales.ubicacion$.pipe(
+      switchMap(ubicacionValor => {
+        const params = new HttpParams()
+          .set('lat', ubicacionValor.lat.toString())
+          .set('lon', ubicacionValor.lon.toString())
+        return this.http.get<any>(url, {params});
+      })
+    );
   }
 }

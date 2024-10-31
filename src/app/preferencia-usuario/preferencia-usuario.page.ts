@@ -28,7 +28,7 @@ export class PreferenciaUsuarioPage implements OnInit {
   opComuna: string[] = []; //para seleccionar la Comuna
   opPeracion: string ='Compra'; //para seleccionar el tipo de operacion
   opPropiedad: string ='Casa';
-  opInmbueble: string = 'Nueva';
+  opInmbueble: string = 'Nuevo';
   preferenciaUsuario: PreferenciaUsuarioService = new PreferenciaUsuarioService(); //para guardar las preferencias del usuario
   //preferenciaUsuario: any = {}; //para guardar las preferencias del usuario
   areaTotal: number = 0; //para capturar los mts cuadrados totales de la vivienda
@@ -52,8 +52,8 @@ export class PreferenciaUsuarioPage implements OnInit {
 
       this.DistanciaRango = this.preferenciaUsuario.distancia;
       this.cheCked = this.preferenciaUsuario.busquedaAutomatica === 'true' ? true : false;
-      this.opPeracion = this.preferenciaUsuario.tipo_operacion;
-      this.opPropiedad = this.preferenciaUsuario.tipo_vivienda
+      this.opPeracion = this.preferenciaUsuario.tipo_operacion == false ? 'Compra' : 'Arriendo';
+      this.opPropiedad = (this.preferenciaUsuario.tipo_vivienda == 0 ? 'Departamento' : this.preferenciaUsuario.tipo_vivienda == 1 ? 'Casa' : 'Otro');
       this.opInmbueble = this.preferenciaUsuario.condicion;
       this.areaTotal = this.preferenciaUsuario.area_total;
       this.pisos = this.preferenciaUsuario.pisos;
@@ -272,8 +272,8 @@ export class PreferenciaUsuarioPage implements OnInit {
       usuario : this.datosGlobales.userGlobal,
       busquedaAutomatica: this.cheCked.toString(),
       distancia: this.DistanciaRango,
-      tipo_operacion: this.opPeracion,
-      tipo_vivienda: this.opPropiedad,
+      tipo_operacion: this.opPeracion == 'Compra' ? false : true,
+      tipo_vivienda: (this.opPropiedad == 'Departamento' ? 0 : this.opPropiedad == 'Casa' ? 1 : 2),
       condicion: this.opInmbueble,
       area_total: parseFloat((this.areaTotal).toFixed(1)),
       pisos: Math.round(this.pisos),
