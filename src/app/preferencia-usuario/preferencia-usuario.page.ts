@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RangeCustomEvent } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { GlobalDataService } from '../servicios/global-data.service';
+import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
 
 
 @Component({
@@ -25,10 +26,11 @@ export class PreferenciaUsuarioPage implements OnInit {
   bodega: number = 0; //para capturar si hay bodega
   opRegion: string[] = []; //para seleccionar la Región
   opComuna: string[] = []; //para seleccionar la Comuna
-  opPeracion: string =''; //para seleccionar el tipo de operacion
-  opPropiedad: string ='';
-  opInmbueble: string = '';
-  preferenciaUsuario: any = {}; //para guardar las preferencias del usuario
+  opPeracion: string ='Compra'; //para seleccionar el tipo de operacion
+  opPropiedad: string ='Casa';
+  opInmbueble: string = 'Nueva';
+  preferenciaUsuario: PreferenciaUsuarioService = new PreferenciaUsuarioService(); //para guardar las preferencias del usuario
+  //preferenciaUsuario: any = {}; //para guardar las preferencias del usuario
   areaTotal: number = 0; //para capturar los mts cuadrados totales de la vivienda
   areaConstruida: number = 0; //para capturar los mts cuadrados construidos de la vivienda
   antiguedad: number = 0; //para capturar la antiguedad de la vivienda
@@ -48,11 +50,11 @@ export class PreferenciaUsuarioPage implements OnInit {
     if (this.datosGlobales.preferencias.usuario == this.datosGlobales.userGlobal){
       this.preferenciaUsuario = this.datosGlobales.preferencias;
 
-      this.DistanciaRango = this.preferenciaUsuario.Distancia;
+      this.DistanciaRango = this.preferenciaUsuario.distancia;
       this.cheCked = this.preferenciaUsuario.busquedaAutomatica === 'true' ? true : false;
-      this.opPeracion = this.preferenciaUsuario.operacion;
-      this.opPropiedad = this.preferenciaUsuario.propiedadTipo;
-      this.opInmbueble = this.preferenciaUsuario.inmueble;
+      this.opPeracion = this.preferenciaUsuario.tipo_operacion;
+      this.opPropiedad = this.preferenciaUsuario.tipo_vivienda
+      this.opInmbueble = this.preferenciaUsuario.condicion;
       this.areaTotal = this.preferenciaUsuario.area_total;
       this.pisos = this.preferenciaUsuario.pisos;
       this.areaConstruida = this.preferenciaUsuario.area_construida;
@@ -62,10 +64,10 @@ export class PreferenciaUsuarioPage implements OnInit {
       this.valorMontoVivienda.max = this.preferenciaUsuario.ValorMaximo;
       this.precio_uf_desde = this.preferenciaUsuario.precio_uf_desde;
       this.precio_uf_hasta = this.preferenciaUsuario.precio_uf_hasta;
-      this.opSubsidio = this.preferenciaUsuario.Subsidio;
+      this.opSubsidio = this.preferenciaUsuario.tipo_subsidio;
       this.cantHabitaciones = this.preferenciaUsuario.habitaciones;
       this.cantBanos = this.preferenciaUsuario.banos;
-      this.estacionamiento = this.preferenciaUsuario.Estacionamiento;
+      this.estacionamiento = this.preferenciaUsuario.estaciona;
       this.bodega = this.preferenciaUsuario.bodega;
       this.contactado = this.preferenciaUsuario.contactado === 'true' ? true : false;
       this.notificaciones = this.preferenciaUsuario.notificaciones === 'true' ? true : false;
@@ -291,10 +293,12 @@ export class PreferenciaUsuarioPage implements OnInit {
       notificaciones: this.notificaciones.toString(),
     };
 
-    //Para mostrar las preferencias del usuario en consola y usar este objketo más adelante
-    console.log('preferencias del usuario: ',this.preferenciaUsuario);
+    
     // Guardar las preferencias del usuario en datos globales
     this.datosGlobales.setPreferencias(this.preferenciaUsuario);
+
+    //Para mostrar las preferencias del usuario en consola
+    console.log('preferencias del usuario: ',this.datosGlobales.preferencias);
     // TODO: Guardar las preferencias del usuario en la base de datos
 
     // Para navegra a la pagina de preferencias.
