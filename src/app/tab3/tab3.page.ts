@@ -31,6 +31,7 @@ export class Tab3Page implements AfterViewInit {
   usermarkers: Leaflet.Marker[] = [];
 
   preferencias: PreferenciaUsuarioService = this.datosGlobales.preferencias;
+  matches: any[] = [];
 
   paginationConfig = {
     type: 'progressbar',
@@ -44,24 +45,29 @@ export class Tab3Page implements AfterViewInit {
     //Obtiene los datos si las preferencias han cambiado
     if(this.preferencias != this.datosGlobales.preferencias){
       this.preferencias = this.datosGlobales.preferencias;
-      this.obtenerDatos();
+      this.actualizarMatches();
     }
   }
 
   ngAfterViewInit(){
+    this.actualizarMatches();
+    this.obtenerMatches();
     this.maps.forEach((map) => {
       if (map) {
         this.destroyMap(map);
       }
     });
-    this.setupSwipeGesture();
-    this.cardlist = this.cards!.toArray();
+    this.cards?.changes.subscribe(() => {
+      this.setupSwipeGesture();
+      this.cardlist = this.cards!.toArray();
+    });
     this.datosGlobales.ubicacion$.subscribe((ubicacion) => {
       if (ubicacion) {
         this.updateMaps(ubicacion.lat, ubicacion.lon);
       }
     });
-    this.obtenerDatos();
+    
+    
   }
 
   //GESTOS
@@ -214,9 +220,10 @@ export class Tab3Page implements AfterViewInit {
   //LIKE Y DISLIKE
 
   guardarPref(propiedad: string){
-    console.log(this.cardlist)
     //get current card
     const lastElement = this.cardlist.pop()?.nativeElement;
+    const id_match  = lastElement?.getAttribute('id-match');
+  
     //TODO: save fav
     
     //Like animation 
@@ -229,10 +236,13 @@ export class Tab3Page implements AfterViewInit {
     lastElement?.addEventListener('transitionend', () => {
       lastElement.remove();
     });
+    this.updateMatch(id_match!);
   }
 
   rechazarPref(propiedad: string){
-    const lastElement = this.cardlist.pop()?.nativeElement;   
+    const lastElement = this.cardlist.pop()?.nativeElement;
+    const id_match  = lastElement?.getAttribute('id-match');
+
     const choiceCard = lastElement!.querySelector('.choice.nope');
     choiceCard!.style.opacity = '1';
     setTimeout(() => {
@@ -249,8 +259,18 @@ export class Tab3Page implements AfterViewInit {
 
   //METODOS FETCH
 
-  obtenerDatos(){
-    this.apiCon.getViviendasApi().subscribe((data) => {
+  actualizarMatches(){
+    this.apiCon.getViviendasApi()
+  }
+
+  obtenerMatches(){
+    this.apiCon.getMatches().subscribe((data) => {
+      this.matches = data;
+    });
+  }
+
+  updateMatch(id_match: string){
+    this.apiCon.updateMatch(id_match).subscribe((data) => {
       console.log(data);
     });
   }

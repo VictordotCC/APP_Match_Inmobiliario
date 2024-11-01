@@ -81,6 +81,7 @@ export class LoginPage  implements OnInit{
       this.limpiarFormulario();
     }
     if (JSON.stringify(usuario) == JSON.stringify(userCompletoGlobal)){
+      this.datosGlobales.preferencias.usuario = usuario.nombre;
       const alert = await this.alertController.create({
         header: 'Bienvenido '+ userGlobal,
         message: 'Acceso Autorizado',

@@ -66,4 +66,16 @@ export class DataServiceService {
       })
     );
   }
+
+  getMatches(): Observable<any> {
+    const url = this.apiMatch + 'get_matches';
+    const params = new HttpParams().set('usuario', this.datosGlobales.userGlobal); //TODO: cambiar a this.datosGlobales.preferencias.usuario
+    return this.http.get<any>(url, {params});
+  }
+
+  updateMatch(id_match: string): Observable<any> {
+    const url = this.apiMatch + 'marcar_visto';
+    const params = new HttpParams().set('id_match', id_match);
+    return this.http.get<any>(url, {params});
+  }
 }
