@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ViewChildren, ViewChild, QueryList, ElementRef } from '@angular/core';
 import * as Leaflet from 'leaflet';
-import { Animation, GestureController, Gesture, AnimationController, GestureDetail, IonCard } from '@ionic/angular';
+import { Animation, GestureController, Gesture, AnimationController, GestureDetail } from '@ionic/angular';
 
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DataServiceService } from '../servicios/data-service.service';
@@ -221,22 +221,16 @@ export class Tab3Page implements AfterViewInit {
   }
 
   //LIKE Y DISLIKE
-  guardarFavoritos(ob :any){
-    this.apiCon.guardarFavoritos(ob).subscribe((data) => {
-      console.log(data);
-    });
-  }
-
 
   guardarPref(propiedad: string){
     //get current card
     const lastElement = this.cardlist.pop()?.nativeElement;
-    const id_match  = lastElement?.getAttribute('id-match');
+    const id_match  = lastElement!.getAttribute('id-match');
+    // obtener id de la vivienda
+    const id_vivienda = lastElement!.getAttribute('id-vivienda');
 
-    //TODO: save fav
-    console.log(id_match);
-    // agregado 02/09/2024 mvc
-    this.favoritos = {id_vivienda: id_match!, id_usuario: this.datosGlobales.userGlobal, fecha_guardado: new Date().toISOString()};
+    // Agregar a favoritos
+    this.favoritos = {id_vivienda: id_vivienda, usuario: this.datosGlobales.userGlobal}
     this.guardarFavoritos(this.favoritos);
 
 
@@ -250,6 +244,7 @@ export class Tab3Page implements AfterViewInit {
     lastElement?.addEventListener('transitionend', () => {
       lastElement.remove();
     });
+    //actuilizar match a visto
     this.updateMatch(id_match!);
   }
 
@@ -267,8 +262,8 @@ export class Tab3Page implements AfterViewInit {
       lastElement.remove();
     });
 
-    //TODO: save dislike
-    console.log('Dislike')
+    
+    this.updateMatch(id_match!);
   }
 
   //METODOS FETCH
@@ -280,11 +275,18 @@ export class Tab3Page implements AfterViewInit {
   obtenerMatches(){
     this.apiCon.getMatches().subscribe((data) => {
       this.matches = data;
+      console.log(data[0]);
     });
   }
 
   updateMatch(id_match: string){
     this.apiCon.updateMatch(id_match).subscribe((data) => {
+      console.log(data);
+    });
+  }
+
+  guardarFavoritos(ob :any){
+    this.apiCon.guardarFavoritos(ob).subscribe((data) => {
       console.log(data);
     });
   }
@@ -314,5 +316,15 @@ export class Tab3Page implements AfterViewInit {
         this.destroyMap(map);
       }
     }
+  }
+
+  //Formateos
+  formatNumber(num: number){
+    const number = Math.ceil(num);
+    return new Intl.NumberFormat('es-CL').format(number);
+  }
+
+  formatString(str: string){
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 }

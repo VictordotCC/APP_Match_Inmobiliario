@@ -29,6 +29,7 @@ export class GlobalDataService {
   public lon: number  = 0;
   public timestamp  = 0;
   public mapZoom = 17;
+  public mapMinZoom = 15;
   public likeThreshold = 200;
   public imageWidth = 412;
   public imageHeight = 440;

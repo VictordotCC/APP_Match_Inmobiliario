@@ -13,7 +13,7 @@
 </ion-header>
 <ion-content [fullscreen]="false">
   <div class="match-container">
-    <ion-card #card *ngFor="let match of matches" [attr.id-match]="match.id_match" class="match-card" (click)="toggleDetails($event.target)">
+    <ion-card #card *ngFor="let match of matches" [attr.id-match]="match.id_match" [attr.id-vivienda] ="match.id_vivienda" class="match-card" (click)="toggleDetails($event.target)">
       <div class="slides-container">
         <swiper-container [pagination]="paginationConfig">
           <swiper-slide *ngFor="let imagen of match.imagenes">
@@ -35,8 +35,9 @@
             <ion-card-subtitle style="color:aliceblue">{{ match.ubicacion }}</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
-            <p>{{ match.descripcion }}</p>
-            <p><strong>Precio:</strong> {{ match.precio_uf }} | UF </p>
+            <p>{{ formatString(match.descripcion) }}</p>
+            <p><strong>Precio:</strong> {{ formatNumber(match.precio_uf) }} | UF Aproximadamente </p>
+            <h2>A <strong> {{ formatNumber(match.cercania) }}</strong> metros de tí</h2>
           </ion-card-content>
         </div>
       </div>
@@ -46,7 +47,7 @@
         </ion-card-header>
         <ion-card-content>
           <p><strong>{{ match.nombre_propiedad }}</strong></p>
-          <p><strong>{{ match.descripcion }}</strong></p>
+          <p><strong>{{ formatString(match.descripcion) }}</strong></p>
           <p><strong>{{ match.tipo_operacion  === false ? "Compra" : "Arriendo"}}</strong></p>
           <p><strong>Área Total: </strong> {{ match.area_total }}</p>
           <p><strong>Pisos: </strong> {{ match.pisos }}</p>

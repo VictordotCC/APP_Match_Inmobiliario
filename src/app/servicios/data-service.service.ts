@@ -26,9 +26,80 @@ export class DataServiceService {
   };
   constructor( private http: HttpClient, private datosGlobales: GlobalDataService) { }
 
-  getViviendasFavoritos(): Observable<any[]> {
+  // esta funcion es para buscar en el SearchBar
+  getViviendaSearch(){
     const url = this.apiMatch + 'favoritos';
     return this.http.get<any[]>(url, this.httpOptions);
+    //return this.http.get(this.apiViviendasUrl);
+  }
+
+  //API QUERYS
+  getVivienda(id: string): Observable<any> {
+    const url = this.apiMatch + 'viviendas';
+    const params = new HttpParams().set('id_vivienda', id);
+    return this.http.get<any>(url, {params}); //TODO: Implementar interface
+  }
+
+  getViviendasApi(): Observable<any> {
+    const url = this.apiMatch + 'viviendas';
+    return this.datosGlobales.ubicacion$.pipe(
+      switchMap(ubicacionValor => {
+        const postData = {
+          preferencias: this.datosGlobales.preferencias,
+          ubicacion: ubicacionValor
+        };
+        return this.http.post<any>(url, postData, this.httpOptions);
+      })
+    );
+  }
+
+  /*METODO ANTIGUO
+  getViviendasCercanas(): Observable<any> {
+    const url = this.apiMatch + 'viviendas_cercanas';
+    return this.datosGlobales.ubicacion$.pipe(
+      switchMap(ubicacionValor => {
+        const params = new HttpParams()
+          .set('lat', ubicacionValor.lat.toString())
+          .set('lon', ubicacionValor.lon.toString())
+        return this.http.get<any>(url, {params});
+      })
+    );
+  }*/
+
+  getViviendasCercanas(lat: number, lon: number): Observable<any> {
+    const url = this.apiMatch + 'viviendas_cercanas';
+    return this.datosGlobales.ubicacion$.pipe(
+      switchMap(ubicacionValor => {
+        const params = new HttpParams()
+          .set('lat', lat.toString())
+          .set('lon', lon.toString())
+        return this.http.get<any>(url, {params});
+      })
+    );
+  }
+
+  getMatches(): Observable<any> {
+    const url = this.apiMatch + 'get_matches';
+    return this.datosGlobales.ubicacion$.pipe(
+      switchMap(ubicacionValor => {
+      const params = new HttpParams()
+      .set('usuario', this.datosGlobales.userGlobal) //TODO: cambiar a this.datosGlobales.preferencias.usuario
+      .set('lat', this.datosGlobales.lat.toString())
+      .set('lon', this.datosGlobales.lon.toString());
+      return this.http.get<any>(url, {params});
+    })
+    );
+  }
+
+  updateMatch(id_match: string): Observable<any> {
+    const url = this.apiMatch + 'marcar_visto';
+    const params = new HttpParams().set('id_match', id_match);
+    return this.http.get<any>(url, {params});
+  }
+
+  getViviendasFavoritos(): Observable<any[]> {
+    const url = this.apiMatch + 'favoritos';
+    return this.http.get<any[]>(url);
 
   }
   guardarFavoritos(obj:any): Observable<any> {
@@ -57,55 +128,4 @@ export class DataServiceService {
     return this.http.post<any>(url, this.httpOptions);
   }
   */
-
-  // esta funcion es para buscar en el SearchBar
-  getViviendaSearch(){
-    const url = this.apiMatch + 'favoritos';
-    return this.http.get<any[]>(url, this.httpOptions);
-    //return this.http.get(this.apiViviendasUrl);
-  }
-
-  //API QUERYS
-  getVivienda(id: string): Observable<any> {
-    const url = this.apiMatch + 'viviendas';
-    const params = new HttpParams().set('id_vivienda', id);
-    return this.http.get<any>(url, {params}); //TODO: Implementar interface
-  }
-
-  getViviendasApi(): Observable<any> {
-    const url = this.apiMatch + 'viviendas';
-    return this.datosGlobales.ubicacion$.pipe(
-      switchMap(ubicacionValor => {
-        const postData = {
-          preferencias: this.datosGlobales.preferencias,
-          ubicacion: ubicacionValor
-        };
-        return this.http.post<any>(url, postData, this.httpOptions);
-      })
-    );
-  }
-
-  getViviendasCercanas(): Observable<any> {
-    const url = this.apiMatch + 'viviendas_cercanas';
-    return this.datosGlobales.ubicacion$.pipe(
-      switchMap(ubicacionValor => {
-        const params = new HttpParams()
-          .set('lat', ubicacionValor.lat.toString())
-          .set('lon', ubicacionValor.lon.toString())
-        return this.http.get<any>(url, {params});
-      })
-    );
-  }
-
-  getMatches(): Observable<any> {
-    const url = this.apiMatch + 'get_matches';
-    const params = new HttpParams().set('usuario', this.datosGlobales.userGlobal); //TODO: cambiar a this.datosGlobales.preferencias.usuario
-    return this.http.get<any>(url, {params});
-  }
-
-  updateMatch(id_match: string): Observable<any> {
-    const url = this.apiMatch + 'marcar_visto';
-    const params = new HttpParams().set('id_match', id_match);
-    return this.http.get<any>(url, {params});
-  }
 }

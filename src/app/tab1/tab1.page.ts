@@ -13,6 +13,7 @@ import { DataServiceService } from '../servicios/data-service.service';
 export class Tab1Page implements OnInit {
   map: Leaflet.Map | undefined;
   markers: Leaflet.Marker[] = [];
+  userMarker: Leaflet.Marker | undefined;
   private defaultIcon = Leaflet.icon({
     iconUrl: '../../assets/markers/marker-icon.png',
     shadowUrl: '../../assets/markers/marker-shadow.png'})
@@ -21,6 +22,11 @@ export class Tab1Page implements OnInit {
   user: string = '';
   pass: string = '';
   tipo: string = '';
+
+  viewLat: number = 0;
+  viewLon: number = 0;
+
+
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController, private apiCon: DataServiceService) {}
 
   ngOnInit() {
@@ -43,8 +49,7 @@ export class Tab1Page implements OnInit {
     this.initializeMap();
     this.datosGlobales.ubicacion$.subscribe((ubicacion) => {
       if (ubicacion) {
-        this.map?.setView([ubicacion.lat, ubicacion.lon], this.datosGlobales.mapZoom);
-        this.markers = [];
+        this.map?.setView([ubicacion.lat, ubicacion.lon])//, this.datosGlobales.mapZoom);
         this.adduserMarker(ubicacion.lat, ubicacion.lon, this.defaultIcon);
         this.nearbyMarker();
       }
@@ -52,22 +57,32 @@ export class Tab1Page implements OnInit {
   }
 
   initializeMap() {
-    this.map = Leaflet.map('map').setView([this.datosGlobales.lat, this.datosGlobales.lon], this.datosGlobales.mapZoom);
+    this.viewLat = this.datosGlobales.lat;
+    this.viewLon = this.datosGlobales.lon;
+    this.map = Leaflet.map('map', {minZoom : this.datosGlobales.mapMinZoom}).setView([this.viewLat, this.viewLon], this.datosGlobales.mapZoom); //maxZoom
+    Leaflet.control.scale().addTo(this.map);
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
-    this.adduserMarker(this.datosGlobales.lat, this.datosGlobales.lon, this.defaultIcon);
+    this.adduserMarker(this.viewLat, this.viewLon, this.defaultIcon);
     this.nearbyMarker();
+    this.map.on('moveend', () => this.mapMoved());
   }
 
   adduserMarker(lat: number, lon: number, icon: Leaflet.Icon) {
     if (this.map) {
-      const marker = Leaflet.marker([lat, lon], {icon: icon}).addTo(this.map);
-      this.markers.push(marker);
+      if (this.userMarker) {
+        this.userMarker.setLatLng([lat, lon]);
+      } else {
+        this.userMarker = Leaflet.marker([lat, lon], {icon: icon}).addTo(this.map);
+      }
     }
   }
 
   nearbyMarker() {
+    this.markers.forEach(marker => {
+      marker.remove();
+    });
     this.obtenerViviendas().subscribe((viviendas: any) => {
       viviendas.forEach((vivienda: any) => {
         if(this.map){
@@ -84,7 +99,7 @@ export class Tab1Page implements OnInit {
       });
     });
     /*if (this.map) {
-      const marker = Leaflet.marker([this.datosGlobales.lat -0.001, this.datosGlobales.lon -0.001], {icon: Leaflet.icon({
+      const marker = Leaflet.marker([this.viewLat -0.001, this.viewLon -0.001], {icon: Leaflet.icon({
         iconUrl: '../../assets/markers/casa-with-shadow.png',
         iconSize: [36, 36],
         iconAnchor: [12, 41],
@@ -97,6 +112,18 @@ export class Tab1Page implements OnInit {
   centrarMapa(){
     if(this.map){
       this.map.setView([this.datosGlobales.lat, this.datosGlobales.lon], this.datosGlobales.mapZoom);
+    }
+  }
+
+  mapMoved(){
+    const center = this.map!.getCenter();
+    const deltaLat = Math.abs(center.lat - this.datosGlobales.lat);
+    const deltaLon = Math.abs(center.lng - this.datosGlobales.lon);
+
+    if (deltaLat > 0.0045 || deltaLon > 0.0045) {
+      this.viewLat = center.lat;
+      this.viewLon = center.lng;
+      this.nearbyMarker();
     }
   }
 
@@ -114,6 +141,6 @@ export class Tab1Page implements OnInit {
   //Metodos Fetch
 
   obtenerViviendas(){
-    return this.apiCon.getViviendasCercanas()
+    return this.apiCon.getViviendasCercanas(this.viewLat, this.viewLon);
   }
 }
