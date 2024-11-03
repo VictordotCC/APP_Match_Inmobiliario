@@ -83,16 +83,19 @@ export class LoginPage  implements OnInit{
     if (JSON.stringify(usuario) == JSON.stringify(userCompletoGlobal)){
       this.datosGlobales.preferencias.usuario = usuario.nombre;
       const alert = await this.alertController.create({
-        header: 'Bienvenido '+ userGlobal,
+        header: 'Bienvenido '+ this.datosGlobales.userNombreGlobal, //userGlobal,
         message: 'Acceso Autorizado',
         buttons: ['Aceptar']
       });
       await alert.present();
       //this.router.navigate(['/tabs']);
       //con el siguiente código enviamos los datos de usuario y contraseña a la página de tabs
+      /*
       this.navCtrl.navigateForward(['/tabs'], {
         queryParams: { user: userGlobal, pass: passGlobal, tipo: this.tipoUsuario }
       });
+      */
+     this.navCtrl.navigateForward(['/tabs']);
     }
     if (usuario.nombre != userGlobal || usuario.clave != passGlobal ){
       console.log('error de login');

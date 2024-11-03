@@ -13,6 +13,9 @@ export class PreferenciasPage implements OnInit {
   user: string = '';
   pass: string = '';
   tipo: string = '';
+  nombre: string = '';
+  apellido: string = '';
+  fotoPerfil: string = '';
 
   ngOnInit() {
     /*
@@ -25,9 +28,12 @@ export class PreferenciasPage implements OnInit {
       console.log('Tipo:', this.tipo);
     });
     */
-    this.user = this.datosGlobales.userGlobal;
+    this.user = this.datosGlobales.userGlobal; //correo global
     this.pass = this.datosGlobales.passGlobal;
     this.tipo = this.datosGlobales.userTipoGlobal;
+    this.nombre = this.datosGlobales.userNombreGlobal;
+    this.apellido = this.datosGlobales.userApellidoGlobal;
+    this.fotoPerfil = this.datosGlobales.imgGlobal;
   }
 
   async showAlert() {

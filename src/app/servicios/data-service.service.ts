@@ -17,21 +17,51 @@ export class DataServiceService {
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
+      //'Access-Control-Allow-Origin': '*',
+      //'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
+      //"Access-Control-Allow-Methods": "*",
+      //"Access-Control-Allow-Headers": "'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'"
+
     }),
   };
   constructor( private http: HttpClient, private datosGlobales: GlobalDataService) { }
 
-  getViviendas(){ //Eliminar este metodo//
-    return this.http.get(this.apiViviendasUrl, this.httpOptions);
-    //return this.http.get(this.apiViviendasUrl);
+  getViviendasFavoritos(): Observable<any[]> {
+    const url = this.apiMatch + 'favoritos';
+    return this.http.get<any[]>(url, this.httpOptions);
+
   }
-  getImagenes(){ //Eliminar este metodo//
-    return this.http.get(this.apiImagenesUrl, this.httpOptions);
-    //return this.http.get(this.apiImagenesUrl);
+  guardarFavoritos(obj:any): Observable<any> {
+    const url = this.apiMatch + 'favoritos';
+    return this.http.post<any>(url, obj, this.httpOptions);
   }
+  /*
+  guardarFavoritos(id: any): Observable<any> {
+    const url = this.apiMatch + 'favoritos';
+    const params = new HttpParams().set('id_vivienda', id);
+    return this.http.post<any>(url, {params});
+  } */
+  /*
+    guardarFavoritos(obj:any): Observable<any> {
+      const url = this.apiMatch + 'favoritos';
+      const params = new HttpParams().set('id_vivienda', obj.id_vivienda).set('id_usuario', obj.id_usuario).set('fecha_guardado', obj.fecha_guardado);
+      return this.http.post<any>(url, {params});
+    }
+  */
+
+
+
+  /*
+  guardarFavoritos(): Observable<any> {
+    const url = this.apiMatch + 'favoritos';
+    return this.http.post<any>(url, this.httpOptions);
+  }
+  */
+
   // esta funcion es para buscar en el SearchBar
   getViviendaSearch(){
-    return this.http.get<any[]>(this.apiViviendasUrl, this.httpOptions);
+    const url = this.apiMatch + 'favoritos';
+    return this.http.get<any[]>(url, this.httpOptions);
     //return this.http.get(this.apiViviendasUrl);
   }
 

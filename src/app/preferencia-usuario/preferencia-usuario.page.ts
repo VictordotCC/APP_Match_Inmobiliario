@@ -293,7 +293,7 @@ export class PreferenciaUsuarioPage implements OnInit {
       notificaciones: this.notificaciones.toString(),
     };
 
-    
+
     // Guardar las preferencias del usuario en datos globales
     this.datosGlobales.setPreferencias(this.preferenciaUsuario);
 
@@ -302,7 +302,8 @@ export class PreferenciaUsuarioPage implements OnInit {
     // TODO: Guardar las preferencias del usuario en la base de datos
 
     // Para navegra a la pagina de preferencias.
-    this.router.navigate(['preferencias'], {state: {preferencias: this.preferenciaUsuario}});
+    //this.router.navigate(['preferencias'], {state: {preferencias: this.preferenciaUsuario}});
+    this.router.navigate(['/preferencias']);
 
   }
 

@@ -6,6 +6,8 @@ import { GlobalDataService } from '../servicios/global-data.service';
 import { DataServiceService } from '../servicios/data-service.service';
 import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
 
+
+
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -32,14 +34,15 @@ export class Tab3Page implements AfterViewInit {
 
   preferencias: PreferenciaUsuarioService = this.datosGlobales.preferencias;
   matches: any[] = [];
-
+  favoritos: any = {}; //para crear el objeto que se va  a enviar a la api
   paginationConfig = {
     type: 'progressbar',
-    el: '.swiper-pagination',  
+    el: '.swiper-pagination',
   };
- 
+
+
   constructor(private datosGlobales: GlobalDataService, private apiCon: DataServiceService,
-    private gestureCtrl: GestureController, private animationCtrl: AnimationController) { }
+    private gestureCtrl: GestureController, private animationCtrl: AnimationController ) { }
 
   ionViewDidEnter(){
     //Obtiene los datos si las preferencias han cambiado
@@ -66,8 +69,8 @@ export class Tab3Page implements AfterViewInit {
         this.updateMaps(ubicacion.lat, ubicacion.lon);
       }
     });
-    
-    
+
+
   }
 
   //GESTOS
@@ -110,8 +113,8 @@ export class Tab3Page implements AfterViewInit {
     actualCard.style.rotate = `${translateXvalue/30}deg`;
     //actualCard.style.filter = `brightness(${Math.max(1 - Math.abs(step)/2, 0.5)})`;
 
-     const choiceE1 = this.pullDeltaX > 0 ? 
-      actualCard.querySelector('.choice.like') 
+     const choiceE1 = this.pullDeltaX > 0 ?
+      actualCard.querySelector('.choice.like')
       : actualCard.querySelector('.choice.nope');
 
     choiceE1!.style.opacity = `${Math.abs(this.pullDeltaX)/100}`;
@@ -199,7 +202,7 @@ export class Tab3Page implements AfterViewInit {
         map.setView([lat, lon], this.datosGlobales.mapZoom);
         this.usermarkers.forEach((marker) => {
           marker.setLatLng([lat, lon]);
-        });       
+        });
       }
     });
   }
@@ -218,15 +221,26 @@ export class Tab3Page implements AfterViewInit {
   }
 
   //LIKE Y DISLIKE
+  guardarFavoritos(ob :any){
+    this.apiCon.guardarFavoritos(ob).subscribe((data) => {
+      console.log(data);
+    });
+  }
+
 
   guardarPref(propiedad: string){
     //get current card
     const lastElement = this.cardlist.pop()?.nativeElement;
     const id_match  = lastElement?.getAttribute('id-match');
-  
+
     //TODO: save fav
-    
-    //Like animation 
+    console.log(id_match);
+    // agregado 02/09/2024 mvc
+    this.favoritos = {id_vivienda: id_match!, id_usuario: this.datosGlobales.userGlobal, fecha_guardado: new Date().toISOString()};
+    this.guardarFavoritos(this.favoritos);
+
+
+    //Like animation
     const choiceCard = lastElement!.querySelector('.choice.like');
     choiceCard!.style.opacity = '1';
     setTimeout(() => {
@@ -252,7 +266,7 @@ export class Tab3Page implements AfterViewInit {
     lastElement?.addEventListener('transitionend', () => {
       lastElement.remove();
     });
-    
+
     //TODO: save dislike
     console.log('Dislike')
   }

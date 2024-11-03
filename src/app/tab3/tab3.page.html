@@ -47,7 +47,7 @@
         <ion-card-content>
           <p><strong>{{ match.nombre_propiedad }}</strong></p>
           <p><strong>{{ match.descripcion }}</strong></p>
-          <p><strong>{{ match.tipo_operacion  == false ? "Compra" : "Arriendo"}}</strong></p>
+          <p><strong>{{ match.tipo_operacion  === false ? "Compra" : "Arriendo"}}</strong></p>
           <p><strong>Área Total: </strong> {{ match.area_total }}</p>
           <p><strong>Pisos: </strong> {{ match.pisos }}</p>
           <p><strong>Habitaciones: </strong> {{ match.habitaciones }}</p>
@@ -55,8 +55,8 @@
           <p><strong>Estacionamientos: </strong> {{ match.estaciona }}</p>
           <p><strong>Bodegas: </strong> {{ match.bodega }}</p>
           <p><strong>Antiguedad: </strong> {{ match.antiguedad }}</p>
-          <p><strong>Tipo de Vivienda: </strong> 
-            {{ match.tipo_vivienda == 0 ? "Departamento" : match.tipo_vivienda == 1 ? "Casa" : "Otro" }}
+          <p><strong>Tipo de Vivienda: </strong>
+            {{ match.tipo_vivienda === 0 ? "Departamento" : match.tipo_vivienda === 1 ? "Casa" : "Otro" }}
          </p>
           <p><strong>Condicion: </strong> {{ match.condicion }}</p>
           <p><strong>Cantidad de Baños: </strong> {{ match.banos }}</p>

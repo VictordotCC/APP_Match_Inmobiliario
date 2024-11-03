@@ -6,9 +6,17 @@ import { BehaviorSubject, Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class GlobalDataService {
-  public userGlobal: string = 'abc@def.com';
+
+  public userGlobal: string = 'abc@def.com'; //correo global
   public passGlobal: string = '1234';
   public userTipoGlobal: string = 'Comprador';
+  public userNombreGlobal: string = 'Dio Manfred';
+  public userApellidoGlobal: string = 'Brando';
+  public userTelefonoGlobal: string = '1234567890';
+  public idUserGlobal: string = '1';
+  public activoGlobal: boolean = true;
+  public linksContactoGlobal: string = 'https://www.google.com';
+  public imgGlobal: string = 'https://miniurl.cl/2h1xii';
 
   private ubicacion = new BehaviorSubject<{lat: number, lon: number, timestamp: number}>({lat: 0, lon: 0, timestamp: 0});
   public ubicacion$ = this.ubicacion.asObservable();

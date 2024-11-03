@@ -24,6 +24,7 @@ export class Tab1Page implements OnInit {
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController, private apiCon: DataServiceService) {}
 
   ngOnInit() {
+    /*
     this.route.queryParams.subscribe(params => {
       this.user = params['user'];
       this.pass = params['pass'];
@@ -32,6 +33,7 @@ export class Tab1Page implements OnInit {
       console.log('Pass:', this.pass);
       console.log('Tipo:', this.tipo);
     });
+    */
   }
 
   ionViewDidEnter() {
@@ -101,9 +103,12 @@ export class Tab1Page implements OnInit {
 
   iraPreferencias(){
     console.log('ir a preferencias');
+    this.navCtrl.navigateForward(['/preferencias']);
+    /*
     this.navCtrl.navigateForward(['/preferencias'], {
       queryParams: { user: this.user, pass: this.pass, tipo: this.tipo}
     });
+    */
   }
 
   //Metodos Fetch

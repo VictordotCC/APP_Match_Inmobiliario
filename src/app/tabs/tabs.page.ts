@@ -13,6 +13,7 @@ export class TabsPage implements OnInit {
   constructor( private route: ActivatedRoute, public navCtrl: NavController) {}
 
   ngOnInit() {
+    /*
     this.route.queryParams.subscribe(params => {
       this.user = params['user'];
       this.pass = params['pass'];
@@ -21,8 +22,10 @@ export class TabsPage implements OnInit {
       console.log('Pass:', this.pass);
       console.log('Tipo:', this.tipo);
     });
+
     this.navCtrl.navigateForward(['/tabs/tab1'], {
       queryParams: { user: this.user, pass: this.pass, tipo: this.tipo}
     });
+    */
   }
 }

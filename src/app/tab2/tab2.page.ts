@@ -1,7 +1,8 @@
 import { DataServiceService } from './../servicios/data-service.service';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { IonSegment } from '@ionic/angular';
-import { Observable} from 'rxjs';
+import { Observable, of} from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab2',
@@ -13,8 +14,10 @@ export class Tab2Page implements OnInit {
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
 
-  viviendas!: Observable<any>;
-  imagenes!: Observable<any>;
+
+  viviendas!: Observable<any[]>;
+  //viviendas: any[] = [];
+  imagenes!: Observable<any[]>;
   serchVar: any[] = []; // variable para buscar en el SearchBar
   textoBuscar = "";
 
@@ -23,8 +26,9 @@ export class Tab2Page implements OnInit {
   ngOnInit() {
     /* // esta es la forma de obtener los datos de la api */
 
-    this.viviendas = this.DataService.getViviendas();
-    this.imagenes = this.DataService.getImagenes();
+    this.viviendas = this.DataService.getViviendasFavoritos();
+
+    //this.imagenes = this.DataService.getImagenes();
 
     this.DataService.getViviendaSearch().subscribe( serchVar => {
       console.log(serchVar);
@@ -54,8 +58,8 @@ export class Tab2Page implements OnInit {
 
   buscar( event: any){
     //const texto = event.detail.value;
-    console.log(this.textoBuscar);
     this.textoBuscar = event.detail.value;
+    console.log(this.textoBuscar);
   }
 
 }
