@@ -32,51 +32,19 @@
         <ion-icon name="locate" style="z-index: 99;"></ion-icon>
       </ion-fab-button>
     </ion-fab>
-    <div id="map" style = "width: 90vw; height: 50vh;"></div>
+    <div id="map"></div>
   </ion-item>
   <ion-item class="side-scroll">
-    <ion-card>
-      <img alt="casa ejemplo" src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg" />
+    <ion-card *ngFor="let vivienda of viviendas">
+      <img [src]="vivienda.imagenes[0].url" />
       <ion-card-header>
-        <ion-card-title>Card Title</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+        <!--<ion-card-title>{{ vivienda.nombre_propiedad }}</ion-card-title>-->
+        <ion-card-subtitle>{{ vivienda.tipo_operacion  === false ? "Venta" : "Arriendo"}}</ion-card-subtitle>
       </ion-card-header>
-
       <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content>
-    </ion-card>
-    <ion-card>
-      <img alt="casa ejemplo" src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg">
-      <ion-card-header>
-        <ion-card-title>Card Title</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content>
-    </ion-card>
-    <ion-card>
-      <img alt="casa ejemplo" src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg">
-      <ion-card-header>
-        <ion-card-title>Card Title</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content>
-    </ion-card>
-    <ion-card>
-      <img alt="casa ejemplo" src="https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg">
-      <ion-card-header>
-        <ion-card-title>Card Title</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
+        <p>{{ vivienda.descripcion }}</p>
+        <p><strong>Área Total: </strong> {{ vivienda.area_total }}</p>
+        <p><strong>Precio (UF): </strong> {{ vivienda.precio_uf }}</p>
       </ion-card-content>
     </ion-card>
   </ion-item>

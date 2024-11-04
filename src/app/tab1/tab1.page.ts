@@ -26,6 +26,10 @@ export class Tab1Page implements OnInit {
   viewLat: number = 0;
   viewLon: number = 0;
 
+  viviendas: any[] = [];
+  page = 0;
+  per_page = 20;
+
 
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController, private apiCon: DataServiceService) {}
 
@@ -84,6 +88,8 @@ export class Tab1Page implements OnInit {
       marker.remove();
     });
     this.obtenerViviendas().subscribe((viviendas: any) => {
+      this.viviendas = viviendas;
+      console.log(this.viviendas[0]);
       viviendas.forEach((vivienda: any) => {
         if(this.map){
           const marker = Leaflet.marker([vivienda.latitud, vivienda.longitud], {icon: Leaflet.icon({
@@ -93,7 +99,8 @@ export class Tab1Page implements OnInit {
             popupAnchor: [1, -34],
             })}).addTo(this.map).bindPopup(`<b>${vivienda.nombre_propiedad} </b> en <b>${vivienda.tipo_operacion == false ? 'Venta': 'Arriendo'}</b><br>${vivienda.precio_uf} UF`
                                            + `<br><img src="${vivienda.imagenes[0].url}" style="width: 100px; height: 100px;">`
-                                           + `<br><a href="${JSON.parse(vivienda.links_contacto)[0]}" target="_blank">Contacto</a>`);
+                                           + `<br><a href="${JSON.parse(vivienda.links_contacto)[0]}" target="_blank">Contacto</a>`
+                                           + '<a href="" style="float: right">Ver más</a>');
           this.markers.push(marker);
         }
       });

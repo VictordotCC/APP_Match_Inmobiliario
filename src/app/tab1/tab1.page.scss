@@ -3,25 +3,37 @@ ion-fab {
     right: 16px;
 }
 
+#map {
+    width: 95vw; 
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .side-scroll {
     display: flex;
     overflow-x: auto; /* Permite el scroll horizontal */
     white-space: nowrap; /* Evita que los ítems se rompan en una nueva línea */
     max-height: 50vh; /* Limita la altura para evitar que se extienda más allá de la pantalla */
-    padding: 5vh;
-  }
+    scrollbar-width: none;
+}
+
+.side-scroll::-webkit-scrollbar {
+    display: none;
+}
   
-  .side-scroll ion-card {
+.side-scroll ion-card {
     min-width: 200px; /* Ajusta el tamaño según sea necesario */
     max-height: 48vh;
     max-width: 50%; /* Limita el ancho máximo para asegurarse de que se ajuste */
     flex: 0 0 auto; /* Asegura que las tarjetas mantengan su tamaño sin estirarse */
-    margin: 0 8px; /* Añade un margen entre las tarjetas */
+    margin: 8px; /* Añade un margen entre las tarjetas */
     overflow: hidden; /* Oculta el contenido que se salga */
-  }
+}
   
-  .side-scroll ion-card-content {
+.side-scroll ion-card-content {
     white-space: normal; /* Asegura que el contenido pueda envolver en múltiples líneas */
     text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
     overflow: hidden; 
