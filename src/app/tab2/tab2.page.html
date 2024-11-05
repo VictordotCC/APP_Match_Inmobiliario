@@ -63,16 +63,35 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
 <ion-content [fullscreen]="true">
   <ion-list>
     <!--<ion-item *ngFor="let search of serchVar | filtro:'textBuscar'"> -->
-    <ion-item *ngFor="let vivienda of viviendas | async" >
+    <ion-item *ngFor="let vivienda of viviendas" >
       <ion-card>
-        <img id="imagen_casa" alt="casa ejemplo" src= "https://img.freepik.com/vector-gratis/plantilla-pegatina-mini-casa-aislada_1308-60687.jpg"/>
         <ion-card-header>
-          <ion-card-subtitle>[{{vivienda.tipo_propiedad}}]</ion-card-subtitle>
-          <ion-card-subtitle>{{vivienda.precio}}</ion-card-subtitle>
+          <img class="imagen_casa" [src]="vivienda.imagenes[0].url"/>
+          <ion-card-subtitle>{{ vivienda.tipo_vivienda == 0 ? "Departamento" : vivienda.tipo_vivienda == 1 ? "Casa" : "Otro" }}
+            en {{ vivienda.tipo_operacion == false ? "Venta" : "Arriendo" }}
+          </ion-card-subtitle>
+          <ion-card-subtitle>{{vivienda.precio_uf}} UF</ion-card-subtitle>
         </ion-card-header>
         <ion-card-title>{{vivienda.nombre_propiedad}}</ion-card-title>
         <ion-card-subtitle>{{vivienda.condicion}}</ion-card-subtitle>
-        <ion-card-content>{{vivienda.descripcion}}</ion-card-content>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="4" class="center-content">
+                <ion-icon name="bed"></ion-icon>
+                <ion-label>{{vivienda.habitaciones}}</ion-label>
+              </ion-col>
+              <ion-col size="4" class="center-content">
+                <ion-icon src="assets/icon/toilet.svg"></ion-icon>
+                <ion-label>{{vivienda.banos}}</ion-label>
+              </ion-col>
+              <ion-col size="4" class="center-content">
+                <ion-icon name="cube"></ion-icon>
+                <ion-label>{{vivienda.area_construida}} mts<sup>2</sup></ion-label>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
       </ion-card>
     </ion-item>
   </ion-list>

@@ -1,13 +1,13 @@
 import { DataServiceService } from './../servicios/data-service.service';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { IonSegment } from '@ionic/angular';
-import { Observable, of} from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable} from 'rxjs';
+import { GlobalDataService } from '../servicios/global-data.service';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss']
+  styleUrls: ['tab2.page.scss'],
 })
 export class Tab2Page implements OnInit {
 
@@ -15,25 +15,24 @@ export class Tab2Page implements OnInit {
   @ViewChild(IonSegment) segmento2!: IonSegment;
 
 
-  viviendas!: Observable<any[]>;
-  //viviendas: any[] = [];
+  viviendas: any[] = [];
   imagenes!: Observable<any[]>;
   serchVar: any[] = []; // variable para buscar en el SearchBar
   textoBuscar = "";
 
-  constructor(private DataService: DataServiceService) {}
+  constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService) {}
 
   ngOnInit() {
-    /* // esta es la forma de obtener los datos de la api */
-
-    this.viviendas = this.DataService.getViviendasFavoritos();
-
     //this.imagenes = this.DataService.getImagenes();
 
     this.DataService.getViviendaSearch().subscribe( serchVar => {
       console.log(serchVar);
       this.serchVar = serchVar;
      });
+  }
+
+  ionViewWillEnter(){
+    this.obtenerFavs();
   }
 
   segmentPrecMtsHab(event: CustomEvent){
@@ -62,6 +61,11 @@ export class Tab2Page implements OnInit {
     console.log(this.textoBuscar);
   }
 
+  obtenerFavs(){
+    this.DataService.getViviendasFavoritos().subscribe( data => {
+      this.viviendas = data;
+    });
+  }
 }
 
 

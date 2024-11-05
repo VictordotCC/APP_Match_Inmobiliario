@@ -29,7 +29,11 @@ export class DataServiceService {
   // esta funcion es para buscar en el SearchBar
   getViviendaSearch(){
     const url = this.apiMatch + 'favoritos';
-    return this.http.get<any[]>(url, this.httpOptions);
+    const params = new HttpParams()
+      .set('usuario', this.datosGlobales.userGlobal)
+      .set('lat', this.datosGlobales.lat.toString())
+      .set('lon', this.datosGlobales.lon.toString());
+    return this.http.get<any[]>(url, {params});
     //return this.http.get(this.apiViviendasUrl);
   }
 
@@ -99,9 +103,13 @@ export class DataServiceService {
 
   getViviendasFavoritos(): Observable<any[]> {
     const url = this.apiMatch + 'favoritos';
-    return this.http.get<any[]>(url);
-
+    const params = new HttpParams()
+      .set('usuario', this.datosGlobales.userGlobal)
+      .set('lat', this.datosGlobales.lat.toString())
+      .set('lon', this.datosGlobales.lon.toString());
+    return this.http.get<any[]>(url, {params});
   }
+
   guardarFavoritos(obj:any): Observable<any> {
     const url = this.apiMatch + 'favoritos';
     return this.http.post<any>(url, obj, this.httpOptions);
