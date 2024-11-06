@@ -3,6 +3,7 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { IonSegment } from '@ionic/angular';
 import { Observable} from 'rxjs';
 import { GlobalDataService } from '../servicios/global-data.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-tab2',
@@ -19,8 +20,13 @@ export class Tab2Page implements OnInit {
   imagenes!: Observable<any[]>;
   serchVar: any[] = []; // variable para buscar en el SearchBar
   textoBuscar = "";
+  trustedURL: any = ''; // Correct property name
+  dangerousUrl: string = ''; // Add this property to avoid undefined error
 
-  constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService) {}
+  constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, private sanitizer: DomSanitizer) {
+    this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
+    this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl); // Correct property name
+  }
 
   ngOnInit() {
     //this.imagenes = this.DataService.getImagenes();
@@ -65,6 +71,10 @@ export class Tab2Page implements OnInit {
     this.DataService.getViviendasFavoritos().subscribe( data => {
       this.viviendas = data;
     });
+  }
+
+  formatString(str: string){
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 }
 

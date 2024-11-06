@@ -17,12 +17,11 @@ export class DataServiceService {
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
-      //'Access-Control-Allow-Origin': '*',
-      //'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
       //"Access-Control-Allow-Methods": "*",
-      //"Access-Control-Allow-Headers": "'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'"
-
-    }),
+      "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token"
+    })
   };
   constructor( private http: HttpClient, private datosGlobales: GlobalDataService) { }
 
