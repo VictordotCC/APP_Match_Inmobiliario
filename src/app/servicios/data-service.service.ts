@@ -19,8 +19,7 @@ export class DataServiceService {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
-      //"Access-Control-Allow-Methods": "*",
-      "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token"
+      "Access-Control-Allow-Headers": "Content-Type"
     })
   };
   constructor( private http: HttpClient, private datosGlobales: GlobalDataService) { }

@@ -15,14 +15,16 @@ export class Tab2Page implements OnInit {
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
 
-
+  isModalOpen: boolean = false; // Add this property to control modal state
   viviendas: any[] = [];
   imagenes!: Observable<any[]>;
   serchVar: any[] = []; // variable para buscar en el SearchBar
   textoBuscar = "";
   trustedURL: any = ''; // Correct property name
   dangerousUrl: string = ''; // Add this property to avoid undefined error
-
+  idOpenDetalle: string = '';
+  detalleVivienda: any = {};
+  fotoCasa :string =''; //variable para la foto de la casa
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, private sanitizer: DomSanitizer) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
     this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl); // Correct property name
@@ -76,10 +78,26 @@ export class Tab2Page implements OnInit {
   formatString(str: string){
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+
+  openDetalle(vivienda: any){
+    //this.idOpenDetalle = this.viviendas[0].id_vivienda;
+    this.fotoCasa = this.viviendas[0].imagenes.url;
+    this.detalleVivienda = vivienda;
+    this.isModalOpen = true;
+
+  }
+
+  closeModal(){ // Add this method to close the modal
+    this.isModalOpen = false;
+  }
+
+
+
+
 }
 
 
-  // datos de prueba
+
 
 
 

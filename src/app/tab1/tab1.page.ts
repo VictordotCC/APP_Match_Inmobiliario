@@ -29,21 +29,13 @@ export class Tab1Page implements OnInit {
   viviendas: any[] = [];
   page = 0;
   per_page = 20;
-
+  detalleVivienda: any = {};
+  isModalOpen: boolean = false; // Add this property to control modal state
 
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController, private apiCon: DataServiceService) {}
 
   ngOnInit() {
-    /*
-    this.route.queryParams.subscribe(params => {
-      this.user = params['user'];
-      this.pass = params['pass'];
-      this.tipo = params['tipo'];
-      console.log('User:', this.user);
-      console.log('Pass:', this.pass);
-      console.log('Tipo:', this.tipo);
-    });
-    */
+
   }
 
   ionViewDidEnter() {
@@ -150,4 +142,21 @@ export class Tab1Page implements OnInit {
   obtenerViviendas(){
     return this.apiCon.getViviendasCercanas(this.viewLat, this.viewLon);
   }
+
+  openDetalle(viv: any){
+    this.detalleVivienda = viv;
+    this.isModalOpen = true;
+
+  }
+  closeModal(){ // Add this method to close the modal
+    this.isModalOpen = false;
+  }
+
+  guardarFavorito(viv: any){
+    this.apiCon.guardarFavoritos(viv).subscribe((res: any) => {
+      console.log(res);
+    });
+  }
+
+
 }

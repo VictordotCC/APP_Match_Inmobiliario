@@ -35,8 +35,8 @@
     <div id="map"></div>
   </ion-item>
   <ion-item class="side-scroll">
-    <ion-card *ngFor="let vivienda of viviendas">
-      <img [src]="vivienda.imagenes[0].url" />
+    <ion-card *ngFor="let vivienda of viviendas" >
+      <img class="imagen_casa"  [src]="vivienda.imagenes[0].url" />
       <ion-card-header>
         <!--<ion-card-title>{{ vivienda.nombre_propiedad }}</ion-card-title>-->
         <ion-card-subtitle>{{ vivienda.tipo_operacion  === false ? "Venta" : "Arriendo"}}</ion-card-subtitle>
@@ -46,7 +46,51 @@
         <p><strong>Área Total: </strong> {{ vivienda.area_total }}</p>
         <p><strong>Precio (UF): </strong> {{ vivienda.precio_uf }}</p>
       </ion-card-content>
+      <ion-button expand="block" id="open-modal" (click)="openDetalle(vivienda)">Ver detalles</ion-button>
     </ion-card>
+  </ion-item>
+
+  <ion-item>
+    <ion-modal #modal trigger="open-modal" [isOpen]="isModalOpen">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>{{detalleVivienda.nombre_propiedad}}</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card>
+            <img class="imagen_casa" [src]="detalleVivienda.imagenes[0].url"/>
+            <!-- <img class="imagen_casa" [src]="fotoCasa"/> -->
+            <ion-card-content>
+              <a class="e2e-trusted-url" [href]="detalleVivienda.links_contacto[0]" target="_blank"><strong> Link de Contacto </strong></a>
+              <p><strong>{{ detalleVivienda.nombre_propiedad }}</strong></p>
+              <p><strong>{{ detalleVivienda.descripcion }}</strong></p>
+              <p><strong>{{ detalleVivienda.tipo_operacion  === false ? "Venta" : "Arriendo"}}</strong></p>
+              <p><strong>Área Total: </strong> {{ detalleVivienda.area_total }}</p>
+              <p><strong>Pisos: </strong> {{ detalleVivienda.pisos }}</p>
+              <p><strong>Habitaciones: </strong> {{ detalleVivienda.habitaciones }}</p>
+              <p><strong>Precio (UF): </strong> {{ detalleVivienda.precio_uf }}</p>
+              <p><strong>Estacionamientos: </strong> {{ detalleVivienda.estaciona }}</p>
+              <p><strong>Bodegas: </strong> {{ detalleVivienda.bodega }}</p>
+              <p><strong>Antiguedad: </strong> {{ detalleVivienda.antiguedad }}</p>
+              <p><strong>Tipo de Vivienda: </strong>
+                {{ detalleVivienda.tipo_vivienda === 0 ? "Departamento" : detalleVivienda.tipo_vivienda === 1 ? "Casa" : "Otro" }}
+             </p>
+              <p><strong>Condicion: </strong> {{ detalleVivienda.condicion }}</p>
+              <p><strong>Cantidad de Baños: </strong> {{ detalleVivienda.banos }}</p>
+              <p><strong>Área Construida: </strong> {{ detalleVivienda.area_construida }}</p>
+              <p><strong>Tipo Subsidio: </strong> {{ detalleVivienda.tipo_subsidio }}</p>
+              <p>Propiedad publicada el : {{ detalleVivienda.fecha_creacion }}</p>
+            </ion-card-content>
+            <ion-button expand="block" (click)="guardarFavorito(detalleVivienda)"><ion-icon name="heart"></ion-icon> Guardar en Favoritos </ion-button>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
   </ion-item>
 
 </ion-content>
