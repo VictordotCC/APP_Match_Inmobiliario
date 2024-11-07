@@ -110,7 +110,11 @@ export class DataServiceService {
 
   guardarFavoritos(obj:any): Observable<any> {
     const url = this.apiMatch + 'favoritos';
-    return this.http.post<any>(url, obj, this.httpOptions);
+    const postData = {
+      id_vivienda: obj.id_vivienda,
+      usuario: obj.usuario
+    };
+    return this.http.post<any>(url, postData, this.httpOptions);
   }
   /*
   guardarFavoritos(id: any): Observable<any> {

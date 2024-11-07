@@ -231,9 +231,15 @@ export class Tab3Page implements AfterViewInit {
 
     // Agregar a favoritos
     this.favoritos = {id_vivienda: id_vivienda, usuario: this.datosGlobales.userGlobal}
-    this.guardarFavoritos(this.favoritos);
-
-
+    console.log(this.favoritos);
+    this.guardarFavoritos(this.favoritos).subscribe((data) => {
+      console.log(data);
+      if (data.status === 200){
+        this.updateMatch(id_match!);
+      } else { 
+        console.log('Error al guardar favorito');
+      }
+    });
     //Like animation
     const choiceCard = lastElement!.querySelector('.choice.like');
     choiceCard!.style.opacity = '1';
@@ -244,8 +250,6 @@ export class Tab3Page implements AfterViewInit {
     lastElement?.addEventListener('transitionend', () => {
       lastElement.remove();
     });
-    //actuilizar match a visto
-    this.updateMatch(id_match!);
   }
 
   rechazarPref(propiedad: string){
@@ -286,9 +290,7 @@ export class Tab3Page implements AfterViewInit {
   }
 
   guardarFavoritos(ob :any){
-    this.apiCon.guardarFavoritos(ob).subscribe((data) => {
-      console.log(data);
-    });
+    return this.apiCon.guardarFavoritos(ob);
   }
   //MOSTRAR DETALLES
 
