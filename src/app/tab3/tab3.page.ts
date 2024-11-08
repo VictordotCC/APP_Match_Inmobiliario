@@ -234,7 +234,8 @@ export class Tab3Page implements AfterViewInit {
     console.log(this.favoritos);
     this.guardarFavoritos(this.favoritos).subscribe((data) => {
       console.log(data);
-      if (data.status === 200){
+      if (data[1] == 200){
+        console.log('Favorito guardado');
         this.updateMatch(id_match!);
       } else { 
         console.log('Error al guardar favorito');

@@ -114,7 +114,7 @@ export class DataServiceService {
       id_vivienda: obj.id_vivienda,
       usuario: obj.usuario
     };
-    return this.http.post<any>(url, postData, this.httpOptions);
+    return this.http.post<any>(url, postData);
   }
   /*
   guardarFavoritos(id: any): Observable<any> {

@@ -145,6 +145,7 @@ export class Tab1Page implements OnInit {
 
   openDetalle(viv: any){
     this.detalleVivienda = viv;
+    this.detalleVivienda.links_contacto = JSON.parse(viv.links_contacto);
     this.isModalOpen = true;
 
   }
@@ -153,8 +154,9 @@ export class Tab1Page implements OnInit {
   }
 
   guardarFavorito(viv: any){
-    this.apiCon.guardarFavoritos(viv).subscribe((res: any) => {
-      console.log(res);
+    const obj = { usuario: this.datosGlobales.userGlobal, id_vivienda: viv.id_vivienda };
+    this.apiCon.guardarFavoritos(obj).subscribe((data) => {
+      console.log(data);
     });
   }
 
