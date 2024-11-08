@@ -2,7 +2,8 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
 import { GlobalDataService } from './servicios/global-data.service';
-
+import { Capacitor } from '@capacitor/core';
+import { NotificationsPushService } from './servicios/notifications-push.service';
 import { register } from 'swiper/element/bundle';
 register();
 
@@ -17,8 +18,9 @@ export class AppComponent implements OnInit {
   clearWatchEmitter: EventEmitter<void> = new EventEmitter();
   watchEmitter: EventEmitter<void> = new EventEmitter();
 
-  constructor(private platform: Platform, private datosGlobales: GlobalDataService) {
-  }
+  constructor(private platform: Platform, private datosGlobales: GlobalDataService,
+              private notificationsPushService: NotificationsPushService)
+              { this.init() }
 
   ngOnInit() {
     this.platform.ready().then(() => {
@@ -28,6 +30,11 @@ export class AppComponent implements OnInit {
     this.datosGlobales.clearWatch$.subscribe(() => this.clearWatch());
     this.watchEmitter.subscribe(() => this.watchLocation());
     });
+  }
+  init() {
+    if (Capacitor.isNativePlatform()) {
+      this.notificationsPushService.init();
+    }
   }
 
   async requestLocationPermission() {
@@ -41,7 +48,7 @@ export class AppComponent implements OnInit {
           return;
         }
       }
-      
+
       this.getLocation();
     } catch (error) {
       console.error('Error al verificar permisos de ubicación:', error);
@@ -59,7 +66,7 @@ export class AppComponent implements OnInit {
   }
 
   watchLocation() {
-    this.posWatch = Geolocation.watchPosition({ 
+    this.posWatch = Geolocation.watchPosition({
       enableHighAccuracy: true,
       timeout: 10000
       }, (position, err) => {
@@ -83,7 +90,7 @@ export class AppComponent implements OnInit {
       console.log('Limpiando watch');
       Geolocation.clearWatch({ id: this.posWatch });
       this.posWatch = null;
-      console.log('this.posWatch:', this.posWatch); 
+      console.log('this.posWatch:', this.posWatch);
     }
   }
 }

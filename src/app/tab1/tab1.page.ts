@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { DataServiceService } from '../servicios/data-service.service';
 
 @Component({
@@ -32,7 +32,8 @@ export class Tab1Page implements OnInit {
   detalleVivienda: any = {};
   isModalOpen: boolean = false; // Add this property to control modal state
 
-  constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController, private apiCon: DataServiceService) {}
+  constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController,
+    private apiCon: DataServiceService, private alertController: AlertController) {}
 
   ngOnInit() {
 
@@ -153,11 +154,18 @@ export class Tab1Page implements OnInit {
     this.isModalOpen = false;
   }
 
-  guardarFavorito(viv: any){
+  async guardarFavorito(viv: any){
     const obj = { usuario: this.datosGlobales.userGlobal, id_vivienda: viv.id_vivienda };
     this.apiCon.guardarFavoritos(obj).subscribe((data) => {
       console.log(data);
+
     });
+    const alert = await this.alertController.create({
+      header: 'Guardado',
+      message: 'Se ha guarda la vivienda en favoritos',
+      buttons: ['Aceptar']
+    });
+    await alert.present();
   }
 
 

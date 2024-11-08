@@ -114,7 +114,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
             <img class="imagen_casa" [src]="detalleVivienda.imagenes[0].url"/>
             <!-- <img class="imagen_casa" [src]="fotoCasa"/> -->
             <ion-card-content>
-              <a class="e2e-trusted-url" [href]="trustedURL" target="_blank"><strong> Link de Contacto </strong></a>
+              <a class="e2e-trusted-url" [href]="fotoCasa" target="_blank"><strong> Link de Contacto </strong></a>
               <p><strong>{{ detalleVivienda.nombre_propiedad }}</strong></p>
               <p><strong>{{ detalleVivienda.descripcion }}</strong></p>
               <p><strong>{{ detalleVivienda.tipo_operacion  === false ? "Venta" : "Arriendo"}}</strong></p>

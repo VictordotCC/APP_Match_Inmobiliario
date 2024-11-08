@@ -81,7 +81,7 @@ export class Tab2Page implements OnInit {
 
   openDetalle(vivienda: any){
     //this.idOpenDetalle = this.viviendas[0].id_vivienda;
-    this.fotoCasa = this.viviendas[0].imagenes.url;
+    this.fotoCasa = JSON.parse(vivienda.links_contacto);
     this.detalleVivienda = vivienda;
     this.isModalOpen = true;
 
