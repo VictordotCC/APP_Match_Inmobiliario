@@ -11,7 +11,7 @@ import { GlobalDataService } from './global-data.service';
 })
 export class DataServiceService {
 
-  apiMatch = 'http://localhost:5000/';
+  apiMatch = 'http://127.0.0.1:5000/';
   apiViviendasUrl = '../../assets/Data/viviendas.json';
   apiImagenesUrl = '../../assets/Data/imagenes.json';
   httpOptions = {
