@@ -24,25 +24,25 @@ export class NotificationsPushService {
     // On success, we should be able to receive notifications
     PushNotifications.addListener('registration', (token: Token) => {
       console.log('registro exitoso My token: ' + JSON.stringify(token));
-      //this.interactionService.presentAlert('Registro existoso, My token: ' + token.value);
+      alert('Registro existoso, My token: ' + token.value);
     });
 
     // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError', (error: any) => {
       console.log('Error on registration: ' + JSON.stringify(error));
-      //this.interactionService.presentAlert('Error en el registro: ' + JSON.stringify(error));
+      alert('Error en el registro: ' + JSON.stringify(error));
     });
 
     // Show us the notification payload if the app is open on our device
     PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-      //console.log('Push received: ' + JSON.stringify(notification));
+      console.log('Push received: ' + JSON.stringify(notification));
       //this.interactionService.presentAlert('Push recibido: ' + JSON.stringify(notification));
       alert('Push recibido: ' + JSON.stringify(notification));
     });
 
     // Method called when tapping on a notification
     PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
-      //console.log('Push action performed: ' + JSON.stringify(notification));
+      console.log('Push action performed: ' + JSON.stringify(notification));
       //this.interactionService.presentAlert('Notificación en segundo plano: ' + JSON.stringify(notification));
       alert('Notificación en segundo plano: ' + JSON.stringify(notification));
     });
