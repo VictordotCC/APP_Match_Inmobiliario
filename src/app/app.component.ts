@@ -58,7 +58,6 @@ export class AppComponent implements OnInit {
   async getLocation() {
     try {
       const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
-      console.log('Ubicación actual:', position.coords.latitude, position.coords.longitude);
       this.datosGlobales.setUbicacion(position.coords.latitude, position.coords.longitude, position.timestamp);
     } catch (error) {
       console.error('Error al obtener la ubicación:', error);
