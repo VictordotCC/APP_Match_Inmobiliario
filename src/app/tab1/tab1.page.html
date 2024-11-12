@@ -50,8 +50,7 @@
     </ion-card>
   </ion-item>
 
-  <ion-item>
-    <ion-modal #modal trigger="open-modal" [isOpen]="isModalOpen">
+    <ion-modal #modal trigger="open-modal" [isOpen]="isModalOpen" (willDismiss)="closeModal()">
       <ng-template>
         <ion-content>
           <ion-toolbar>
@@ -86,11 +85,11 @@
               <p><strong>Tipo Subsidio: </strong> {{ detalleVivienda.tipo_subsidio }}</p>
               <p>Propiedad publicada el : {{ detalleVivienda.fecha_creacion }}</p>
             </ion-card-content>
-            <ion-button expand="block" (click)="guardarFavorito(detalleVivienda)"><ion-icon name="heart"></ion-icon> Guardar en Favoritos </ion-button>
+            <ion-button *ngIf="!isFavorite" expand="block" (click)="guardarFavorito(detalleVivienda)"><ion-icon name="heart"></ion-icon> Guardar en Favoritos </ion-button>
+            <ion-button *ngIf="isFavorite" [disabled]="true" expand="block"><ion-icon name="checkmark-done-outline"></ion-icon> Guardado en Favoritos </ion-button>
           </ion-card>
         </ion-content>
       </ng-template>
     </ion-modal>
-  </ion-item>
 
 </ion-content>

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { ActivatedRoute } from '@angular/router';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, IonModal } from '@ionic/angular';
 import { DataServiceService } from '../servicios/data-service.service';
 
 @Component({
@@ -11,6 +11,8 @@ import { DataServiceService } from '../servicios/data-service.service';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page implements OnInit {
+  @ViewChild('modal') modal: IonModal | undefined;
+
   map: Leaflet.Map | undefined;
   markers: Leaflet.Marker[] = [];
   userMarker: Leaflet.Marker | undefined;
@@ -31,12 +33,14 @@ export class Tab1Page implements OnInit {
   per_page = 20;
   detalleVivienda: any = {};
   isModalOpen: boolean = false; // Add this property to control modal state
+  isFavorite: boolean = false; // Check if the current item is in favorites
+  favoritos: any[] = [];
 
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController,
     private apiCon: DataServiceService, private alertController: AlertController) {}
 
   ngOnInit() {
-
+    this.obtenerFavoritos();
   }
 
   ionViewDidEnter() {
@@ -82,7 +86,6 @@ export class Tab1Page implements OnInit {
     });
     this.obtenerViviendas().subscribe((viviendas: any) => {
       this.viviendas = viviendas;
-      console.log(this.viviendas[0]);
       viviendas.forEach((vivienda: any) => {
         if(this.map){
           const marker = Leaflet.marker([vivienda.latitud, vivienda.longitud], {icon: Leaflet.icon({
@@ -145,21 +148,26 @@ export class Tab1Page implements OnInit {
   }
 
   openDetalle(viv: any){
-    this.detalleVivienda = viv;
+    this.detalleVivienda = {...viv};
+    console.log(viv.links_contacto);
     this.detalleVivienda.links_contacto = JSON.parse(viv.links_contacto);
     this.isModalOpen = true;
-
+    this.isFavorite = this.favoritos.some((Fav) => Fav.id_vivienda === this.detalleVivienda.id_vivienda);
   }
+
   closeModal(){ // Add this method to close the modal
     this.isModalOpen = false;
+    setTimeout(() => {
+      this.isFavorite = false;
+    }, 300);
   }
 
   async guardarFavorito(viv: any){
     const obj = { usuario: this.datosGlobales.userGlobal, id_vivienda: viv.id_vivienda };
     this.apiCon.guardarFavoritos(obj).subscribe((data) => {
       console.log(data);
-
     });
+    this.isFavorite = true;
     const alert = await this.alertController.create({
       header: 'Guardado',
       message: 'Se ha guarda la vivienda en favoritos',
@@ -168,5 +176,10 @@ export class Tab1Page implements OnInit {
     await alert.present();
   }
 
+  async obtenerFavoritos(){
+    this.apiCon.getViviendasFavoritos().subscribe((data) => {
+      this.favoritos = data;
+    });
+  }
 
 }
