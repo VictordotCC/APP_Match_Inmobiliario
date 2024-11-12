@@ -5,14 +5,14 @@
         <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" [routerLink]="['/preferencias']"/>
       </ion-avatar>
       <ion-icon name="notifications-outline" slot="end"></ion-icon>
-      <ion-searchbar placeholder="Buscar"></ion-searchbar>
+      <ion-searchbar placeholder="Buscar" (ionChange) ="searchVivienda($event)"></ion-searchbar>
     </ion-item>
   </ion-toolbar>
 </ion-header>
 <ion-toolbar>
   <ion-item>
     <ion-icon name="options" slot="start"></ion-icon>
-    <ion-segment class="filtros2" value="Venta" [(ngModel)]="opcionFiltro">
+    <ion-segment class="filtros2" value="Venta" [(ngModel)]="opcionFiltro" (ionChange)="onSegmentChange($event)">
       <ion-segment-button id="btn-todos" value="Todos"  small>
         <ion-label>Todos</ion-label>
       </ion-segment-button>
@@ -35,7 +35,8 @@
     <div id="map"></div>
   </ion-item>
   <ion-item class="side-scroll">
-    <ion-card *ngFor="let vivienda of viviendas" >
+    <!-- <ion-card *ngFor="let vivienda of viviendas | filtroViviendas:searchText" > -->
+    <ion-card *ngFor="let vivienda of filterViviendas" >
       <img class="imagen_casa"  [src]="vivienda.imagenes[0].url" />
       <ion-card-header>
         <!--<ion-card-title>{{ vivienda.nombre_propiedad }}</ion-card-title>-->

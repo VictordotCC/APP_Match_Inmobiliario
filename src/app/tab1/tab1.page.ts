@@ -19,15 +19,15 @@ export class Tab1Page implements OnInit {
   private defaultIcon = Leaflet.icon({
     iconUrl: '../../assets/markers/marker-icon.png',
     shadowUrl: '../../assets/markers/marker-shadow.png'})
-
+  textSearch: string = '';
   opcionFiltro: string = 'Todos';
   user: string = '';
   pass: string = '';
   tipo: string = '';
-
+  filterViviendas: any[] = [];
   viewLat: number = 0;
   viewLon: number = 0;
-
+  searchText: string = '';
   viviendas: any[] = [];
   page = 0;
   per_page = 20;
@@ -41,6 +41,7 @@ export class Tab1Page implements OnInit {
 
   ngOnInit() {
     this.obtenerFavoritos();
+
   }
 
   ionViewDidEnter() {
@@ -86,6 +87,7 @@ export class Tab1Page implements OnInit {
     });
     this.obtenerViviendas().subscribe((viviendas: any) => {
       this.viviendas = viviendas;
+      this.filterViviendas = viviendas;
       viviendas.forEach((vivienda: any) => {
         if(this.map){
           const marker = Leaflet.marker([vivienda.latitud, vivienda.longitud], {icon: Leaflet.icon({
@@ -182,4 +184,47 @@ export class Tab1Page implements OnInit {
     });
   }
 
+  onSegmentChange(event: any) {
+    this.opcionFiltro = event.detail.value;
+    this.applyFilters();
+  }
+  searchVivienda(event: any) {
+    this.searchText = event.target.value;
+    this.applyFilters();
+  }
+  applyFilters() {
+    let filtered = this.viviendas;
+
+    if (this.opcionFiltro !== 'Todos') {
+      filtered = filtered.filter((vivienda: any) => {
+        return vivienda.tipo_operacion === (this.opcionFiltro === 'Venta' ? false : true);
+      });
+    }
+
+    if (this.searchText && this.searchText.trim() !== '') {
+      filtered = filtered.filter((vivienda: any) => {
+        return vivienda.nombre_propiedad.toLowerCase().includes(this.searchText.toLowerCase());
+      });
+    }
+
+    this.filterViviendas = filtered;
+  }
+
+  /*
+  searchVivienda(event: any){
+    this.textSearch = event.target.value;
+    //this.nearbyMarker();
+    if (this.textSearch && this.textSearch.trim() !== '') {
+      this.filterViviendas = this.filterViviendas.filter((vivienda: any) => {
+        return (vivienda.nombre_propiedad.toLowerCase().indexOf(this.textSearch.toLowerCase()) > -1);
+      });
+    } else if (this.opcionFiltro === 'Todos') {
+      this.filterViviendas = this.viviendas;
+    } else if (this.opcionFiltro === 'Venta'){
+      this.textSearch = this.opcionFiltro;
+    } else if (this.opcionFiltro === 'Arriendo'){
+      this.textSearch = this.opcionFiltro;
+    }
+  }
+    */
 }

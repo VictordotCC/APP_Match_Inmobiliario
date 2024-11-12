@@ -7,14 +7,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PipesModule } from './pipes/pipes.module';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-
+import { FiltroViviendasPipe } from './filtro-viviendas.pipe';
 //import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @NgModule({
  // schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, PipesModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, PipesModule, FiltroViviendasPipe],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: LocationStrategy, useClass: HashLocationStrategy}
