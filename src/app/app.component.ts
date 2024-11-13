@@ -5,6 +5,13 @@ import { GlobalDataService } from './servicios/global-data.service';
 import { Capacitor } from '@capacitor/core';
 import { NotificationsPushService } from './servicios/notifications-push.service';
 import { register } from 'swiper/element/bundle';
+import { addIcons } from 'ionicons';
+import {chevronDownCircle,
+  chevronForwardCircle,
+  chevronUpCircle,
+  colorPalette,
+  document,
+  globe} from 'ionicons/icons';
 register();
 
 @Component({
@@ -20,7 +27,9 @@ export class AppComponent implements OnInit {
 
   constructor(private platform: Platform, private datosGlobales: GlobalDataService,
               private notificationsPushService: NotificationsPushService)
-              { this.init() }
+              { this.init();
+                addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, colorPalette, document, globe });
+               }
 
   ngOnInit() {
     this.platform.ready().then(() => {

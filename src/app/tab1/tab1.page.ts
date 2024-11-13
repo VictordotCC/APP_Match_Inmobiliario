@@ -4,6 +4,13 @@ import { GlobalDataService } from '../servicios/global-data.service';
 import { ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, IonModal } from '@ionic/angular';
 import { DataServiceService } from '../servicios/data-service.service';
+import { addIcons } from 'ionicons';
+import {chevronDownCircle,
+  chevronForwardCircle,
+  chevronUpCircle,
+  colorPalette,
+  document,
+  globe} from 'ionicons/icons';
 
 @Component({
   selector: 'app-tab1',
@@ -35,9 +42,11 @@ export class Tab1Page implements OnInit {
   isModalOpen: boolean = false; // Add this property to control modal state
   isFavorite: boolean = false; // Check if the current item is in favorites
   favoritos: any[] = [];
-
+  mostrarMapa: boolean = true;
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController,
-    private apiCon: DataServiceService, private alertController: AlertController) {}
+    private apiCon: DataServiceService, private alertController: AlertController) {
+      addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, colorPalette, document, globe });
+    }
 
   ngOnInit() {
     this.obtenerFavoritos();
@@ -56,6 +65,9 @@ export class Tab1Page implements OnInit {
         this.nearbyMarker();
       }
     });
+  }
+  showMapa(){
+    this.mostrarMapa = !this.mostrarMapa;
   }
 
   initializeMap() {

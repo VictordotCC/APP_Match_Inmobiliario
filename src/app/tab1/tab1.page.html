@@ -26,8 +26,20 @@
   </ion-item>
 </ion-toolbar>
 <ion-content [fullscreen]="true">
-  <ion-item >
-    <ion-fab vertical="bottom" horizontal="end" slot="start">
+  <!--
+  <ion-fab vertical="top" horizontal="end" slot="fixed" [edge]="true">
+    <ion-fab-button  size="small" color="dark">
+      <ion-icon name="chevron-down-circle"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="bottom">
+      <ion-fab-button>
+        <ion-icon name="globe" (click)="showMapa()"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+  -->
+  <ion-item>
+    <ion-fab vertical="bottom" horizontal="end" slot="start" >
       <ion-fab-button (click)="centrarMapa()" size="small" color="dark">
         <ion-icon name="locate" style="z-index: 99;"></ion-icon>
       </ion-fab-button>
