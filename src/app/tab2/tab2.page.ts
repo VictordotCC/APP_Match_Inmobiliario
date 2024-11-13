@@ -29,7 +29,11 @@ export class Tab2Page implements OnInit {
   isModalOpen2: boolean = false; // Add this property to control modal state
   inputUfmin: number = 0;
   inputUfmax: number = 0;
-
+  mtsMin: number = 0;
+  mtsMax: number = 0;
+  isModalOpen3: boolean = false; // Add this property to control modal state
+  isModalOpen4: boolean = false; // Add this property to control modal state
+  inputHabitacion: number = 0;
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, private sanitizer: DomSanitizer) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
     this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl); // Correct property name
@@ -71,16 +75,34 @@ export class Tab2Page implements OnInit {
       });
     }
 
-    if (this.inputUfmin > 0) {//(this.inputUfmin != null) { //filtro valor mínimo
+    if (this.inputUfmin > 0) {//filtro valor mínimo
       filtered = filtered.filter((vivienda: any) => {
         return vivienda.precio_uf >= this.inputUfmin;
       });
     }
-    if (this.inputUfmax > 0) { //(this.inputUfmax != null) {//filtro valor máximo
+    if (this.inputUfmax > 0) {//filtro valor máximo
       filtered = filtered.filter((vivienda: any) => {
         return vivienda.precio_uf <= this.inputUfmax;
       });
     }
+    if (this.mtsMin > 0) {//filtro valor mínimo
+      filtered = filtered.filter((vivienda: any) => {
+        return vivienda.area_total >= this.mtsMin;
+      });
+    }
+    if (this.mtsMax > 0) { //filtro valor máximo
+      filtered = filtered.filter((vivienda: any) => {
+        return vivienda.area_total <= this.mtsMax;
+      });
+    }
+    if (this.inputHabitacion > 0) { //filtro valor habitaciones
+      filtered = filtered.filter((vivienda: any) => {
+        return vivienda.habitaciones >= this.inputHabitacion;
+      });
+    }
+
+
+
       this.filterViviendas = filtered;
   }
 
@@ -116,9 +138,21 @@ export class Tab2Page implements OnInit {
   closeModal2(){ // Add this method to close the modal
     this.isModalOpen2 = false;
   }
+  closeModal3(){ // Add this method to close the modal
+    this.isModalOpen3 = false;
+  }
+  closeModal4(){ // Add this method to close the modal
+    this.isModalOpen4 = false;
+  }
 
   filtroPrecio(){
     this.isModalOpen2 = true;
+  }
+  filtroMetros(){
+    this.isModalOpen3 = true;
+  }
+  filtroHabitacion(){
+    this.isModalOpen4 = true;
   }
 
   ingresoValorViviendaMin(e: Event){
@@ -127,15 +161,39 @@ export class Tab2Page implements OnInit {
   ingresoValorViviendaMax(e: Event){
     this.inputUfmax = parseFloat((e.target as HTMLInputElement).value);
   }
+
+  ingMtsMin(e: Event){
+    this.mtsMin = parseFloat((e.target as HTMLInputElement).value);
+  }
+
+  ingMtsMax(e: Event){
+    this.mtsMax = parseFloat((e.target as HTMLInputElement).value);
+  }
+  ingHabitacion(e: Event){
+    this.inputHabitacion = parseFloat((e.target as HTMLInputElement).value);
+  }
+
   filtrarPrecio(){
     this.applyFilters();
     this.closeModal2();
   }
-  limpiarFiltroPrecio(){
+  filtrarMetros(){
+    this.applyFilters();
+    this.closeModal3();
+  }
+  filtrarHabitacion(){
+    this.applyFilters();
+    this.closeModal4();
+  }
+
+  limpiarFiltro(){
     this.inputUfmin = 0;
     this.inputUfmax = 0;
+    this.mtsMin = 0;
+    this.mtsMax = 0;
+    this.inputHabitacion = 0;
     this.applyFilters();
-    //this.closeModal2();
+
   }
 
 

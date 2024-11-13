@@ -24,6 +24,24 @@ ion-modal ion-toolbar {
   --background: rgb(14 116 144);
   --color: white;
 }
+#modal_uf {//ion-modal2 {
+  --height: 35%; //50%;
+  --width:90%;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+#modal_mts {//ion-modal2 {
+  --height: 35%; //50%;
+  --width:90%;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+#modal_habitacion {//ion-modal2 {
+  --height: 35%; //50%;
+  --width:90%;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
 
 .imagen_casa{
   width: 90%; //50%;

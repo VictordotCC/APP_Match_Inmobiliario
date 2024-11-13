@@ -26,13 +26,13 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
 <ion-toolbar>
   <ion-item>
     <ion-segment value ="Precio"  (ionChange)="segmentPrecMtsHab($event)" #segmento1>
-      <ion-segment-button id="open-modal2" small (click)="filtroPrecio()">
+      <ion-segment-button  value="Precio" id="open-modal2" small (click)="filtroPrecio()">
         <ion-label>Precio</ion-label>
       </ion-segment-button>
-      <ion-segment-button id="open-modal3" small>
+      <ion-segment-button  value="Mts" id="open-modal3" small (click)="filtroMetros()">
         <ion-label>mts</ion-label>
       </ion-segment-button>
-      <ion-segment-button id="open-modal4" small>
+      <ion-segment-button  value="Habitaciones" id="open-modal4" small (click)="filtroHabitacion()">
         <ion-label>Habitaciones</ion-label>
       </ion-segment-button>
     </ion-segment>
@@ -94,7 +94,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
   </ion-list>
 
   <ion-item>
-    <ion-modal #modal trigger="open-modal" [isOpen]="isModalOpen">
+    <ion-modal #modal trigger="open-modal" [isOpen]="isModalOpen" (willDismiss)="closeModal()">
       <ng-template>
         <ion-content>
           <ion-toolbar>
@@ -140,7 +140,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
     </ion-modal>
   </ion-item>
   <ion-item>
-    <ion-modal #modal2 trigger="open-modal2" [isOpen]="isModalOpen2">
+    <ion-modal #modal2 id= "modal_uf" trigger="open-modal2" [isOpen]="isModalOpen2" (willDismiss)="closeModal2()">
       <ng-template>
         <ion-content>
           <ion-toolbar>
@@ -162,6 +162,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
                         type="numeric"
                         max="9999"
                         maxlength="4"
+                        label="mínimo"
                         labelPlacement="floating"
                         helperText="Ingrese un monto valido"
                         errorText="número incorrecto"
@@ -175,6 +176,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
                         type="numeric"
                         max="9999"
                         maxlength="4"
+                        label="máximo"
                         labelPlacement="floating"
                         helperText="Ingrese un monto valido"
                         errorText="número incorrecto"
@@ -187,7 +189,113 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
                     <ion-button expand="block" (click)="filtrarPrecio()">Filtrar</ion-button>
                   </ion-col>
                   <ion-col size="6" class="center-content">
-                    <ion-button expand="block" (click)="limpiarFiltroPrecio()">Limpiar</ion-button>
+                    <ion-button expand="block" (click)="limpiarFiltro()">Limpiar</ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+  <ion-item>
+    <ion-modal #modal3 id="modal_mts" trigger="open-modal3" [isOpen]="isModalOpen3" (willDismiss)="closeModal3()">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Metros Propiedad</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal3()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card>
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9999"
+                        maxlength="4"
+                        label="mínimo"
+                        labelPlacement="floating"
+                        helperText="Ingrese un monto valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "mtsMin"
+                        (ionChange)="ingMtsMin($event)"></ion-input>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9999"
+                        maxlength="4"
+                        label="máximo"
+                        labelPlacement="floating"
+                        helperText="Ingrese un monto valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "mtsMax"
+                        (ionChange)="ingMtsMax($event)"></ion-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="filtrarMetros()">Filtrar</ion-button>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="limpiarFiltro()">Limpiar</ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+  <ion-item>
+    <ion-modal #modal4 id="modal_habitacion" trigger="open-modal4" [isOpen]="isModalOpen4" (willDismiss)="closeModal4()">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Cantidad de Habitaciones</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal4()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card>
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9"
+                        maxlength="1"
+                        label="Cant. Habitaciones"
+                        labelPlacement="floating"
+                        helperText="Ingrese un número valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "inputHabitacion"
+                        (ionChange)="ingHabitacion($event)"></ion-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="filtrarHabitacion()">Filtrar</ion-button>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="limpiarFiltro()">Limpiar</ion-button>
                   </ion-col>
                 </ion-row>
               </ion-grid>
