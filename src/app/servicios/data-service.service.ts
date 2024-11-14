@@ -56,19 +56,6 @@ export class DataServiceService {
     );
   }
 
-  /*METODO ANTIGUO
-  getViviendasCercanas(): Observable<any> {
-    const url = this.apiMatch + 'viviendas_cercanas';
-    return this.datosGlobales.ubicacion$.pipe(
-      switchMap(ubicacionValor => {
-        const params = new HttpParams()
-          .set('lat', ubicacionValor.lat.toString())
-          .set('lon', ubicacionValor.lon.toString())
-        return this.http.get<any>(url, {params});
-      })
-    );
-  }*/
-
   getViviendasCercanas(lat: number, lon: number): Observable<any> {
     const url = this.apiMatch + 'viviendas_cercanas';
     return this.datosGlobales.ubicacion$.pipe(
@@ -117,26 +104,13 @@ export class DataServiceService {
     };
     return this.http.post<any>(url, postData);
   }
-  /*
-  guardarFavoritos(id: any): Observable<any> {
+
+  borrarFavorito(obj:any): Observable<any> {
     const url = this.apiMatch + 'favoritos';
-    const params = new HttpParams().set('id_vivienda', id);
-    return this.http.post<any>(url, {params});
-  } */
-  /*
-    guardarFavoritos(obj:any): Observable<any> {
-      const url = this.apiMatch + 'favoritos';
-      const params = new HttpParams().set('id_vivienda', obj.id_vivienda).set('id_usuario', obj.id_usuario).set('fecha_guardado', obj.fecha_guardado);
-      return this.http.post<any>(url, {params});
-    }
-  */
-
-
-
-  /*
-  guardarFavoritos(): Observable<any> {
-    const url = this.apiMatch + 'favoritos';
-    return this.http.post<any>(url, this.httpOptions);
+    const postData = {
+      id_vivienda: obj.id_vivienda,
+      usuario: obj.usuario
+    };
+    return this.http.request('DELETE', url, {body: postData});
   }
-  */
 }

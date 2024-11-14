@@ -163,7 +163,6 @@ export class Tab1Page implements OnInit {
 
   openDetalle(viv: any){
     this.detalleVivienda = {...viv};
-    console.log(viv.links_contacto);
     this.detalleVivienda.links_contacto = JSON.parse(viv.links_contacto);
     this.isModalOpen = true;
     this.isFavorite = this.favoritos.some((Fav) => Fav.id_vivienda === this.detalleVivienda.id_vivienda);
@@ -187,6 +186,7 @@ export class Tab1Page implements OnInit {
       message: 'Se ha guarda la vivienda en favoritos',
       buttons: ['Aceptar']
     });
+    this.favoritos.push(viv);
     await alert.present();
   }
 

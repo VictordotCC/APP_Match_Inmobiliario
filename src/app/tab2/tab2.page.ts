@@ -1,9 +1,10 @@
 import { DataServiceService } from './../servicios/data-service.service';
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { IonSegment } from '@ionic/angular';
+import { IonSegment, AlertController } from '@ionic/angular';
 import { Observable} from 'rxjs';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { alert } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tab2',
@@ -34,7 +35,9 @@ export class Tab2Page implements OnInit {
   isModalOpen3: boolean = false; // Add this property to control modal state
   isModalOpen4: boolean = false; // Add this property to control modal state
   inputHabitacion: number = 0;
-  constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, private sanitizer: DomSanitizer) {
+  
+  constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, 
+    private sanitizer: DomSanitizer, private alertController: AlertController) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
     this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl); // Correct property name
   }
@@ -120,6 +123,35 @@ export class Tab2Page implements OnInit {
     });
   }
 
+  async borrarFav(vivienda: any){
+    const fav = {id_vivienda: vivienda.id_vivienda, usuario: this.datosGlobales.userGlobal};
+    console.log(fav);
+    const alert = await this.alertController.create({
+      header: 'Eliminar',
+      message: '¿Desea eliminar la vivienda de favoritos?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.DataService.borrarFavorito(fav).subscribe( data => {
+              this.obtenerFavs();
+              setTimeout(() => {
+                this.closeModal();
+              }, 500);
+            });
+            return true;
+          }
+        }
+      ]
+    });
+    return await alert.present();
+  }
+
+
   formatString(str: string){
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -131,6 +163,7 @@ export class Tab2Page implements OnInit {
     this.isModalOpen = true;
 
   }
+  //FIXME: Add Generic method to close modals
 
   closeModal(){ // Add this method to close the modal
     this.isModalOpen = false;

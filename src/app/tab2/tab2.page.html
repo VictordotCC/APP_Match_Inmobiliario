@@ -134,6 +134,7 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
               <p><strong>Tipo Subsidio: </strong> {{ detalleVivienda.tipo_subsidio }}</p>
               <p>Propiedad publicada el : {{ detalleVivienda.fecha_creacion }}</p>
             </ion-card-content>
+            <ion-button id="eliminar-fav" (click)="borrarFav(detalleVivienda)" expand="block" color="danger"><ion-icon name="trash"></ion-icon> Borrar de Favoritos </ion-button>
           </ion-card>
         </ion-content>
       </ng-template>
