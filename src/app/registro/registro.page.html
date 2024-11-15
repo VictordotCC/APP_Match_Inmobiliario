@@ -21,7 +21,7 @@
       </ion-item>
       <ion-item>
         <ion-label position="floating">N° de Teléfono</ion-label>
-        <ion-input formControlName="telefono" class="form-control" ></ion-input>
+        <ion-input formControlName="telefono" class="form-control" type="tel" maxlength="11"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="floating">Contraseña</ion-label>
@@ -31,12 +31,52 @@
         <ion-label position="floating">Repetir Contraseña</ion-label>
         <ion-input formControlName="repContrasena" type="password"  class="form-control" ></ion-input>
       </ion-item>
+      <div class="check">
+        <ion-checkbox formControlName="terms" slot="start" position="fixed">Leí y acepto los <a href="#" (click)="$event.stopPropagation()">Terminos y Condiciones</a></ion-checkbox>
+      </div>
+      <ng-container *ngFor = "let validation of validation_messages.correo">
+        <div class="error-message" *ngIf="formularioRegistro?.get('correo')?.hasError(validation.type) && (formularioRegistro?.get('correo')?.dirty || formularioRegistro?.get('correo')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.nombres">
+        <div class="error-message" *ngIf="formularioRegistro?.get('nombres')?.hasError(validation.type) && (formularioRegistro?.get('nombres')?.dirty || formularioRegistro?.get('nombres')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.apellidos">
+        <div class="error-message" *ngIf="formularioRegistro?.get('apellidos')?.hasError(validation.type) && (formularioRegistro?.get('apellidos')?.dirty || formularioRegistro?.get('apellidos')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.telefono">
+        <div class="error-message" *ngIf="formularioRegistro?.get('telefono')?.hasError(validation.type) && (formularioRegistro?.get('telefono')?.dirty || formularioRegistro?.get('telefono')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.contrasena">
+        <div class="error-message" *ngIf="formularioRegistro?.get('contrasena')?.hasError(validation.type) && (formularioRegistro?.get('contrasena')?.dirty || formularioRegistro?.get('contrasena')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.repContrasena">
+        <div class="error-message" *ngIf="formularioRegistro?.get('repContrasena')?.hasError(validation.type) && (formularioRegistro?.get('repContrasena')?.dirty || formularioRegistro?.get('repContrasena')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.terms">
+        <div class="error-message" *ngIf="formularioRegistro?.get('terms')?.hasError(validation.type) && (formularioRegistro?.get('terms')?.dirty || formularioRegistro?.get('terms')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="formularioRegistro.hasError('areEqual') && formularioRegistro.get('repContrasena')?.dirty">
+        <div class="error-message">
+          Las contraseñas no coinciden
+        </div>
+      </ng-container>
     </form>
-  </ion-card-content> 
-  <div class="check">
-    <ion-checkbox slot="start" position="fixed">Leí y acepto los <a href="#" (click)="$event.stopPropagation()">Terminos y Condiciones</a></ion-checkbox>
-  </div>
+  </ion-card-content>
   <div class="btn-regis">
-    <ion-button name ="btn-registrarse" shape="round" color="primary" (click)="registrarse()">Registrarse</ion-button>
+    <ion-button name ="btn-registrarse" shape="round" color="primary" [disabled]="formularioRegistro.invalid" (click)="registrarse()">Registrarse</ion-button>
   </div>
 </ion-content>

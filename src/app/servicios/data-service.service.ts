@@ -113,4 +113,11 @@ export class DataServiceService {
     };
     return this.http.request('DELETE', url, {body: postData});
   }
+
+  //ZONA DE USUARIOS
+  getUser(user: string): Observable<any> {
+    const url = this.apiMatch + 'usuario';
+    const params = new HttpParams().set('usuario', user);
+    return this.http.get<any>(url, {params});
+  }
 }
