@@ -86,7 +86,6 @@ export class AppComponent implements OnInit {
         console.error('Error al obtener la ubicación', this.posWatch);
         return;
       }
-      console.log('Ubicación actual posWatch:', position.coords.latitude, position.coords.longitude);
       this.datosGlobales.setUbicacion(position.coords.latitude, position.coords.longitude, position.timestamp);
       //TODO: Logica de guardar ubicacion cada vez que cambie
     }).toString();

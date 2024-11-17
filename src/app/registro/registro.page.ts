@@ -86,17 +86,17 @@ export class RegistroPage implements OnInit {
   ngOnInit() {
   }
 
-  async registrarse() {
+  registrarse() {
     // TODO: implementar la lógica para registrar al usuario
-    console.log(this.formularioRegistro.value);
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Registro',
-      message: 'Registro exitoso',
-      buttons: ['OK']
+    this.dataService.registrarUsuario(this.formularioRegistro.value).subscribe(async (data) => {
+      const alert = await this.alertController.create({
+        cssClass: 'my-custom-class',
+        header: 'Registro',
+        message: 'Registro exitoso',
+        buttons: ['OK']
+      });
+      await alert.present();
+      this.router.navigate(['/login']);
     });
-
-    await alert.present();
-    this.router.navigate(['/login']);
   }
 }

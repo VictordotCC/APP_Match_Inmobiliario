@@ -120,4 +120,17 @@ export class DataServiceService {
     const params = new HttpParams().set('usuario', user);
     return this.http.get<any>(url, {params});
   }
+
+  registrarUsuario(obj:any): Observable<any> {
+    const url = this.apiMatch + 'registro';
+    const postData = {
+      contrasena: obj.contrasena,
+      nombres: obj.nombres,
+      apellidos: obj.apellidos,
+      telefono: obj.telefono,
+      correo: obj.correo
+    };
+    return this.http.post<any>(url, postData);
+    
+  }
 }
