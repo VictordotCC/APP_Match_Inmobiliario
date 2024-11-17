@@ -47,5 +47,27 @@ export class NotificationsPushService {
       alert('Notificación en segundo plano: ' + JSON.stringify(notification));
     });
   }
+  public sendNotification(title: string, body: string) {
+    PushNotifications.createChannel({
+      id: 'match-channel',
+      name: 'Match Notifications',
+      description: 'Notifications for matches',
+      importance: 5,
+      visibility: 1,
+      sound: 'default',
+      vibration: true,
+    });
+    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+      console.log('Notification received: ', notification);
+    });
+
+    PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
+      console.log('Notification action performed: ', notification);
+    });
+
+    // Scheduling notifications is not supported by PushNotifications, consider using LocalNotifications instead
+    console.log('Notification scheduled: ', { title, body });
+    alert(`Notification scheduled: ${title} - ${body}`);
+  }
 
 }

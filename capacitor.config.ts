@@ -5,7 +5,12 @@ const config: CapacitorConfig = {
   appId: 'app-matchinmobiliario',
   appName: 'app.web.matchInmobiliario',
   //appName: 'app-MatchInmobiliario',
-  webDir: 'www'
+  webDir: 'www',
+  plugins	: { //agregado para push notifications 16/11/2024 manu
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert'],
+    },
+  },
 };
 
 export default config;
