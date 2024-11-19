@@ -6,6 +6,7 @@ import { GlobalDataService } from '../servicios/global-data.service';
 import { IonSegment } from '@ionic/angular';
 import { AppComponent } from '../app.component';
 import { TabsPage } from '../tabs/tabs.page';
+import { DataServiceService } from '../servicios/data-service.service';
 
 @Component({
   selector: 'app-login',
@@ -25,18 +26,19 @@ export class LoginPage  implements OnInit{
     public fb: FormBuilder, public alertController: AlertController,private router: Router,
     private datosGlobales: GlobalDataService,
     private appComponent: AppComponent,
-    public navCtrl: NavController
+    public navCtrl: NavController,
+    private apiCon: DataServiceService
   ) {
 
     this.formularioLogin = this.fb.group({
-      'correo': new FormControl("abc@def.com", [Validators.required, Validators.email]), /*eliminar el valor por defecto*/
-      'contrasena': new FormControl("1234", Validators.required), /*eliminar el valor por defecto*/
+      'correo': new FormControl("test@test.cl", [Validators.required, Validators.email]), /*eliminar el valor por defecto*/
+      'contrasena': new FormControl("Aa12341234", Validators.required), /*eliminar el valor por defecto*/
     });
 
   }
 
   ngOnInit(){
-
+    //TODO: Implementar autologin
   }
 
   navigateToRegistro() {
@@ -65,13 +67,10 @@ export class LoginPage  implements OnInit{
   /* Función para realizar algo al hacer click en el botón de ingresar */
 
   async ingresar(){
-    var userGlobal = this.datosGlobales.userGlobal;
-    var passGlobal = this.datosGlobales.passGlobal;
-    var userCompletoGlobal = {nombre: userGlobal, clave: passGlobal}
     var f = this.formularioLogin.value;
-    var usuario = {nombre:f.correo, clave:f.contrasena};
+    var usuario = {correo:f.correo, contrasena:f.contrasena};
 
-    if (usuario.nombre == null){
+    if (usuario.correo == null){
       const alert = await this.alertController.create({
         header: 'Error de logueo',
         message: 'Debe ingresar valores validos',
@@ -80,34 +79,40 @@ export class LoginPage  implements OnInit{
       await alert.present();
       this.limpiarFormulario();
     }
-    if (JSON.stringify(usuario) == JSON.stringify(userCompletoGlobal)){
-      this.datosGlobales.preferencias.usuario = usuario.nombre;
-      const alert = await this.alertController.create({
-        header: 'Bienvenido '+ this.datosGlobales.userNombreGlobal, //userGlobal,
-        message: 'Acceso Autorizado',
-        buttons: ['Aceptar']
-      });
-      await alert.present();
-      //this.router.navigate(['/tabs']);
-      //con el siguiente código enviamos los datos de usuario y contraseña a la página de tabs
-      /*
-      this.navCtrl.navigateForward(['/tabs'], {
-        queryParams: { user: userGlobal, pass: passGlobal, tipo: this.tipoUsuario }
-      });
-      */
-     this.navCtrl.navigateForward(['/tabs']);
-    }
-    if (usuario.nombre != userGlobal || usuario.clave != passGlobal ){
-      console.log('error de login');
-      const alert = await this.alertController.create({
-        header: 'Usuario',
-        message: 'El usuario no existe o la contraseña es incorrecta',
-        buttons: ['Aceptar']
+    this.apiCon.loginUsuario(usuario).subscribe(async (data: any) => {
+      console.log(data);
+      if (data.status == 200){
+        //this.datosGlobales.preferencias.usuario = usuario.correo;
+        const alert = await this.alertController.create({
+          header: 'Bienvenido '+ data.user.nombres+' '+data.user.apellidos,
+          message: 'Acceso Autorizado',
+          buttons: ['Aceptar']
         });
         await alert.present();
-        //this.limpiarFormulario();
-
-        }
+        //TODO Guardar el token de acceso en el local storage
+        //TODO: Eliminar lo que sigue
+        this.datosGlobales.userGlobal = usuario.correo;
+        this.datosGlobales.userTipoGlobal = this.tipoUsuario;
+        this.datosGlobales.userNombreGlobal = data.user.nombres;
+        this.datosGlobales.userApellidoGlobal = data.user.apellidos;
+        this.datosGlobales.userTelefonoGlobal = data.user.telefono;
+        this.datosGlobales.activoGlobal = data.user.activo;
+        this.datosGlobales.linksContactoGlobal = data.user.links_contacto;
+        this.datosGlobales.imgGlobal = data.user.imagen;
+        this.datosGlobales.access_token = data.access_token;
+        this.datosGlobales.refresh_token = data.refresh_token;
+        //HASTA ACÁ
+        this.navCtrl.navigateForward(['/tabs']);
+      } else if (data.status == 401){
+        const alert = await this.alertController.create({
+          header: 'Error de logueo',
+          message: 'El usuario no existe o la contraseña es incorrecta',
+          buttons: ['Aceptar']
+        });
+        await alert.present();
+        this.limpiarFormulario();
+      }
+    });
 
   }
   /* función para limpiar los campos en el formulario */

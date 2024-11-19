@@ -8,7 +8,7 @@
     <ion-list>
       <ion-item>
         <!--<ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true" value="Comprador"> -->
-        <ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true"
+        <ion-select value="Comprador" placeholder="Cambiar Perfil" slot="end" okText="Confirmar" cancelText="Cancelar" fill="true"
           value="{{tipo}}"
           [(ngModel)]="tipo">
           <ion-select-option value="Comprador">Comprador</ion-select-option>
@@ -26,7 +26,7 @@
       <!--<img alt="Silhouette of a person's head" src="{{fotoPerfil}}" /> -->
     </ion-avatar>
     <ion-label>
-      <h2>{{nombre + apellido}}</h2>
+      <h2>{{nombre+' '+ apellido}}</h2>
       <p>{{user}}</p>
     </ion-label>
   </ion-item>

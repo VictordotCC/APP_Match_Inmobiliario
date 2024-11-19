@@ -11,8 +11,8 @@ import { GlobalDataService } from './global-data.service';
 })
 export class DataServiceService {
 
-  //apiMatch = 'http://127.0.0.1:5000/';
-  apiMatch = 'https://api-match-inmobiliario.onrender.com/';
+  apiMatch = 'http://127.0.0.1:5000/';
+  //apiMatch = 'https://api-match-inmobiliario.onrender.com/';
   apiViviendasUrl = '../../assets/Data/viviendas.json';
   apiImagenesUrl = '../../assets/Data/imagenes.json';
   httpOptions = {
@@ -29,7 +29,7 @@ export class DataServiceService {
   getViviendaSearch(){
     const url = this.apiMatch + 'favoritos';
     const params = new HttpParams()
-      .set('usuario', this.datosGlobales.userGlobal)
+      .set('usuario', this.datosGlobales.userGlobal!)
       .set('lat', this.datosGlobales.lat.toString())
       .set('lon', this.datosGlobales.lon.toString());
     return this.http.get<any[]>(url, {params});
@@ -73,7 +73,7 @@ export class DataServiceService {
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
       const params = new HttpParams()
-      .set('usuario', this.datosGlobales.userGlobal) //TODO: cambiar a this.datosGlobales.preferencias.usuario
+      .set('usuario', this.datosGlobales.userGlobal!) //TODO: cambiar a this.datosGlobales.preferencias.usuario
       .set('lat', this.datosGlobales.lat.toString())
       .set('lon', this.datosGlobales.lon.toString());
       return this.http.get<any>(url, {params});
@@ -90,7 +90,7 @@ export class DataServiceService {
   getViviendasFavoritos(): Observable<any[]> {
     const url = this.apiMatch + 'favoritos';
     const params = new HttpParams()
-      .set('usuario', this.datosGlobales.userGlobal)
+      .set('usuario', this.datosGlobales.userGlobal!)
       .set('lat', this.datosGlobales.lat.toString())
       .set('lon', this.datosGlobales.lon.toString());
     return this.http.get<any[]>(url, {params});
@@ -114,6 +114,22 @@ export class DataServiceService {
     return this.http.request('DELETE', url, {body: postData});
   }
 
+  obtenerPreferencias(): Observable<any> {
+    const url = this.apiMatch + 'preferencia';
+    const params = new HttpParams().set('correo', this.datosGlobales.userGlobal!);
+    return this.http.get<any>(url, {params});
+  }
+
+  guardarPreferencias(obj:any): Observable<any> {
+    const url = this.apiMatch + 'preferencia';
+    const postData = {
+      correo: obj.usuario,
+      preferencias: obj
+    };
+    return this.http.post<any>(url, postData);
+  }
+    
+
   //ZONA DE USUARIOS
   getUser(user: string): Observable<any> {
     const url = this.apiMatch + 'usuario';
@@ -132,5 +148,14 @@ export class DataServiceService {
     };
     return this.http.post<any>(url, postData);
 
+  }
+
+  loginUsuario(obj:any): Observable<any> {
+    const url = this.apiMatch + 'login';
+    const postData = {
+      correo: obj.correo,
+      contrasena: obj.contrasena
+    };
+    return this.http.post<any>(url, postData);
   }
 }

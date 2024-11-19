@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class PreferenciaUsuarioService {
-  public usuario: string = 'abc@def.com'; //TODO: Borrar default
-  public busquedaAutomatica: string = 'true';
+  public usuario: string = 'None';
+  public busquedaAutomatica: boolean = true;
   public distancia: number = 0;
   public tipo_operacion: boolean = false;
   public tipo_vivienda: number = 1;
@@ -24,8 +24,8 @@ export class PreferenciaUsuarioService {
   public banos: number = 0;
   public estaciona: number = 0;
   public bodega: number = 0;
-  public contactado: string = 'false';
-  public notificaciones: string = 'true';
+  public contactado: boolean = false;
+  public notificaciones: boolean = true;
 
   constructor() { }
 }

@@ -4,6 +4,7 @@ import { RangeCustomEvent } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
+import { DataServiceService } from '../servicios/data-service.service';
 
 
 @Component({
@@ -40,18 +41,22 @@ export class PreferenciaUsuarioPage implements OnInit {
   precio_uf_desde: number = 0; //para convertir el valor de la vivienda a UF
   precio_uf_hasta: number = 0; //para convertir el valor de la vivienda a UF
 
-  constructor( private alertController: AlertController, private router: Router, private datosGlobales: GlobalDataService) {
+  constructor( private alertController: AlertController, 
+    private router: Router, 
+    private datosGlobales: GlobalDataService,
+    private apiCon: DataServiceService) {
 
    }
 
   ngOnInit() {
     window.scrollTo(0,0);
-
+    console.log('usuario global: ',this.datosGlobales.userGlobal);
+    console.log('preferencias globales: ',this.datosGlobales.preferencias.usuario);
     if (this.datosGlobales.preferencias.usuario == this.datosGlobales.userGlobal){
       this.preferenciaUsuario = this.datosGlobales.preferencias;
 
       this.DistanciaRango = this.preferenciaUsuario.distancia;
-      this.cheCked = this.preferenciaUsuario.busquedaAutomatica === 'true' ? true : false;
+      this.cheCked = this.preferenciaUsuario.busquedaAutomatica;
       this.opPeracion = this.preferenciaUsuario.tipo_operacion == false ? 'Compra' : 'Arriendo';
       this.opPropiedad = (this.preferenciaUsuario.tipo_vivienda == 0 ? 'Departamento' : this.preferenciaUsuario.tipo_vivienda == 1 ? 'Casa' : 'Otro');
       this.opInmbueble = this.preferenciaUsuario.condicion;
@@ -62,15 +67,37 @@ export class PreferenciaUsuarioPage implements OnInit {
       this.tipoValor = this.preferenciaUsuario.TipoValor;
       this.valorMontoVivienda.min = this.preferenciaUsuario.ValorMinimo;
       this.valorMontoVivienda.max = this.preferenciaUsuario.ValorMaximo;
-      this.precio_uf_desde = this.preferenciaUsuario.precio_uf_desde;
-      this.precio_uf_hasta = this.preferenciaUsuario.precio_uf_hasta;
       this.opSubsidio = this.preferenciaUsuario.tipo_subsidio;
       this.cantHabitaciones = this.preferenciaUsuario.habitaciones;
       this.cantBanos = this.preferenciaUsuario.banos;
       this.estacionamiento = this.preferenciaUsuario.estaciona;
       this.bodega = this.preferenciaUsuario.bodega;
-      this.contactado = this.preferenciaUsuario.contactado === 'true' ? true : false;
-      this.notificaciones = this.preferenciaUsuario.notificaciones === 'true' ? true : false;
+      this.contactado = this.preferenciaUsuario.contactado;
+      this.notificaciones = this.preferenciaUsuario.notificaciones;
+    } else {
+      console.log('No hay preferencias guardadas');
+      this.apiCon.obtenerPreferencias().subscribe((data: any) => {
+        console.log(data);
+        this.DistanciaRango = data.preferencias.distancia;
+        this.cheCked = true //FIXME: implementar en DB
+        this.opPeracion = data.preferencias.tipo_operacion == false ? 'Compra' : 'Arriendo';
+        this.opPropiedad = (data.preferencias.tipo_vivienda == 0 ? 'Departamento' : data.preferencias.tipo_vivienda == 1 ? 'Casa' : 'Otro');
+        this.opInmbueble = data.preferencias.condicion;
+        this.areaTotal = data.preferencias.area_total;
+        this.pisos = data.preferencias.pisos;
+        this.areaConstruida = data.preferencias.area_construida
+        this.antiguedad = data.preferencias.antiguedad;
+        this.tipoValor = "UF"; //FIXME: implementar en DB
+        this.valorMontoVivienda.min = 0; //FIXME: agregar valor minimo en DB
+        this.valorMontoVivienda.max = 0; //FIXME: agregar valor maximo en DB
+        this.opSubsidio = data.preferencias.tipo_subsidio;
+        this.cantHabitaciones = data.preferencias.habitaciones;
+        this.cantBanos = data.preferencias.banos;
+        this.estacionamiento = data.preferencias.estaciona;
+        this.bodega = data.preferencias.bodega;
+        this.contactado = data.preferencias.contactado;
+        this.notificaciones = data.preferencias.notificaciones;
+      });
     }
   }
 
@@ -270,7 +297,7 @@ export class PreferenciaUsuarioPage implements OnInit {
 
     this.preferenciaUsuario = {
       usuario : this.datosGlobales.userGlobal,
-      busquedaAutomatica: this.cheCked.toString(),
+      busquedaAutomatica: this.cheCked,
       distancia: this.DistanciaRango,
       tipo_operacion: this.opPeracion == 'Compra' ? false : true,
       tipo_vivienda: (this.opPropiedad == 'Departamento' ? 0 : this.opPropiedad == 'Casa' ? 1 : 2),
@@ -289,18 +316,28 @@ export class PreferenciaUsuarioPage implements OnInit {
       banos: Math.round(this.cantBanos),
       estaciona: Math.round(this.estacionamiento),
       bodega: Math.round(this.bodega),
-      contactado: this.contactado.toString(),
-      notificaciones: this.notificaciones.toString(),
+      contactado: this.contactado,
+      notificaciones: this.notificaciones
     };
 
 
     // Guardar las preferencias del usuario en datos globales
     this.datosGlobales.setPreferencias(this.preferenciaUsuario);
 
-    //Para mostrar las preferencias del usuario en consola
-    console.log('preferencias del usuario: ',this.datosGlobales.preferencias);
-    // TODO: Guardar las preferencias del usuario en la base de datos
-
+    //Guardar las preferencias del usuario en la base de datos
+    this.apiCon.guardarPreferencias(this.preferenciaUsuario).subscribe(async (data: any) => {
+      if (data.status == 200){
+        console.log(data);
+        const alert = await this.alertController.create({
+          header: 'Preferencias Guardadas',
+          message: 'Preferencias guardadas exitosamente',
+          buttons: ['Aceptar']
+        });
+        await alert.present();
+      } else {
+        //TODO guardar localmente
+      }
+    });
     // Para navegra a la pagina de preferencias.
     //this.router.navigate(['preferencias'], {state: {preferencias: this.preferenciaUsuario}});
     this.router.navigate(['/preferencias']);

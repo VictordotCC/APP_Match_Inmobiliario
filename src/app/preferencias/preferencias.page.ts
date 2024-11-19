@@ -28,12 +28,13 @@ export class PreferenciasPage implements OnInit {
       console.log('Tipo:', this.tipo);
     });
     */
-    this.user = this.datosGlobales.userGlobal; //correo global
-    this.pass = this.datosGlobales.passGlobal;
+    this.user = this.datosGlobales.userGlobal!; //correo global
+    //this.pass = this.datosGlobales.passGlobal;
     this.tipo = this.datosGlobales.userTipoGlobal;
     this.nombre = this.datosGlobales.userNombreGlobal;
     this.apellido = this.datosGlobales.userApellidoGlobal;
     this.fotoPerfil = this.datosGlobales.imgGlobal;
+    console.log('User:', this.user);
   }
 
   async showAlert() {
