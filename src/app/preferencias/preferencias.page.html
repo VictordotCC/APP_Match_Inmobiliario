@@ -32,7 +32,7 @@
   </ion-item>
   <ion-list *ngIf="tipo === 'Comprador'">
     <ion-list-header>
-      <ion-label>Configuración</ion-label>
+      <ion-label><strong>Configuración</strong></ion-label>
     </ion-list-header>
     <ion-item button >
       <ion-label [routerLink]="['/preferencia-usuario']" >Preferencias</ion-label>
@@ -47,7 +47,36 @@
       <ion-label [routerLink]="">Privacidad y Datos</ion-label>
     </ion-item>
     <ion-list-header>
-      <ion-label [routerLink]="">Soporte</ion-label>
+      <ion-label><strong>Soporte</strong></ion-label>
+    </ion-list-header>
+    <ion-item button>
+      <ion-label [routerLink]="">Centro de denuncias</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-label [routerLink]="">Condiciones de servicio</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-label [routerLink]="">Política de privacidad</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-label [routerLink]="">Información de la App</ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-list *ngIf="tipo === 'Vendedor'">
+    <ion-list-header>
+      <ion-label><strong>Configuración</strong></ion-label>
+    </ion-list-header>
+    <ion-item button >
+      <ion-label [routerLink]="['/inmueble']">Ingresar un Inmueble</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-label [routerLink]="">Administración de la cuenta</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-label [routerLink]="">Privacidad y Datos</ion-label>
+    </ion-item>
+    <ion-list-header>
+      <ion-label><strong>Soporte</strong></ion-label>
     </ion-list-header>
     <ion-item button>
       <ion-label [routerLink]="">Centro de denuncias</ion-label>

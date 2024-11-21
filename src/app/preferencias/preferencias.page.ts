@@ -18,16 +18,7 @@ export class PreferenciasPage implements OnInit {
   fotoPerfil: string = '';
 
   ngOnInit() {
-    /*
-    this.route.queryParams.subscribe(params => { //Recibe los parametros de la URL y que se envian desde la pagina anterior
-      this.user = params['user'];
-      this.pass = params['pass'];
-      this.tipo = params['tipo'];
-      console.log('User:', this.user);
-      console.log('Pass:', this.pass);
-      console.log('Tipo:', this.tipo);
-    });
-    */
+
     this.user = this.datosGlobales.userGlobal!; //correo global
     //this.pass = this.datosGlobales.passGlobal;
     this.tipo = this.datosGlobales.userTipoGlobal;

@@ -11,8 +11,8 @@ import { GlobalDataService } from './global-data.service';
 })
 export class DataServiceService {
 
-  apiMatch = 'http://127.0.0.1:5000/';
-  //apiMatch = 'https://api-match-inmobiliario.onrender.com/';
+  //apiMatch = 'http://127.0.0.1:5000/';
+  apiMatch = 'https://api-match-inmobiliario.onrender.com/';
   apiViviendasUrl = '../../assets/Data/viviendas.json';
   apiImagenesUrl = '../../assets/Data/imagenes.json';
   httpOptions = {
@@ -96,6 +96,13 @@ export class DataServiceService {
     return this.http.get<any[]>(url, {params});
   }
 
+  //Guardar Viviendas
+  postVivienda(vivienda: any): Observable<any> {
+    const url = this.apiMatch + 'viviendas';
+    return this.http.post<any>(url, vivienda);
+  }
+
+
   guardarFavoritos(obj:any): Observable<any> {
     const url = this.apiMatch + 'favoritos';
     const postData = {
@@ -128,7 +135,7 @@ export class DataServiceService {
     };
     return this.http.post<any>(url, postData);
   }
-    
+
 
   //ZONA DE USUARIOS
   getUser(user: string): Observable<any> {
@@ -158,4 +165,22 @@ export class DataServiceService {
     };
     return this.http.post<any>(url, postData);
   }
+
+  //ZONA DE IMAGENES
+  //guardar imagenes
+  getImagenes(id: string): Observable<any> {
+    const url = this.apiMatch + 'imagenes';
+    const params = new HttpParams().set('id_vivienda', id);
+    return this.http.get<any>(url, {params});
+  }
+
+  postImagenes(obj:any): Observable<any> {
+    const url = this.apiMatch + 'imagenes';
+    return this.http.post<any>(url, obj);
+  }
+
+
+
+
+
 }

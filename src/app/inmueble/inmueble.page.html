@@ -1,0 +1,258 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-item>
+      <ion-title>Ingrese un Inmueble</ion-title>
+      <ion-icon slot="start" style="margin-left: 2%; color:rgb(30, 103, 170)"name="arrow-back-outline" size="large" [routerLink]="['/preferencias']"></ion-icon>
+      <!--
+      <ion-avatar slot="start">
+        <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" [routerLink]="['/preferencias']"/>
+      </ion-avatar>
+      -->
+      <!-- <ion-icon name="notifications-outline" slot="end"></ion-icon> -->
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div>
+    <ion-item>
+      <ion-label> Aquí podrá ingresar las viviendas que necesite publicar </ion-label>
+    </ion-item>
+  </div>
+  <div>
+    <ion-item>
+      <ion-label> Tipo de operación </ion-label> <!-- Tipo de operación -->
+      <ion-select placeholder="Selecciona una opción" [(ngModel)]="opPeracion" (ionChange)="selectedOperacion()">
+        <ion-select-option value="Venta"> Venta </ion-select-option>
+        <ion-select-option value="Arriendo"> Arriendo </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+  <div>
+    <ion-item>
+      <ion-label> Tipo de propiedad </ion-label> <!-- Tipo de propiedad -->
+      <ion-select placeholder="Selecciona una opción" [(ngModel)]="opPropiedad" (ionChange)="selectedPropiedad()">
+        <ion-select-option value="Casa">Casa</ion-select-option>
+        <ion-select-option value="Departamento">Departamento</ion-select-option>
+        <ion-select-option value="Otro">Otro</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+  <div>
+    <ion-item>
+      <ion-label> Condición del inmueble </ion-label> <!-- Condición del inmueble -->
+      <ion-select placeholder="Selecciona una opción" [(ngModel)]="opInmbueble" (ionChange)="selectedInmueble()">
+        <ion-select-option value="Nuevo">Nueva</ion-select-option>
+        <ion-select-option value="Usado">Usada</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6"> <!---- Metros cuadrados (area construida) -->
+        <ion-input fill="solid" type="numeric" maxlength="4" max="9999"
+          label= "mts2 Construidos"
+          labelPlacement="floating"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          [(ngModel)]="areaConstruida"
+          (ionChange)="metrosConstruidos($event)"></ion-input>
+      </ion-col>
+      <ion-col size="6"> <!---- años de antiguedad -->
+        <ion-input fill="solid" type="numeric" maxlength="3" max="999"
+          label="Antiguedad años"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          [(ngModel)]="antiguedad"
+          (ionChange)="ingresarAntiguedad($event)"></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6"> <!---- Metros cuadrados (area Total) -->
+        <ion-input fill="solid" type="numeric" maxlength="4" max="9999"
+          label= "Area total mts2"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          [(ngModel)] ="areaTotal"
+          (ionChange)="metrosTotales($event)"></ion-input>
+      </ion-col>
+      <ion-col size="6"> <!---- cantidad de pisos -->
+        <ion-input fill="solid" type="numeric" maxlength="1" max="9"
+          label="Cantidad de pisos"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          [(ngModel)]="pisos"
+          (ionChange)="cantPisos($event)"></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col size ="6">
+        <ion-input fill="solid" type="numeric" max=99999 maxlength="5"
+        label= "Ingrese valor en UF del inmueble"
+        labelPlacement="floating"
+        [clearInput]="true"
+        helperText="ingrese número"
+        errorText="dato no válido"
+        (ionChange)="ingresoValorVivienda($event)"
+        [(ngModel)]="valorMontoVivienda"></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <div>
+    <ion-item>
+      <ion-label> ¿Acepta Subsidio? </ion-label>
+      <ion-checkbox slot="start" [(ngModel)]="checkSubsidio"  (ionClick)="habilitarSub()"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Selecciona el tipo de subsidio</ion-label>
+        <ion-select placeholder="Elija opción" [disabled]="!checkSubsidio" [(ngModel)]="opSubsidio" (ionChange)="selectedSubsidio()" multiple="true" value="Ninguno">
+          <ion-select-option *ngFor="let op of subSidio" [value]="op" > {{op}}</ion-select-option>
+        </ion-select>
+    </ion-item>
+  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-input fill="solid" type="numeric"  max="99" maxlength="2"
+          label= "Cantidad de habitaciones"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          (ionInput)="ingresoHabitaciones()"
+          [(ngModel)]="cantHabitaciones"></ion-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-input fill="solid" type="numeric"  max="99" maxlength="2"
+          label="Cantidad de baños"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          (ionInput)="ingresoBanos()"
+          [(ngModel)]="cantBanos"></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-input fill="solid" type="numeric"  max="99" maxlength="2"
+          label= "Cant estacionamientos"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          (ionInput)="inEstacionamiento()"
+          [(ngModel)]="estacionamiento"></ion-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-input fill="solid" type="numeric"  max="99" maxlength="2"
+          label="Cant bodegas"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          (ionInput)="inBodega()"
+          [(ngModel)]="bodega"></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <div>
+    <ion-item>
+      <ion-input fill="solid" type="text"
+          label="Link de contacto"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          (ionChange)="inContacto()"
+          [(ngModel)]="linkContacto"></ion-input>
+    </ion-item>
+  </div>
+  <ion-item>
+    <ion-label> Ubicación Geográfica del inmueble</ion-label>
+  </ion-item>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-input fill="solid" type="numeric"  max="-99.000000000" maxlength="13"
+          label= "Latitud"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          (ionChange)="ingresoLatitud()"
+          [(ngModel)]="inLatitud"></ion-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-input fill="solid" type="numeric"  max="-99.000000000" maxlength="13"
+          label="Longitud"
+          labelPlacement="floating"
+          [clearInput]="true"
+          helperText="ingrese número"
+          errorText="dato no válido"
+          (ionChange)="ingresoLongitud()"
+          [(ngModel)]="inLongitud"></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div>
+    <ion-item>
+      <ion-label> URL Imágenes del inmueble </ion-label> </ion-item>
+    <ion-item>
+      <ion-input fill="solid" type="text"  maxlength="500"
+      label="URL"
+      labelPlacement="floating"
+      [clearInput]="true"
+      helperText="ingrese URL"
+      errorText="dato no válido"
+      (ionChange)="fotoVivienda()"
+      [(ngModel)]="urlFotoVivienda"></ion-input>
+    </ion-item>
+  </div>
+  <div>
+    <ion-item>
+      <ion-label> Nombre de la publicación del inmueble </ion-label> </ion-item>
+    <ion-item>
+      <ion-input fill="solid" maxlength="250"
+            label="Descripción"
+            labelPlacement="floating"
+            [clearInput]="true"
+            helperText="ingrese descripción"
+            errorText="dato no válido"
+            (ionChange)="nombreVivienda()"
+            [(ngModel)]="nomVivienda"></ion-input></ion-item>
+  </div>
+  <div>
+    <ion-item>
+      <ion-label> Descripción del inmueble </ion-label> </ion-item>
+    <ion-item>
+      <ion-textarea fill="solid" maxlength="500"
+            label="Descripción"
+            labelPlacement="floating"
+            helperText="ingrese descripción"
+            errorText="dato no válido"
+            (ionChange)="descripcionVivienda()"
+            [(ngModel)]="descripVivienda"></ion-textarea>
+    </ion-item>
+  </div>
+  <div>
+    <ion-item>
+      <!--<ion-button slot="start" size="medium" shape="round" (ionClick)="GuardarAjustes()" [routerLink]="['/preferencias']">Guardar Información</ion-button> -->
+      <ion-button slot="start" size="medium" shape="round" (click)="GuardarAjustes()">Guardar Información</ion-button>
+    </ion-item>
+  </div>
+
+</ion-content>
