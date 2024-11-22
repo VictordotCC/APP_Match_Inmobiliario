@@ -19,8 +19,8 @@ export class PreferenciaUsuarioPage implements OnInit {
   tipoValor: string = 'UF'; //para seleccionar si es UF o CLP
   valorMontoVivienda = {min:0, max:0}; //para capturar el valor de la vivienda
   checkSubsidio: boolean = false; //para validar si esta activado o no la busqueda por subsidio
-  subSidio: string[]= ['Ninguno','DS01','DS19','DS49','Arriendo']; //para seleccionar el tipo de subsidio
-  opSubsidio: string = ''; //para capturar el tipo de subsidio
+  subSidio: string[]= ['DS01','DS19','DS49','Arriendo']; //para seleccionar el tipo de subsidio
+  opSubsidio: string[] = []; //para capturar el tipo de subsidio
   cantHabitaciones: number = 0; //para capturar la cantidad de habitaciones
   cantBanos: number = 0; //para capturar la cantidad de baños
   estacionamiento: number = 0; //para capturar si hay estacionamientos
@@ -51,12 +51,13 @@ export class PreferenciaUsuarioPage implements OnInit {
   ngOnInit() {
     window.scrollTo(0,0);
     console.log('usuario global: ',this.datosGlobales.userGlobal);
-    console.log('preferencias globales: ',this.datosGlobales.preferencias.usuario);
+    console.log('preferencias globales: ',this.datosGlobales.preferencias);
     if (this.datosGlobales.preferencias.usuario == this.datosGlobales.userGlobal){
+      //Las trae de los datos globales
+      //TODO: Traerlas desde Storage
       this.preferenciaUsuario = this.datosGlobales.preferencias;
-
       this.DistanciaRango = this.preferenciaUsuario.distancia;
-      this.cheCked = this.preferenciaUsuario.busquedaAutomatica;
+      this.cheCked = this.preferenciaUsuario.busqueda_automatica;
       this.opPeracion = this.preferenciaUsuario.tipo_operacion == false ? 'Compra' : 'Arriendo';
       this.opPropiedad = (this.preferenciaUsuario.tipo_vivienda == 0 ? 'Departamento' : this.preferenciaUsuario.tipo_vivienda == 1 ? 'Casa' : 'Otro');
       this.opInmbueble = this.preferenciaUsuario.condicion;
@@ -64,9 +65,9 @@ export class PreferenciaUsuarioPage implements OnInit {
       this.pisos = this.preferenciaUsuario.pisos;
       this.areaConstruida = this.preferenciaUsuario.area_construida;
       this.antiguedad = this.preferenciaUsuario.antiguedad;
-      this.tipoValor = this.preferenciaUsuario.TipoValor;
-      this.valorMontoVivienda.min = this.preferenciaUsuario.ValorMinimo;
-      this.valorMontoVivienda.max = this.preferenciaUsuario.ValorMaximo;
+      this.tipoValor = this.preferenciaUsuario.tipo_valor;
+      this.valorMontoVivienda.min = this.preferenciaUsuario.precio_minimo;
+      this.valorMontoVivienda.max = this.preferenciaUsuario.precio_maximo;
       this.opSubsidio = this.preferenciaUsuario.tipo_subsidio;
       this.cantHabitaciones = this.preferenciaUsuario.habitaciones;
       this.cantBanos = this.preferenciaUsuario.banos;
@@ -74,12 +75,12 @@ export class PreferenciaUsuarioPage implements OnInit {
       this.bodega = this.preferenciaUsuario.bodega;
       this.contactado = this.preferenciaUsuario.contactado;
       this.notificaciones = this.preferenciaUsuario.notificaciones;
+      this.checkSubsidio = this.opSubsidio.length == 0 ? false : true;
     } else {
-      console.log('No hay preferencias guardadas');
+      //Las trae de la API
       this.apiCon.obtenerPreferencias().subscribe((data: any) => {
-        console.log(data);
         this.DistanciaRango = data.preferencias.distancia;
-        this.cheCked = true //FIXME: implementar en DB
+        this.cheCked = data.preferencias.busqueda_automatica;
         this.opPeracion = data.preferencias.tipo_operacion == false ? 'Compra' : 'Arriendo';
         this.opPropiedad = (data.preferencias.tipo_vivienda == 0 ? 'Departamento' : data.preferencias.tipo_vivienda == 1 ? 'Casa' : 'Otro');
         this.opInmbueble = data.preferencias.condicion;
@@ -87,9 +88,9 @@ export class PreferenciaUsuarioPage implements OnInit {
         this.pisos = data.preferencias.pisos;
         this.areaConstruida = data.preferencias.area_construida
         this.antiguedad = data.preferencias.antiguedad;
-        this.tipoValor = "UF"; //FIXME: implementar en DB
-        this.valorMontoVivienda.min = 0; //FIXME: agregar valor minimo en DB
-        this.valorMontoVivienda.max = 0; //FIXME: agregar valor maximo en DB
+        this.tipoValor = data.preferencias.tipo_valor;
+        this.valorMontoVivienda.min = data.preferencias.precio_minimo;
+        this.valorMontoVivienda.max = data.preferencias.precio_maximo;
         this.opSubsidio = data.preferencias.tipo_subsidio;
         this.cantHabitaciones = data.preferencias.habitaciones;
         this.cantBanos = data.preferencias.banos;
@@ -97,7 +98,13 @@ export class PreferenciaUsuarioPage implements OnInit {
         this.bodega = data.preferencias.bodega;
         this.contactado = data.preferencias.contactado;
         this.notificaciones = data.preferencias.notificaciones;
+        this.checkSubsidio = this.opSubsidio.length == 0 ? false : true;
+
+        this.preferenciaUsuario = data.preferencias;
+        this.preferenciaUsuario.usuario = this.datosGlobales.userGlobal;
+        this.datosGlobales.setPreferencias(this.preferenciaUsuario);
       });
+      
     }
   }
 
@@ -217,7 +224,6 @@ export class PreferenciaUsuarioPage implements OnInit {
   habilitarSub(){
     this.checkSubsidio = !this.checkSubsidio;
     if (this.checkSubsidio == false){
-      this.opSubsidio = 'Ninguno';
       console.log('no se seleccionó ningun subsidio');
     }
 
@@ -282,8 +288,8 @@ export class PreferenciaUsuarioPage implements OnInit {
 
   //Para Guardar las preferencias del usuario se genera un objeto para después enviarlo a la base de datos
   GuardarAjustes() {
-    if (this.opSubsidio === ''){
-      this.opSubsidio = 'Ninguno';
+    if (this.opSubsidio == null){
+      this.opSubsidio = [];
     }
 
     if (this.tipoValor === 'CLP'){
@@ -297,25 +303,25 @@ export class PreferenciaUsuarioPage implements OnInit {
 
     this.preferenciaUsuario = {
       usuario : this.datosGlobales.userGlobal,
-      busquedaAutomatica: this.cheCked,
+      busqueda_automatica: this.cheCked,
       distancia: this.DistanciaRango,
       tipo_operacion: this.opPeracion == 'Compra' ? false : true,
       tipo_vivienda: (this.opPropiedad == 'Departamento' ? 0 : this.opPropiedad == 'Casa' ? 1 : 2),
       condicion: this.opInmbueble,
-      area_total: parseFloat((this.areaTotal).toFixed(1)),
-      pisos: Math.round(this.pisos),
-      area_construida :parseFloat((this.areaConstruida).toFixed(1)),
-      antiguedad:Math.round(this.antiguedad),
-      TipoValor: this.tipoValor,
-      ValorMinimo: parseFloat((this.valorMontoVivienda.min).toFixed(1)),
-      ValorMaximo: parseFloat((this.valorMontoVivienda.max).toFixed(1)),
-      precio_uf_desde: this.precio_uf_desde, //porqué setearlos en cero? se pierde el valor que se le asignó en el if
-      precio_uf_hasta: this.precio_uf_hasta, //Era por testeo, ya no es necesario
-      tipo_subsidio: this.opSubsidio,
-      habitaciones: Math.round(this.cantHabitaciones),
-      banos: Math.round(this.cantBanos),
-      estaciona: Math.round(this.estacionamiento),
-      bodega: Math.round(this.bodega),
+      area_total: this.areaTotal ? parseFloat((this.areaTotal).toFixed(1)) : 0,
+      pisos: this.pisos ? Math.round(this.pisos) : 0,
+      area_construida :this.areaConstruida ? parseFloat((this.areaConstruida).toFixed(1)) : 0,
+      antiguedad: this.antiguedad ? Math.round(this.antiguedad) : 0,
+      tipo_valor: this.tipoValor,
+      precio_minimo: this.valorMontoVivienda.min ? parseFloat((this.valorMontoVivienda.min).toFixed(1)) : 0,
+      precio_maximo: this.valorMontoVivienda.max ? parseFloat((this.valorMontoVivienda.max).toFixed(1)) : 0,
+      precio_uf_desde: this.precio_uf_desde, 
+      precio_uf_hasta: this.precio_uf_hasta, 
+      tipo_subsidio: this.checkSubsidio ? this.opSubsidio : [],
+      habitaciones: this.cantHabitaciones ? Math.round(this.cantHabitaciones) : 0,
+      banos: this.cantBanos ? Math.round(this.cantBanos) : 0,
+      estaciona: this.estacionamiento ? Math.round(this.estacionamiento) : 0,
+      bodega: this.bodega ? Math.round(this.bodega) : 0,
       contactado: this.contactado,
       notificaciones: this.notificaciones
     };

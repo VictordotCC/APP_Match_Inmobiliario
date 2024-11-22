@@ -137,7 +137,7 @@ export class Tab1Page implements OnInit {
     const deltaLat = Math.abs(center.lat - this.datosGlobales.lat);
     const deltaLon = Math.abs(center.lng - this.datosGlobales.lon);
 
-    if (deltaLat > 0.0045 || deltaLon > 0.0045) {
+    if (deltaLat > 0.0005 || deltaLon > 0.0005) {
       this.viewLat = center.lat;
       this.viewLon = center.lng;
       this.nearbyMarker();

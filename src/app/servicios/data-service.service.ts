@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 
 import { GlobalDataService } from './global-data.service';
 
@@ -11,8 +11,8 @@ import { GlobalDataService } from './global-data.service';
 })
 export class DataServiceService {
 
-  //apiMatch = 'http://127.0.0.1:5000/';
-  apiMatch = 'https://api-match-inmobiliario.onrender.com/';
+  apiMatch = 'http://127.0.0.1:5000/';
+  //apiMatch = 'https://api-match-inmobiliario.onrender.com/';
   apiViviendasUrl = '../../assets/Data/viviendas.json';
   apiImagenesUrl = '../../assets/Data/imagenes.json';
   httpOptions = {
@@ -51,7 +51,7 @@ export class DataServiceService {
           preferencias: this.datosGlobales.preferencias,
           ubicacion: ubicacionValor
         };
-        return this.http.post<any>(url, postData, this.httpOptions);
+        return this.http.post<any>(url, postData);
       })
     );
   }
@@ -163,7 +163,11 @@ export class DataServiceService {
       correo: obj.correo,
       contrasena: obj.contrasena
     };
-    return this.http.post<any>(url, postData);
+    return this.http.post<any>(url, postData).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
   //ZONA DE IMAGENES

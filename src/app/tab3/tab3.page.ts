@@ -5,7 +5,7 @@ import { Animation, GestureController, Gesture, AnimationController, GestureDeta
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DataServiceService } from '../servicios/data-service.service';
 import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
-import { NotificationsPushService } from '../servicios/notifications-push.service'; // Importa el servicio de notificaciones
+//import { NotificationsPushService } from '../servicios/notifications-push.service'; // Importa el servicio de notificaciones
 
 
 
@@ -44,18 +44,20 @@ export class Tab3Page implements AfterViewInit {
 
   constructor(private datosGlobales: GlobalDataService, private apiCon: DataServiceService,
     private gestureCtrl: GestureController, private animationCtrl: AnimationController,
-    private notificationsPushService: NotificationsPushService ) { }
+    /*private notificationsPushService: NotificationsPushService*/ ) { }
 
   ionViewDidEnter(){
     //Obtiene los datos si las preferencias han cambiado
+    console.log(this.preferencias);
     if(this.preferencias != this.datosGlobales.preferencias){
+      console.log('Preferencias cambiadas');
       this.preferencias = this.datosGlobales.preferencias;
       this.actualizarMatches();
     }
   }
 
   ngAfterViewInit(){
-    this.notificationsPushService.init(); // Inicializa el servicio de notificaciones
+    //this.notificationsPushService.init(); // Inicializa el servicio de notificaciones
     this.actualizarMatches();
     this.obtenerMatches();
     this.maps.forEach((map) => {
@@ -277,7 +279,10 @@ export class Tab3Page implements AfterViewInit {
   //METODOS FETCH
 
   actualizarMatches(){
-    this.apiCon.getViviendasApi()
+    console.log('Actualizando matches');
+    this.apiCon.getViviendasApi().subscribe((data) => {
+      console.log(data);
+    });
   }
 
   obtenerMatches(){
@@ -286,7 +291,7 @@ export class Tab3Page implements AfterViewInit {
       console.log(data[0]);
       let filtered = this.matches;
       if (filtered.length > 0){
-        this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
+        //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
       }
     });
   }
@@ -296,7 +301,7 @@ export class Tab3Page implements AfterViewInit {
       console.log(data);
       let filtered = data;
       if (filtered.length > 0){
-        this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
+        //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
       }
     });
   }

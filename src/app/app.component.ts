@@ -39,6 +39,7 @@ export class AppComponent implements OnInit {
     this.datosGlobales.clearWatch$.subscribe(() => this.clearWatch());
     this.watchEmitter.subscribe(() => this.watchLocation());
     });
+    
   }
   init() {
     if (Capacitor.isNativePlatform()) {
@@ -87,7 +88,7 @@ export class AppComponent implements OnInit {
         return;
       }
       this.datosGlobales.setUbicacion(position.coords.latitude, position.coords.longitude, position.timestamp);
-      //TODO: Logica de guardar ubicacion cada vez que cambie
+      
     }).toString();
   }
 

@@ -121,7 +121,7 @@
 <ion-grid>
   <ion-row>
     <ion-col size="6">
-      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'UF'" max=9999 maxlength="4"
+      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'UF'" max=99999 maxlength="5"
         label= "Desde {{tipoValor}}"
         labelPlacement="floating"
         [clearInput]="true"
@@ -131,7 +131,7 @@
         [(ngModel)]="valorMontoVivienda.min"></ion-input>
     </ion-col>
     <ion-col size="6">
-      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'UF'" max=9999 maxlength="4"
+      <ion-input fill="solid" type="numeric" *ngIf="tipoValor === 'UF'" max=99999 maxlength="5"
         label="Hasta {{tipoValor}}"
         labelPlacement="floating"
         [clearInput]="true"
@@ -171,7 +171,7 @@
   </ion-item>
   <ion-item>
     <ion-label>Selecciona el tipo de subsidio</ion-label>
-      <ion-select placeholder="Elija opción" [disabled]="!checkSubsidio" [(ngModel)]="opSubsidio" (ionChange)="selectedSubsidio()" multiple="true" value="Ninguno">
+      <ion-select placeholder="Elija opción" [disabled]="!checkSubsidio" [(ngModel)]="opSubsidio" (ionChange)="selectedSubsidio()" multiple="true">
         <ion-select-option *ngFor="let op of subSidio" [value]="op" > {{op}}</ion-select-option>
       </ion-select>
   </ion-item>
