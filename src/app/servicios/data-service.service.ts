@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { GlobalDataService } from './global-data.service';
+import { StorageService } from './storage.service';
 
 
 @Injectable({
@@ -23,7 +24,7 @@ export class DataServiceService {
       "Access-Control-Allow-Headers": "Content-Type"
     })
   };
-  constructor( private http: HttpClient, private datosGlobales: GlobalDataService) { }
+  constructor( private http: HttpClient, private datosGlobales: GlobalDataService, private storage: StorageService) { }
 
   // esta funcion es para buscar en el SearchBar
   getViviendaSearch(){
@@ -121,10 +122,18 @@ export class DataServiceService {
     return this.http.request('DELETE', url, {body: postData});
   }
 
-  obtenerPreferencias(): Observable<any> {
+  obtenerPreferencias(access_token: string): Observable<any> {
     const url = this.apiMatch + 'preferencia';
     const params = new HttpParams().set('correo', this.datosGlobales.userGlobal!);
-    return this.http.get<any>(url, {params});
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.get<any>(url, {params, headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
   guardarPreferencias(obj:any): Observable<any> {
@@ -170,6 +179,23 @@ export class DataServiceService {
     );
   }
 
+  autoLogin(access_token: string, refresh_token: string, user_id: string): Observable<any> {
+    const url = this.apiMatch + 'auto-login';
+    const postData = {
+      refresh_token: refresh_token,
+      user_id: user_id
+    };
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.post<any>(url, postData, {headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
+  }
+
   //ZONA DE IMAGENES
   //guardar imagenes
   getImagenes(id: string): Observable<any> {
@@ -182,9 +208,4 @@ export class DataServiceService {
     const url = this.apiMatch + 'imagenes';
     return this.http.post<any>(url, obj);
   }
-
-
-
-
-
 }

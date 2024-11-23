@@ -5,6 +5,7 @@ import { AlertController } from '@ionic/angular';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
 import { DataServiceService } from '../servicios/data-service.service';
+import { StorageService } from '../servicios/storage.service';
 
 
 @Component({
@@ -41,20 +42,23 @@ export class PreferenciaUsuarioPage implements OnInit {
   precio_uf_desde: number = 0; //para convertir el valor de la vivienda a UF
   precio_uf_hasta: number = 0; //para convertir el valor de la vivienda a UF
 
+  access_token: string = '';
+
   constructor( private alertController: AlertController, 
     private router: Router, 
     private datosGlobales: GlobalDataService,
-    private apiCon: DataServiceService) {
+    private apiCon: DataServiceService,
+    private storage: StorageService) { }
 
-   }
-
-  ngOnInit() {
+  async ngOnInit() {
+    await this.storage.init();
+    this.access_token = await this.storage.get('access_token');
     window.scrollTo(0,0);
+    this.datosGlobales.preferencias = await this.storage.get('preferencias');
+    this.datosGlobales.userGlobal = await this.storage.get('userGlobal');
     console.log('usuario global: ',this.datosGlobales.userGlobal);
     console.log('preferencias globales: ',this.datosGlobales.preferencias);
     if (this.datosGlobales.preferencias.usuario == this.datosGlobales.userGlobal){
-      //Las trae de los datos globales
-      //TODO: Traerlas desde Storage
       this.preferenciaUsuario = this.datosGlobales.preferencias;
       this.DistanciaRango = this.preferenciaUsuario.distancia;
       this.cheCked = this.preferenciaUsuario.busqueda_automatica;
@@ -78,7 +82,7 @@ export class PreferenciaUsuarioPage implements OnInit {
       this.checkSubsidio = this.opSubsidio.length == 0 ? false : true;
     } else {
       //Las trae de la API
-      this.apiCon.obtenerPreferencias().subscribe((data: any) => {
+      this.apiCon.obtenerPreferencias(this.access_token).subscribe((data: any) => {
         this.DistanciaRango = data.preferencias.distancia;
         this.cheCked = data.preferencias.busqueda_automatica;
         this.opPeracion = data.preferencias.tipo_operacion == false ? 'Compra' : 'Arriendo';

@@ -8,13 +8,15 @@ import { AppComponent } from './app.component';
 import { PipesModule } from './pipes/pipes.module';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { FiltroViviendasPipe } from './filtro-viviendas.pipe';
+import { IonicStorageModule, Storage } from '@ionic/storage-angular';
 //import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @NgModule({
  // schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, PipesModule, FiltroViviendasPipe],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, 
+    HttpClientModule, PipesModule, FiltroViviendasPipe, IonicStorageModule.forRoot()],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: LocationStrategy, useClass: HashLocationStrategy}
