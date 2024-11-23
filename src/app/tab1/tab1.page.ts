@@ -4,6 +4,7 @@ import { GlobalDataService } from '../servicios/global-data.service';
 import { ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, IonModal } from '@ionic/angular';
 import { DataServiceService } from '../servicios/data-service.service';
+import { StorageService } from '../servicios/storage.service';
 import { addIcons } from 'ionicons';
 import {chevronDownCircle,
   chevronForwardCircle,
@@ -43,12 +44,15 @@ export class Tab1Page implements OnInit {
   isFavorite: boolean = false; // Check if the current item is in favorites
   favoritos: any[] = [];
   mostrarMapa: boolean = true;
+  access_token: string = '';
+
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController,
-    private apiCon: DataServiceService, private alertController: AlertController) {
+    private apiCon: DataServiceService, private alertController: AlertController, private storage: StorageService) {
       addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, colorPalette, document, globe });
     }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.access_token = await this.storage.get('access_token');
     this.obtenerFavoritos();
 
   }
@@ -155,12 +159,6 @@ export class Tab1Page implements OnInit {
     */
   }
 
-  //Metodos Fetch
-
-  obtenerViviendas(){
-    return this.apiCon.getViviendasCercanas(this.viewLat, this.viewLon);
-  }
-
   openDetalle(viv: any){
     this.detalleVivienda = {...viv};
     this.detalleVivienda.links_contacto = JSON.parse(viv.links_contacto);
@@ -175,9 +173,15 @@ export class Tab1Page implements OnInit {
     }, 300);
   }
 
+  //Metodos Fetch
+
+  obtenerViviendas(){  
+    return this.apiCon.getViviendasCercanas(this.viewLat, this.viewLon, this.access_token);
+  }
+
   async guardarFavorito(viv: any){
     const obj = { usuario: this.datosGlobales.userGlobal, id_vivienda: viv.id_vivienda };
-    this.apiCon.guardarFavoritos(obj).subscribe((data) => {
+    this.apiCon.guardarFavoritos(obj, this.access_token).subscribe((data) => {
       console.log(data);
     });
     this.isFavorite = true;
@@ -191,7 +195,7 @@ export class Tab1Page implements OnInit {
   }
 
   async obtenerFavoritos(){
-    this.apiCon.getViviendasFavoritos().subscribe((data) => {
+    this.apiCon.getViviendasFavoritos(this.access_token).subscribe((data) => {
       this.favoritos = data;
     });
   }

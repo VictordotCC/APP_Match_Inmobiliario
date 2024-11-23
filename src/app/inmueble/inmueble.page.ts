@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { RangeCustomEvent } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { GlobalDataService } from '../servicios/global-data.service';
-import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
 import { DataServiceService } from '../servicios/data-service.service';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { StorageService } from '../servicios/storage.service';
 
 @Component({
   selector: 'app-inmueble',
@@ -13,14 +12,6 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./inmueble.page.scss'],
 })
 export class InmueblePage implements OnInit {
-
-  constructor(
-    private alertController: AlertController,
-    private router: Router,
-    private datosGlobales: GlobalDataService,
-    private apiCon: DataServiceService
-  ) { }
-
   opPeracion: string ='Compra'; //para seleccionar el tipo de operacion
   opPropiedad: string ='Casa';
   opInmbueble: string = 'Nuevo';
@@ -42,7 +33,19 @@ export class InmueblePage implements OnInit {
   urlFotoVivienda: string = '';
   nomVivienda: string = '';
   descripVivienda: string = '';
-  ngOnInit() {
+  private access_token: string = '';
+
+  constructor(
+    private alertController: AlertController,
+    private router: Router,
+    private datosGlobales: GlobalDataService,
+    private apiCon: DataServiceService,
+    private storage: StorageService
+    ) { }
+
+
+  async ngOnInit() {
+    this.access_token = await this.storage.get('access_token');
   }
   selectedOperacion(){
     console.log(this.opPeracion);
@@ -110,7 +113,7 @@ export class InmueblePage implements OnInit {
 
   fotoVivienda(){
     let imagenVivienda = {id_imagen: '1', id_vivienda: '1', url: this.urlFotoVivienda};
-    this.apiCon.postImagenes(imagenVivienda).subscribe((data)=>{
+    this.apiCon.postImagenes(imagenVivienda, this.access_token).subscribe((data)=>{
       console.log(data);
     });
     console.log(this.urlFotoVivienda);
@@ -140,7 +143,7 @@ export class InmueblePage implements OnInit {
       descripcion: this.descripVivienda,
     }
     console.log(vivienda);
-    this.apiCon.postVivienda(vivienda).subscribe((data)=>{
+    this.apiCon.postVivienda(vivienda, this.access_token).subscribe((data)=>{
       console.log(data);
     });
     this.router.navigate(['/preferencias']);

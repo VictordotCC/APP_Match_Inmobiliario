@@ -44,7 +44,7 @@ export class DataServiceService {
     return this.http.get<any>(url, {params}); //TODO: Implementar interface
   }
 
-  getViviendasApi(): Observable<any> {
+  getViviendasApi(access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas';
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
@@ -52,24 +52,40 @@ export class DataServiceService {
           preferencias: this.datosGlobales.preferencias,
           ubicacion: ubicacionValor
         };
-        return this.http.post<any>(url, postData);
+        const auth = 'Bearer ' + access_token;
+        const headers = new HttpHeaders({
+          'Authorization': auth
+        });
+        return this.http.post<any>(url, postData, {headers: headers}).pipe(
+          catchError(err => {
+            return err;
+          })
+        );
       })
     );
   }
 
-  getViviendasCercanas(lat: number, lon: number): Observable<any> {
+  getViviendasCercanas(lat: number, lon: number, access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas_cercanas';
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
         const params = new HttpParams()
           .set('lat', lat.toString())
-          .set('lon', lon.toString())
-        return this.http.get<any>(url, {params});
+          .set('lon', lon.toString());
+        const auth = 'Bearer ' + access_token;
+        const headers = new HttpHeaders({
+          'Authorization': auth
+        });
+        return this.http.get<any>(url, {params}).pipe(
+          catchError(err => {
+            return err;
+          })
+        );
       })
     );
   }
 
-  getMatches(): Observable<any> {
+  getMatches(access_token: string): Observable<any> {
     const url = this.apiMatch + 'get_matches';
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
@@ -77,53 +93,101 @@ export class DataServiceService {
       .set('usuario', this.datosGlobales.userGlobal!) //TODO: cambiar a this.datosGlobales.preferencias.usuario
       .set('lat', this.datosGlobales.lat.toString())
       .set('lon', this.datosGlobales.lon.toString());
-      return this.http.get<any>(url, {params});
+      const auth = 'Bearer ' + access_token;
+      const headers = new HttpHeaders({
+        'Authorization': auth
+      });
+      return this.http.get<any>(url, {params, headers}).pipe(
+        catchError(err => {
+          return err;
+        })
+      );
     })
     );
   }
 
-  updateMatch(id_match: string): Observable<any> {
+  updateMatch(id_match: string, access_token: string): Observable<any> {
     const url = this.apiMatch + 'marcar_visto';
     const params = new HttpParams().set('id_match', id_match);
-    return this.http.get<any>(url, {params});
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.get<any>(url, {params, headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
-  getViviendasFavoritos(): Observable<any[]> {
+  getViviendasFavoritos(access_token: string): Observable<any[]> {
     const url = this.apiMatch + 'favoritos';
     const params = new HttpParams()
       .set('usuario', this.datosGlobales.userGlobal!)
       .set('lat', this.datosGlobales.lat.toString())
       .set('lon', this.datosGlobales.lon.toString());
-    return this.http.get<any[]>(url, {params});
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.get<any[]>(url, {params, headers}).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
   }
 
   //Guardar Viviendas
-  postVivienda(vivienda: any): Observable<any> {
+  postVivienda(vivienda: any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas';
-    return this.http.post<any>(url, vivienda);
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.post<any>(url, vivienda, {headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
 
-  guardarFavoritos(obj:any): Observable<any> {
+  guardarFavoritos(obj:any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'favoritos';
     const postData = {
       id_vivienda: obj.id_vivienda,
       usuario: obj.usuario
     };
-    return this.http.post<any>(url, postData);
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.post<any>(url, postData, {headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
-  borrarFavorito(obj:any): Observable<any> {
+  borrarFavorito(obj:any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'favoritos';
     const postData = {
       id_vivienda: obj.id_vivienda,
       usuario: obj.usuario
     };
-    return this.http.request('DELETE', url, {body: postData});
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.request('DELETE', url, {body: postData, headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
   obtenerPreferencias(access_token: string): Observable<any> {
-    //TODO implementar REFRESH TOKEN
+    //TODO implementar REFRESH TOKEN(AUTH SERVICE)
     const url = this.apiMatch + 'preferencia';
     const params = new HttpParams().set('correo', this.datosGlobales.userGlobal!);
     const auth = 'Bearer ' + access_token;
@@ -137,13 +201,21 @@ export class DataServiceService {
     );
   }
 
-  guardarPreferencias(obj:any): Observable<any> {
+  guardarPreferencias(obj:any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'preferencia';
     const postData = {
       correo: obj.usuario,
       preferencias: obj
     };
-    return this.http.post<any>(url, postData);
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.post<any>(url, postData, {headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
 
@@ -205,8 +277,16 @@ export class DataServiceService {
     return this.http.get<any>(url, {params});
   }
 
-  postImagenes(obj:any): Observable<any> {
+  postImagenes(obj:any, access_token:string): Observable<any> {
     const url = this.apiMatch + 'imagenes';
-    return this.http.post<any>(url, obj);
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.post<any>(url, obj, {headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 }

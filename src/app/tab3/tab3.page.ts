@@ -5,6 +5,7 @@ import { Animation, GestureController, Gesture, AnimationController, GestureDeta
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DataServiceService } from '../servicios/data-service.service';
 import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
+import { StorageService } from '../servicios/storage.service';
 //import { NotificationsPushService } from '../servicios/notifications-push.service'; // Importa el servicio de notificaciones
 
 
@@ -40,11 +41,16 @@ export class Tab3Page implements AfterViewInit {
     type: 'progressbar',
     el: '.swiper-pagination',
   };
-
+  private access_token = '';
 
   constructor(private datosGlobales: GlobalDataService, private apiCon: DataServiceService,
     private gestureCtrl: GestureController, private animationCtrl: AnimationController,
+    private storage: StorageService,
     /*private notificationsPushService: NotificationsPushService*/ ) { }
+
+  async ngOnInit() {
+    this.access_token = await this.storage.get('access_token');
+  }
 
   ionViewDidEnter(){
     //Obtiene los datos si las preferencias han cambiado
@@ -280,13 +286,13 @@ export class Tab3Page implements AfterViewInit {
 
   actualizarMatches(){
     console.log('Actualizando matches');
-    this.apiCon.getViviendasApi().subscribe((data) => {
+    this.apiCon.getViviendasApi(this.access_token).subscribe((data) => {
       console.log(data);
     });
   }
 
   obtenerMatches(){
-    this.apiCon.getMatches().subscribe((data) => {
+    this.apiCon.getMatches(this.access_token).subscribe((data) => {
       this.matches = data;
       console.log(data[0]);
       let filtered = this.matches;
@@ -297,7 +303,7 @@ export class Tab3Page implements AfterViewInit {
   }
 
   updateMatch(id_match: string){
-    this.apiCon.updateMatch(id_match).subscribe((data) => {
+    this.apiCon.updateMatch(id_match, this.access_token).subscribe((data) => {
       console.log(data);
       let filtered = data;
       if (filtered.length > 0){
@@ -307,7 +313,7 @@ export class Tab3Page implements AfterViewInit {
   }
 
   guardarFavoritos(ob :any){
-    return this.apiCon.guardarFavoritos(ob);
+    return this.apiCon.guardarFavoritos(ob, this.access_token);
   }
   //MOSTRAR DETALLES
 

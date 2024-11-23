@@ -4,7 +4,7 @@ import { IonSegment, AlertController } from '@ionic/angular';
 import { Observable} from 'rxjs';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { alert } from 'ionicons/icons';
+import { StorageService } from '../servicios/storage.service';
 
 @Component({
   selector: 'app-tab2',
@@ -35,14 +35,16 @@ export class Tab2Page implements OnInit {
   isModalOpen3: boolean = false; // Add this property to control modal state
   isModalOpen4: boolean = false; // Add this property to control modal state
   inputHabitacion: number = 0;
+  private access_token: string = '';
   
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, 
-    private sanitizer: DomSanitizer, private alertController: AlertController) {
+    private sanitizer: DomSanitizer, private alertController: AlertController, private storage: StorageService) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
-    this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl); // Correct property name
+    this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl,); // Correct property name
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.access_token = await this.storage.get('access_token');
 
   }
 
@@ -117,7 +119,7 @@ export class Tab2Page implements OnInit {
 
 
   obtenerFavs(){
-    this.DataService.getViviendasFavoritos().subscribe( data => {
+    this.DataService.getViviendasFavoritos(this.access_token).subscribe( data => {
       this.viviendas = data;
       this.filterViviendas = this.viviendas;
     });
@@ -137,7 +139,7 @@ export class Tab2Page implements OnInit {
         {
           text: 'Eliminar',
           handler: () => {
-            this.DataService.borrarFavorito(fav).subscribe( data => {
+            this.DataService.borrarFavorito(fav, this.access_token).subscribe( data => {
               this.obtenerFavs();
               setTimeout(() => {
                 this.closeModal();

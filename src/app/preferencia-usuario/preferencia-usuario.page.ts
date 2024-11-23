@@ -335,7 +335,7 @@ export class PreferenciaUsuarioPage implements OnInit {
     this.datosGlobales.setPreferencias(this.preferenciaUsuario);
 
     //Guardar las preferencias del usuario en la base de datos
-    this.apiCon.guardarPreferencias(this.preferenciaUsuario).subscribe(async (data: any) => {
+    this.apiCon.guardarPreferencias(this.preferenciaUsuario, this.access_token).subscribe(async (data: any) => {
       if (data.status == 200){
         console.log(data);
         const alert = await this.alertController.create({
