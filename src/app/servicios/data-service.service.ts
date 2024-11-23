@@ -123,6 +123,7 @@ export class DataServiceService {
   }
 
   obtenerPreferencias(access_token: string): Observable<any> {
+    //TODO implementar REFRESH TOKEN
     const url = this.apiMatch + 'preferencia';
     const params = new HttpParams().set('correo', this.datosGlobales.userGlobal!);
     const auth = 'Bearer ' + access_token;
