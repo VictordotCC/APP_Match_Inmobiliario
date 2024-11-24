@@ -29,7 +29,6 @@ export class Tab1Page implements OnInit {
     shadowUrl: '../../assets/markers/marker-shadow.png'})
   textSearch: string = '';
   opcionFiltro: string = 'Todos';
-  user: string = '';
   pass: string = '';
   tipo: string = '';
   filterViviendas: any[] = [];
@@ -62,6 +61,7 @@ export class Tab1Page implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.obtenerFavoritos();
     if(this.map){
       this.map.remove();
     }
@@ -183,7 +183,7 @@ export class Tab1Page implements OnInit {
   }
 
   async guardarFavorito(viv: any){
-    const obj = { usuario: this.datosGlobales.userGlobal, id_vivienda: viv.id_vivienda };
+    const obj = { usuario: this.usuario, id_vivienda: viv.id_vivienda };
     this.apiCon.guardarFavoritos(obj, this.access_token).subscribe((data) => {
     });
     this.isFavorite = true;

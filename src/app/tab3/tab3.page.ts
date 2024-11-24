@@ -42,6 +42,7 @@ export class Tab3Page implements AfterViewInit {
     el: '.swiper-pagination',
   };
   private access_token = '';
+  private usuario = '';
 
   constructor(private datosGlobales: GlobalDataService, private apiCon: DataServiceService,
     private gestureCtrl: GestureController, private animationCtrl: AnimationController,
@@ -50,6 +51,7 @@ export class Tab3Page implements AfterViewInit {
 
   async ionViewDidEnter(){
     await this.storage.init();
+    this.usuario =  await this.storage.get('userGlobal');
     this.preferencias = await this.storage.get('preferencias');
     this.access_token = await this.storage.get('access_token');
     //Obtiene los datos si las preferencias han cambiado
@@ -62,6 +64,7 @@ export class Tab3Page implements AfterViewInit {
   }
 
   async ngAfterViewInit(){
+    this.usuario =  await this.storage.get('userGlobal');
     await this.storage.init();
     this.preferencias = await this.storage.get('preferencias');
     this.datosGlobales.preferencias = this.preferencias;
@@ -244,8 +247,7 @@ export class Tab3Page implements AfterViewInit {
     const id_vivienda = lastElement!.getAttribute('id-vivienda');
 
     // Agregar a favoritos
-    this.favoritos = {id_vivienda: id_vivienda, usuario: this.datosGlobales.userGlobal}
-    console.log(this.favoritos);
+    this.favoritos = {id_vivienda: id_vivienda, usuario: this.usuario}
     this.guardarFavoritos(this.favoritos).subscribe((data) => {
       console.log(data);
       if (data[1] == 200){

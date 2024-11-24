@@ -52,7 +52,7 @@ export class Tab2Page implements OnInit {
   }
 
   ionViewDidEnter(){
-    
+    this.obtenerFavs();   
   }
 
   segmentPrecMtsHab(event: CustomEvent){
