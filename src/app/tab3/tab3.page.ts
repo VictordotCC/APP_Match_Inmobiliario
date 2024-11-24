@@ -48,11 +48,10 @@ export class Tab3Page implements AfterViewInit {
     private storage: StorageService,
     /*private notificationsPushService: NotificationsPushService*/ ) { }
 
-  async ngOnInit() {
+  async ionViewDidEnter(){
+    await this.storage.init();
+    this.preferencias = await this.storage.get('preferencias');
     this.access_token = await this.storage.get('access_token');
-  }
-
-  ionViewDidEnter(){
     //Obtiene los datos si las preferencias han cambiado
     console.log(this.preferencias);
     if(this.preferencias != this.datosGlobales.preferencias){
@@ -62,7 +61,11 @@ export class Tab3Page implements AfterViewInit {
     }
   }
 
-  ngAfterViewInit(){
+  async ngAfterViewInit(){
+    await this.storage.init();
+    this.preferencias = await this.storage.get('preferencias');
+    this.datosGlobales.preferencias = this.preferencias;
+    this.access_token = await this.storage.get('access_token');
     //this.notificationsPushService.init(); // Inicializa el servicio de notificaciones
     this.actualizarMatches();
     this.obtenerMatches();
@@ -286,13 +289,15 @@ export class Tab3Page implements AfterViewInit {
 
   actualizarMatches(){
     console.log('Actualizando matches');
-    this.apiCon.getViviendasApi(this.access_token).subscribe((data) => {
+    console.log(this.access_token);
+    console.log(this.preferencias);
+    this.apiCon.getViviendasApi(this.preferencias, this.access_token).subscribe((data) => {
       console.log(data);
     });
   }
 
   obtenerMatches(){
-    this.apiCon.getMatches(this.access_token).subscribe((data) => {
+    this.apiCon.getMatches(this.preferencias.usuario, this.access_token).subscribe((data) => {
       this.matches = data;
       console.log(data[0]);
       let filtered = this.matches;

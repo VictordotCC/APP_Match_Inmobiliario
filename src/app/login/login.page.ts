@@ -46,74 +46,78 @@ export class LoginPage  implements OnInit{
     this.access_token = await this.storage.get('access_token');
     this.refresh_token = await this.storage.get('refresh_token');
     this.user_id = await this.storage.get('user_id');
-    this.apiCon.autoLogin(this.access_token, this.refresh_token, this.user_id).subscribe(async (data: any) => {
-      await this.storage.set('access_token', data.access_token);
-      //Guarda el usuario en local storage
-      this.storage.set('userGlobal', data.user.correo);
-      this.storage.set('userTipoGlobal', this.tipoUsuario);
-      this.storage.set('userNombreGlobal', data.user.nombres);
-      this.storage.set('userApellidoGlobal', data.user.apellidos);
-      this.storage.set('userTelefonoGlobal', data.user.telefono);
-      this.storage.set('activoGlobal', data.user.activo);
-      this.storage.set('linksContactoGlobal', data.user.links_contacto);
-      this.storage.set('imgGlobal', data.user.imagen);
-      //TODO: Eliminar lo que sigue al implementar lectura de usuario desde Storage
-      this.datosGlobales.userGlobal = data.user.correo;
-      this.datosGlobales.userTipoGlobal = this.tipoUsuario;
-      this.datosGlobales.userNombreGlobal = data.user.nombres;
-      this.datosGlobales.userApellidoGlobal = data.user.apellidos;
-      this.datosGlobales.userTelefonoGlobal = data.user.telefono;
-      this.datosGlobales.activoGlobal = data.user.activo;
-      this.datosGlobales.linksContactoGlobal = data.user.links_contacto;
-      this.datosGlobales.imgGlobal = data.user.imagen;
+    if (this.access_token != null && this.refresh_token != null && this.user_id != null){
+      this.apiCon.autoLogin(this.access_token, this.refresh_token, this.user_id).subscribe(async (data: any) => {
+        await this.storage.set('access_token', data.access_token);
+        //Guarda el usuario en local storage
+        this.storage.set('userGlobal', data.user.correo);
+        this.storage.set('userTipoGlobal', this.tipoUsuario);
+        this.storage.set('userNombreGlobal', data.user.nombres);
+        this.storage.set('userApellidoGlobal', data.user.apellidos);
+        this.storage.set('userTelefonoGlobal', data.user.telefono);
+        this.storage.set('activoGlobal', data.user.activo);
+        this.storage.set('linksContactoGlobal', data.user.links_contacto);
+        this.storage.set('imgGlobal', data.user.imagen);
+        //TODO: Eliminar lo que sigue al implementar lectura de usuario desde Storage
+        this.datosGlobales.userGlobal = data.user.correo;
+        this.datosGlobales.userTipoGlobal = this.tipoUsuario;
+        this.datosGlobales.userNombreGlobal = data.user.nombres;
+        this.datosGlobales.userApellidoGlobal = data.user.apellidos;
+        this.datosGlobales.userTelefonoGlobal = data.user.telefono;
+        this.datosGlobales.activoGlobal = data.user.activo;
+        this.datosGlobales.linksContactoGlobal = data.user.links_contacto;
+        this.datosGlobales.imgGlobal = data.user.imagen;
 
-      this.apiCon.obtenerPreferencias(this.access_token).subscribe(async (data: any) => {
-        //Guardar en local storage
-        this.preferencias.usuario = this.datosGlobales.userGlobal;
-        this.preferencias.busqueda_automatica = data.preferencias.busqueda_automatica;
-        this.preferencias.distancia = data.preferencias.distancia;
-        this.preferencias.tipo_operacion = data.preferencias.tipo_operacion;
-        this.preferencias.tipo_vivienda = data.preferencias.tipo_vivienda;
-        this.preferencias.condicion = data.preferencias.condicion;
-        this.preferencias.area_total = data.preferencias.area_total;
-        this.preferencias.pisos = data.preferencias.pisos;
-        this.preferencias.area_construida = data.preferencias.area_construida
-        this.preferencias.antiguedad = data.preferencias.antiguedad;
-        this.preferencias.tipo_valor = data.preferencias.tipo_valor;
-        this.preferencias.precio_minimo = data.preferencias.precio_minimo;
-        this.preferencias.precio_maximo = data.preferencias.precio_maximo;
-        this.preferencias.tipo_subsidio = data.preferencias.tipo_subsidio;
-        this.preferencias.habitaciones = data.preferencias.habitaciones;
-        this.preferencias.banos = data.preferencias.banos;
-        this.preferencias.estaciona = data.preferencias.estaciona;
-        this.preferencias.bodega = data.preferencias.bodega;
-        this.preferencias.contactado = data.preferencias.contactado;
-        this.preferencias.notificaciones = data.preferencias.notificaciones;
-        await this.storage.set('preferencias', this.preferencias);
-        //TODO: Eliminar lo que sigue al implementar lectura de prefs desde Storage
-        this.datosGlobales.preferencias.usuario = this.datosGlobales.userGlobal;
-        this.datosGlobales.preferencias.busqueda_automatica = data.preferencias.busqueda_automatica;
-        this.datosGlobales.preferencias.distancia = data.preferencias.distancia;
-        this.datosGlobales.preferencias.tipo_operacion = data.preferencias.tipo_operacion;
-        this.datosGlobales.preferencias.tipo_vivienda = data.preferencias.tipo_vivienda;
-        this.datosGlobales.preferencias.condicion = data.preferencias.condicion;
-        this.datosGlobales.preferencias.area_total = data.preferencias.area_total;
-        this.datosGlobales.preferencias.pisos = data.preferencias.pisos;
-        this.datosGlobales.preferencias.area_construida = data.preferencias.area_construida
-        this.datosGlobales.preferencias.antiguedad = data.preferencias.antiguedad;
-        this.datosGlobales.preferencias.tipo_valor = data.preferencias.tipo_valor;
-        this.datosGlobales.preferencias.precio_minimo = data.preferencias.precio_minimo;
-        this.datosGlobales.preferencias.precio_maximo = data.preferencias.precio_maximo;
-        this.datosGlobales.preferencias.tipo_subsidio = data.preferencias.tipo_subsidio;
-        this.datosGlobales.preferencias.habitaciones = data.preferencias.habitaciones;
-        this.datosGlobales.preferencias.banos = data.preferencias.banos;
-        this.datosGlobales.preferencias.estaciona = data.preferencias.estaciona;
-        this.datosGlobales.preferencias.bodega = data.preferencias.bodega;
-        this.datosGlobales.preferencias.contactado = data.preferencias.contactado;
-        this.datosGlobales.preferencias.notificaciones = data.preferencias.notificaciones;
-        this.router.navigate(['/tabs']);
+        this.apiCon.obtenerPreferencias(this.access_token).subscribe(async (data: any) => {
+          //Guardar en local storage
+          this.preferencias.usuario = this.datosGlobales.userGlobal;
+          this.preferencias.busqueda_automatica = data.preferencias.busqueda_automatica;
+          this.preferencias.distancia = data.preferencias.distancia;
+          this.preferencias.tipo_operacion = data.preferencias.tipo_operacion;
+          this.preferencias.tipo_vivienda = data.preferencias.tipo_vivienda;
+          this.preferencias.condicion = data.preferencias.condicion;
+          this.preferencias.area_total = data.preferencias.area_total;
+          this.preferencias.pisos = data.preferencias.pisos;
+          this.preferencias.area_construida = data.preferencias.area_construida
+          this.preferencias.antiguedad = data.preferencias.antiguedad;
+          this.preferencias.tipo_valor = data.preferencias.tipo_valor;
+          this.preferencias.precio_minimo = data.preferencias.precio_minimo;
+          this.preferencias.precio_maximo = data.preferencias.precio_maximo;
+          this.preferencias.tipo_subsidio = data.preferencias.tipo_subsidio;
+          this.preferencias.habitaciones = data.preferencias.habitaciones;
+          this.preferencias.banos = data.preferencias.banos;
+          this.preferencias.estaciona = data.preferencias.estaciona;
+          this.preferencias.bodega = data.preferencias.bodega;
+          this.preferencias.contactado = data.preferencias.contactado;
+          this.preferencias.notificaciones = data.preferencias.notificaciones;
+          await this.storage.set('preferencias', this.preferencias);
+          //TODO: Eliminar lo que sigue al implementar lectura de prefs desde Storage
+          /*
+          this.datosGlobales.preferencias.usuario = this.datosGlobales.userGlobal;
+          this.datosGlobales.preferencias.busqueda_automatica = data.preferencias.busqueda_automatica;
+          this.datosGlobales.preferencias.distancia = data.preferencias.distancia;
+          this.datosGlobales.preferencias.tipo_operacion = data.preferencias.tipo_operacion;
+          this.datosGlobales.preferencias.tipo_vivienda = data.preferencias.tipo_vivienda;
+          this.datosGlobales.preferencias.condicion = data.preferencias.condicion;
+          this.datosGlobales.preferencias.area_total = data.preferencias.area_total;
+          this.datosGlobales.preferencias.pisos = data.preferencias.pisos;
+          this.datosGlobales.preferencias.area_construida = data.preferencias.area_construida
+          this.datosGlobales.preferencias.antiguedad = data.preferencias.antiguedad;
+          this.datosGlobales.preferencias.tipo_valor = data.preferencias.tipo_valor;
+          this.datosGlobales.preferencias.precio_minimo = data.preferencias.precio_minimo;
+          this.datosGlobales.preferencias.precio_maximo = data.preferencias.precio_maximo;
+          this.datosGlobales.preferencias.tipo_subsidio = data.preferencias.tipo_subsidio;
+          this.datosGlobales.preferencias.habitaciones = data.preferencias.habitaciones;
+          this.datosGlobales.preferencias.banos = data.preferencias.banos;
+          this.datosGlobales.preferencias.estaciona = data.preferencias.estaciona;
+          this.datosGlobales.preferencias.bodega = data.preferencias.bodega;
+          this.datosGlobales.preferencias.contactado = data.preferencias.contactado;
+          this.datosGlobales.preferencias.notificaciones = data.preferencias.notificaciones;
+          */
+          this.router.navigate(['/tabs']);
+        });
       });
-    });
+    }
   }
 
 
@@ -186,6 +190,7 @@ export class LoginPage  implements OnInit{
         this.datosGlobales.linksContactoGlobal = data.user.links_contacto;
         this.datosGlobales.imgGlobal = data.user.imagen;
         //HASTA ACÁ
+        this.access_token = data.access_token;
         this.apiCon.obtenerPreferencias(this.access_token).subscribe(async(data: any) => {
           //Guardar en local storage
           this.preferencias.usuario = this.datosGlobales.userGlobal;
@@ -209,7 +214,9 @@ export class LoginPage  implements OnInit{
           this.preferencias.contactado = data.preferencias.contactado;
           this.preferencias.notificaciones = data.preferencias.notificaciones;
           await this.storage.set('preferencias', this.preferencias);
+          console.log('token despues', await this.storage.get('access_token'));
           //TODO: Eliminar lo que sigue al implementar lectura desde Storage
+          /*
           this.datosGlobales.preferencias.usuario = this.datosGlobales.userGlobal;
           this.datosGlobales.preferencias.busqueda_automatica = data.preferencias.busqueda_automatica;
           this.datosGlobales.preferencias.distancia = data.preferencias.distancia;
@@ -230,6 +237,7 @@ export class LoginPage  implements OnInit{
           this.datosGlobales.preferencias.bodega = data.preferencias.bodega;
           this.datosGlobales.preferencias.contactado = data.preferencias.contactado;
           this.datosGlobales.preferencias.notificaciones = data.preferencias.notificaciones;
+          */
           this.router.navigate(['/tabs']);
         });
         //this.navCtrl.navigateForward(['/tabs']);

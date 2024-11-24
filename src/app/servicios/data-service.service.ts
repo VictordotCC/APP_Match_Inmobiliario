@@ -38,13 +38,21 @@ export class DataServiceService {
   }
 
   //API QUERYS
-  getVivienda(id: string): Observable<any> {
+  getVivienda(id: string, access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas';
     const params = new HttpParams().set('id_vivienda', id);
-    return this.http.get<any>(url, {params}); //TODO: Implementar interface
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.get<any>(url, {params, headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
   }
 
-  getViviendasApi(access_token: string): Observable<any> {
+  getViviendasApi(preferencias: any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas';
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
@@ -76,7 +84,7 @@ export class DataServiceService {
         const headers = new HttpHeaders({
           'Authorization': auth
         });
-        return this.http.get<any>(url, {params}).pipe(
+        return this.http.get<any>(url, {params, headers}).pipe(
           catchError(err => {
             return err;
           })
@@ -85,12 +93,12 @@ export class DataServiceService {
     );
   }
 
-  getMatches(access_token: string): Observable<any> {
+  getMatches(usuario: string, access_token: string): Observable<any> {
     const url = this.apiMatch + 'get_matches';
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
       const params = new HttpParams()
-      .set('usuario', this.datosGlobales.userGlobal!) //TODO: cambiar a this.datosGlobales.preferencias.usuario
+      .set('usuario', usuario) //TODO: cambiar a this.datosGlobales.preferencias.usuario
       .set('lat', this.datosGlobales.lat.toString())
       .set('lon', this.datosGlobales.lon.toString());
       const auth = 'Bearer ' + access_token;
@@ -120,21 +128,17 @@ export class DataServiceService {
     );
   }
 
-  getViviendasFavoritos(access_token: string): Observable<any[]> {
+  getViviendasFavoritos(usuario: string, access_token: string): Observable<any[]> {
     const url = this.apiMatch + 'favoritos';
     const params = new HttpParams()
-      .set('usuario', this.datosGlobales.userGlobal!)
+      .set('usuario', usuario)
       .set('lat', this.datosGlobales.lat.toString())
       .set('lon', this.datosGlobales.lon.toString());
     const auth = 'Bearer ' + access_token;
     const headers = new HttpHeaders({
       'Authorization': auth
     });
-    return this.http.get<any[]>(url, {params, headers}).pipe(
-      catchError(err => {
-        return throwError(err);
-      })
-    );
+    return this.http.get<any[]>(url, {params, headers});
   }
 
   //Guardar Viviendas

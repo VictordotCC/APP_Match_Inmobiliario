@@ -44,7 +44,9 @@ export class Tab1Page implements OnInit {
   isFavorite: boolean = false; // Check if the current item is in favorites
   favoritos: any[] = [];
   mostrarMapa: boolean = true;
-  access_token: string = '';
+  private access_token: string = '';
+  private usuario: string = '';
+
 
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController,
     private apiCon: DataServiceService, private alertController: AlertController, private storage: StorageService) {
@@ -52,7 +54,9 @@ export class Tab1Page implements OnInit {
     }
 
   async ngOnInit() {
+    await this.storage.init();
     this.access_token = await this.storage.get('access_token');
+    this.usuario = await this.storage.get('userGlobal');
     this.obtenerFavoritos();
 
   }
@@ -150,7 +154,6 @@ export class Tab1Page implements OnInit {
 
 
   iraPreferencias(){
-    console.log('ir a preferencias');
     this.navCtrl.navigateForward(['/preferencias']);
     /*
     this.navCtrl.navigateForward(['/preferencias'], {
@@ -175,14 +178,13 @@ export class Tab1Page implements OnInit {
 
   //Metodos Fetch
 
-  obtenerViviendas(){  
+  obtenerViviendas(){
     return this.apiCon.getViviendasCercanas(this.viewLat, this.viewLon, this.access_token);
   }
 
   async guardarFavorito(viv: any){
     const obj = { usuario: this.datosGlobales.userGlobal, id_vivienda: viv.id_vivienda };
     this.apiCon.guardarFavoritos(obj, this.access_token).subscribe((data) => {
-      console.log(data);
     });
     this.isFavorite = true;
     const alert = await this.alertController.create({
@@ -195,7 +197,7 @@ export class Tab1Page implements OnInit {
   }
 
   async obtenerFavoritos(){
-    this.apiCon.getViviendasFavoritos(this.access_token).subscribe((data) => {
+    this.apiCon.getViviendasFavoritos(this.usuario, this.access_token).subscribe((data) => {
       this.favoritos = data;
     });
   }

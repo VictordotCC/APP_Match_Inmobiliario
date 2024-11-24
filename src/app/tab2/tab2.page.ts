@@ -36,6 +36,7 @@ export class Tab2Page implements OnInit {
   isModalOpen4: boolean = false; // Add this property to control modal state
   inputHabitacion: number = 0;
   private access_token: string = '';
+  private usuario: string = '';
   
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, 
     private sanitizer: DomSanitizer, private alertController: AlertController, private storage: StorageService) {
@@ -44,12 +45,14 @@ export class Tab2Page implements OnInit {
   }
 
   async ngOnInit() {
+    await this.storage.init();
     this.access_token = await this.storage.get('access_token');
-
+    this.usuario = await this.storage.get('userGlobal');
+    this.obtenerFavs();
   }
 
-  ionViewWillEnter(){
-    this.obtenerFavs();
+  ionViewDidEnter(){
+    
   }
 
   segmentPrecMtsHab(event: CustomEvent){
@@ -119,15 +122,14 @@ export class Tab2Page implements OnInit {
 
 
   obtenerFavs(){
-    this.DataService.getViviendasFavoritos(this.access_token).subscribe( data => {
+    this.DataService.getViviendasFavoritos(this.usuario, this.access_token).subscribe( data => {
       this.viviendas = data;
       this.filterViviendas = this.viviendas;
     });
   }
 
   async borrarFav(vivienda: any){
-    const fav = {id_vivienda: vivienda.id_vivienda, usuario: this.datosGlobales.userGlobal};
-    console.log(fav);
+    const fav = {id_vivienda: vivienda.id_vivienda, usuario: this.usuario};
     const alert = await this.alertController.create({
       header: 'Eliminar',
       message: '¿Desea eliminar la vivienda de favoritos?',
