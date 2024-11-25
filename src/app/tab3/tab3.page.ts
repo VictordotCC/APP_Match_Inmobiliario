@@ -50,17 +50,20 @@ export class Tab3Page implements AfterViewInit {
     /*private notificationsPushService: NotificationsPushService*/ ) { }
 
   async ionViewDidEnter(){
-    await this.storage.init();
     this.usuario =  await this.storage.get('userGlobal');
+    await this.storage.init();
     this.preferencias = await this.storage.get('preferencias');
     this.access_token = await this.storage.get('access_token');
     //Obtiene los datos si las preferencias han cambiado
     console.log(this.preferencias);
-    if(this.preferencias != this.datosGlobales.preferencias){
+    if(JSON.stringify(this.preferencias) != JSON.stringify(this.datosGlobales.preferencias)){
       console.log('Preferencias cambiadas');
       this.preferencias = this.datosGlobales.preferencias;
+      await this.storage.set('preferencias', this.preferencias);
       this.actualizarMatches();
+      this.obtenerMatches();
     }
+    this.obtenerMatches();
   }
 
   async ngAfterViewInit(){
@@ -295,6 +298,7 @@ export class Tab3Page implements AfterViewInit {
     console.log(this.preferencias);
     this.apiCon.getViviendasApi(this.preferencias, this.access_token).subscribe((data) => {
       console.log(data);
+      this.obtenerMatches();
     });
   }
 

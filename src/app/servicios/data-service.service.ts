@@ -38,6 +38,21 @@ export class DataServiceService {
   }
 
   //API QUERYS
+  refreshToken(): Observable<any> {
+    const refresh_token = this.storage.get('refresh_token').then((val) => {
+      return val;
+    });
+    const url = this.apiMatch + 'refresh';
+    const postData = {
+      refresh_token: refresh_token
+    };
+    return this.http.post<any>(url, postData).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
+  }
+
   getVivienda(id: string, access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas';
     const params = new HttpParams().set('id_vivienda', id);
@@ -57,7 +72,7 @@ export class DataServiceService {
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
         const postData = {
-          preferencias: this.datosGlobales.preferencias,
+          preferencias: preferencias,
           ubicacion: ubicacionValor
         };
         const auth = 'Bearer ' + access_token;
@@ -128,6 +143,20 @@ export class DataServiceService {
     );
   }
 
+  deleteMatches(usuario: string, access_token: string): Observable<any> {
+    const url = this.apiMatch + 'delete_matches';
+    const params = new HttpParams().set('usuario', usuario);
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.request('DELETE', url, {params, headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );  
+  }
+
   getViviendasFavoritos(usuario: string, access_token: string): Observable<any[]> {
     const url = this.apiMatch + 'favoritos';
     const params = new HttpParams()
@@ -191,7 +220,6 @@ export class DataServiceService {
   }
 
   obtenerPreferencias(access_token: string): Observable<any> {
-    //TODO implementar REFRESH TOKEN(AUTH SERVICE)
     const url = this.apiMatch + 'preferencia';
     const params = new HttpParams().set('correo', this.datosGlobales.userGlobal!);
     const auth = 'Bearer ' + access_token;

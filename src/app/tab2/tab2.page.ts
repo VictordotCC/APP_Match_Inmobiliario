@@ -121,7 +121,7 @@ export class Tab2Page implements OnInit {
 
 
 
-  obtenerFavs(){
+  async obtenerFavs(){
     this.DataService.getViviendasFavoritos(this.usuario, this.access_token).subscribe( data => {
       this.viviendas = data;
       this.filterViviendas = this.viviendas;

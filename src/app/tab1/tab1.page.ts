@@ -118,7 +118,7 @@ export class Tab1Page implements OnInit {
             })}).addTo(this.map).bindPopup(`<b>${vivienda.nombre_propiedad} </b> en <b>${vivienda.tipo_operacion == false ? 'Venta': 'Arriendo'}</b><br>${vivienda.precio_uf} UF`
                                            + `<br><img src="${vivienda.imagenes[0].url}" style="width: 100px; height: 100px;">`
                                            + `<br><a href="${JSON.parse(vivienda.links_contacto)[0]}" target="_blank">Contacto</a>`
-                                           + '<a href="" style="float: right">Ver más</a>');
+                                           );
           this.markers.push(marker);
         }
       });
@@ -145,7 +145,7 @@ export class Tab1Page implements OnInit {
     const deltaLat = Math.abs(center.lat - this.datosGlobales.lat);
     const deltaLon = Math.abs(center.lng - this.datosGlobales.lon);
 
-    if (deltaLat > 0.0005 || deltaLon > 0.0005) {
+    if (deltaLat > 0.0015 || deltaLon > 0.0015) {
       this.viewLat = center.lat;
       this.viewLon = center.lng;
       this.nearbyMarker();
