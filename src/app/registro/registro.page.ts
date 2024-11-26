@@ -87,7 +87,6 @@ export class RegistroPage implements OnInit {
   }
 
   registrarse() {
-    // TODO: implementar la lógica para registrar al usuario
     this.dataService.registrarUsuario(this.formularioRegistro.value).subscribe(async (data) => {
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',

@@ -6,12 +6,58 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="mensaje">
-    <h1>
-      La clave será enviada al correo registrado una vez que haga click en el botón de enviar
-    </h1>
+  <div class="ion-padding">
+    <div>
+      <p>Ingresa tu correo electrónico para recuperar tu contraseña:</p>
+    </div>
+    <form [formGroup]="formularioRC">
+      <ion-item>
+        <ion-label position="floating">Correo Electrónico</ion-label>
+        <ion-input formControlName="correo" class="form-control" ></ion-input>
+      </ion-item>
+      <ion-button id="bEnviar" expand="block" [disabled]="formularioRC.invalid" (click)="enviarCorreoRC()">
+        Enviar C&oacute;digo de Recuperacion
+      </ion-button>
+      <ion-item>
+        <ion-label position="floating">Código de Recuperación</ion-label>
+        <ion-input type="text" formControlName="token"></ion-input>
+      </ion-item>
+      <ion-button id="bRecuperar" expand="block" (click)="verificarTokenContrasena()"disabled="true">
+        Recuperar Contraseña
+      </ion-button>
+    </form>
   </div>
-  <div class="btn-recuperar">
-    <ion-button name ="recuperarClave" shape="round" color="primary" [routerLink]="['/login']">Enviar Clave</ion-button>
+
+  <div id="recovery" class="ion-padding" style="display: none;">
+    <div>
+      <p>Código de Recuperaci&oacute;n Confirmado:<br> Ingresa tu nueva contraseña</p>
+    </div>
+    <form [formGroup]="formularioNC">
+      <ion-item>
+        <ion-label position="floating">Nueva Contraseña</ion-label>
+        <ion-input type="password" formControlName="contrasena" class="form-control"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Confirmar Contraseña</ion-label>
+        <ion-input type="password" formControlName="repContrasena" class="form-control"></ion-input>
+      </ion-item>
+      <ion-button id="bCambiar" expand="block" [disabled]="formularioNC.invalid" (click)="cambiarContrasena()">
+        Cambiar Contraseña
+      </ion-button><ng-container *ngFor = "let validation of validation_messages.contrasena">
+        <div class="error-message" *ngIf="formularioNC?.get('contrasena')?.hasError(validation.type) && (formularioNC?.get('contrasena')?.dirty || formularioNC?.get('contrasena')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.repContrasena">
+        <div class="error-message" *ngIf="formularioNC?.get('repContrasena')?.hasError(validation.type) && (formularioNC?.get('repContrasena')?.dirty || formularioNC?.get('repContrasena')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="formularioNC.hasError('areEqual') && formularioNC.get('repContrasena')?.dirty">
+        <div class="error-message">
+          Las contraseñas no coinciden
+        </div>
+      </ng-container>
+    </form>
   </div>
 </ion-content>

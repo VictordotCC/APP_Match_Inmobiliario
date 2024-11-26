@@ -301,6 +301,27 @@ export class DataServiceService {
     );
   }
 
+  recuperarContrasena(correo: string): Observable<any> {
+    const url = this.apiMatch + 'recuperar';
+    const params = new HttpParams().set('correo', correo);
+    return this.http.get<any>(url, {params});
+  }
+
+  verificarTokenRecuperacion(correo:string, token: string): Observable<any> {
+    const url = this.apiMatch + 'verificar_recuperacion';
+    const params = new HttpParams().set('correo', correo).set('token', token);
+    return this.http.get<any>(url, {params});
+  }
+
+  cambiarContrasena(correo:string, contrasena: string): Observable<any> {
+    const url = this.apiMatch + 'recuperar';
+    const postData = {
+      correo: correo,
+      contrasena: contrasena
+    };
+    return this.http.post<any>(url, postData);
+  }
+
   //ZONA DE IMAGENES
   //guardar imagenes
   getImagenes(id: string): Observable<any> {
