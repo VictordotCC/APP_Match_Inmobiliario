@@ -1,18 +1,19 @@
 import { DataServiceService } from './../servicios/data-service.service';
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { IonSegment, AlertController } from '@ionic/angular';
+import { Component, ViewChild, OnInit, AfterViewInit, ElementRef  } from '@angular/core';
+import { IonSegment, AlertController} from '@ionic/angular';
 import { Observable} from 'rxjs';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { StorageService } from '../servicios/storage.service';
-
+import { Chart, registerables } from 'chart.js';
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
 })
-export class Tab2Page implements OnInit {
-
+export class Tab2Page implements OnInit, AfterViewInit  {
+  chart: any; // Add this property to store the chart instance
+  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
   opcionAll: string = 'Todos';
@@ -37,11 +38,12 @@ export class Tab2Page implements OnInit {
   inputHabitacion: number = 0;
   private access_token: string = '';
   private usuario: string = '';
-  prediccionPrecio: any;
+  prediccionPrecio: number = 0;
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService,
     private sanitizer: DomSanitizer, private alertController: AlertController, private storage: StorageService) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
     this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl,); // Correct property name
+    Chart.register(...registerables); // Registra todos los componentes necesarios para el uso de Chart.js
   }
 
   async ngOnInit() {
@@ -49,8 +51,12 @@ export class Tab2Page implements OnInit {
     this.access_token = await this.storage.get('access_token');
     this.usuario = await this.storage.get('userGlobal');
     this.obtenerFavs();
+
   }
 
+  ngAfterViewInit() {
+    this.createChart();
+  }
   ionViewDidEnter(){
     this.obtenerFavs();
   }
@@ -238,9 +244,51 @@ export class Tab2Page implements OnInit {
   predecirPrecio(vivienda: any){
     this.DataService.getPrediccion(vivienda).subscribe( data => {
       this.prediccionPrecio = Math.round(data.prediction);
-      console.log(this.prediccionPrecio);
+      this.updateChart(this.prediccionPrecio); // Call the method to update the chart
+      console.log('predicción en UF:',this.prediccionPrecio);
     });
   }
+
+  async createChart() {
+    if (this.myChart && this.myChart.nativeElement) {
+      const ctx = this.myChart.nativeElement.getContext('2d');
+      if (ctx) {
+        this.chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['2024', '2025', '2026', '2027'], // Puedes ajustar las etiquetas según tus necesidades
+            datasets: [{
+              label: 'Predicción de Precio',
+              data: [], // Inicialmente vacío
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      } else {
+        console.error('No se pudo obtener el contexto del canvas');
+      }
+    } else {
+      console.error('No se pudo encontrar el elemento canvas');
+    }
+  }
+  updateChart(prediccion: number) {
+    if (this.chart) {
+      this.chart.data.datasets[0].data.push(prediccion);
+      this.chart.update();
+    } else {
+      console.error('El gráfico no está inicializado');
+    }
+  }
+
+
 
 }
 

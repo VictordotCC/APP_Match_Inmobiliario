@@ -133,12 +133,14 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
               <p><strong>Área Construida: </strong> {{ detalleVivienda.area_construida }}</p>
               <p><strong>Tipo Subsidio: </strong> {{ detalleVivienda.tipo_subsidio }}</p>
               <p>Propiedad publicada el : {{ detalleVivienda.fecha_creacion }}</p>
-              <div>
-                <ion-card-subtitle><strong>Valor Predecido para final del 2024: {{prediccionPrecio}} UF </strong></ion-card-subtitle>
-              </div>
+              <ion-item >
+                <ion-card-subtitle><strong>Predicción Precio UF final del 2024: {{prediccionPrecio}}</strong></ion-card-subtitle>
+                <canvas #myChart></canvas>
+              </ion-item>
             </ion-card-content>
             <ion-button id="eliminar-fav" (click)="borrarFav(detalleVivienda)" expand="block" color="danger"><ion-icon name="trash"></ion-icon> Borrar de Favoritos </ion-button>
           </ion-card>
+
         </ion-content>
       </ng-template>
     </ion-modal>
