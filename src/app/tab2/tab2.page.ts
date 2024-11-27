@@ -37,8 +37,8 @@ export class Tab2Page implements OnInit {
   inputHabitacion: number = 0;
   private access_token: string = '';
   private usuario: string = '';
-  
-  constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService, 
+  prediccionPrecio: any;
+  constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService,
     private sanitizer: DomSanitizer, private alertController: AlertController, private storage: StorageService) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
     this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl,); // Correct property name
@@ -52,7 +52,7 @@ export class Tab2Page implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.obtenerFavs();   
+    this.obtenerFavs();
   }
 
   segmentPrecMtsHab(event: CustomEvent){
@@ -165,6 +165,7 @@ export class Tab2Page implements OnInit {
     this.fotoCasa = JSON.parse(vivienda.links_contacto);
     this.detalleVivienda = vivienda;
     this.isModalOpen = true;
+    this.predecirPrecio(vivienda);
 
   }
   //FIXME: Add Generic method to close modals
@@ -233,6 +234,13 @@ export class Tab2Page implements OnInit {
 
   }
 
+  //metodo de predicción de precio
+  predecirPrecio(vivienda: any){
+    this.DataService.getPrediccion(vivienda).subscribe( data => {
+      this.prediccionPrecio = Math.round(data.prediction);
+      console.log(this.prediccionPrecio);
+    });
+  }
 
 }
 

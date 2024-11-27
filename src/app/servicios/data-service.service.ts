@@ -11,7 +11,7 @@ import { StorageService } from './storage.service';
   providedIn: 'root'
 })
 export class DataServiceService {
-
+  apiML ='http://127.0.0.1:5050/'
   apiMatch = 'http://127.0.0.1:5000/';
   //apiMatch = 'https://api-match-inmobiliario.onrender.com/';
   apiViviendasUrl = '../../assets/Data/viviendas.json';
@@ -154,7 +154,7 @@ export class DataServiceService {
       catchError(err => {
         return err;
       })
-    );  
+    );
   }
 
   getViviendasFavoritos(usuario: string, access_token: string): Observable<any[]> {
@@ -348,4 +348,29 @@ export class DataServiceService {
       })
     );
   }
+  //modelo machine learning
+  getPrediccion(obj:any): Observable<any> {
+    const url = this.apiML + 'predict';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    const data = [{
+      "area_total": obj.area_total,
+      "habitaciones": obj.habitaciones,
+      "tipo_vivienda": obj.tipo_vivienda,
+      "banos": obj.banos,
+      "area_construida": obj.area_construida,
+      "nom_comuna": 1,
+      "nom_ciudad": 1,
+      "nom_region": 1,
+      "nom_vecindario": obj.nom_vecindario,
+      }];
+    return this.http.post<any[]>(url, data, {headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
+  }
+
+
 }
