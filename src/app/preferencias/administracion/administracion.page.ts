@@ -4,6 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { DataServiceService } from 'src/app/servicios/data-service.service';
 import { StorageService } from 'src/app/servicios/storage.service';
 import { PasswordValidator } from 'src/app/validators/password.validator';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-administracion',
@@ -21,9 +22,10 @@ export class AdministracionPage implements OnInit {
   formularioAdmin : FormGroup;
   formularioCambio: FormGroup;
   validation_messages :any;
+  access_token: string = '';
 
   constructor(private storage: StorageService, private apiCon: DataServiceService, 
-    private fb: FormBuilder, private alertController: AlertController) {
+    private fb: FormBuilder, private alertController: AlertController, private router: Router) {
     
       this.formularioAdmin = this.fb.group({
       nombre: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
@@ -64,12 +66,19 @@ export class AdministracionPage implements OnInit {
 
   async ngOnInit() {
     await this.storage.init();
+    this.access_token = await this.storage.get('access_token');
     this.user = await this.storage.get('userGlobal');
     this.tipo = await this.storage.get('userTipoGlobal');
     this.nombre = await this.storage.get('userNombreGlobal');
     this.apellido = await this.storage.get('userApellidoGlobal');
     this.fotoPerfil = await this.storage.get('imgGlobal');
     this.telefono = await this.storage.get('userTelefonoGlobal');
+
+    this.formularioAdmin.patchValue({
+      nombre: this.nombre,
+      apellido: this.apellido,
+      telefono: this.telefono
+    });
   }
 
   actualizarDatos(){
@@ -89,16 +98,21 @@ export class AdministracionPage implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: (blah) => {
-            console.log('Confirm Cancel');
-          }
         }, {
           text: 'Aceptar',
           handler: () => {
-            console.log('Confirm Okay');
-            //TODO: implementar baja
-          }
+            this.apiCon.darBaja(this.access_token, this.user).subscribe(async (data) => {
+              this.storage.clear();
+              const alert = await this.alertController.create({
+                header: 'Baja',
+                message: 'Se ha dado de baja correctamente',
+                buttons: ['Aceptar']
+              });
+              await alert.present();
+              this.router.navigate(['/login']);
+          });
         }
+      }
       ]
     });
     await alert.present();

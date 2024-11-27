@@ -11,8 +11,9 @@ import { StorageService } from './storage.service';
   providedIn: 'root'
 })
 export class DataServiceService {
-  apiML ='http://127.0.0.1:5050/'
+  //apiML ='http://127.0.0.1:5050/'
   apiMatch = 'http://127.0.0.1:5000/';
+  apiML = 'https://apipreciovivienda.onrender.com/';
   //apiMatch = 'https://api-match-inmobiliario.onrender.com/';
   apiViviendasUrl = '../../assets/Data/viviendas.json';
   apiImagenesUrl = '../../assets/Data/imagenes.json';
@@ -326,6 +327,16 @@ export class DataServiceService {
     const url = this.apiMatch + 'dar-alta';
     const params = new HttpParams().set('correo', correo);
     return this.http.get<any>(url, {params});
+  }
+
+  darBaja(access_token: string, correo: string): Observable<any> {
+    const url = this.apiMatch + 'dar-baja';
+    const params = new HttpParams().set('correo', correo);
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.get<any>(url, {params, headers});
   }
 
   //ZONA DE IMAGENES

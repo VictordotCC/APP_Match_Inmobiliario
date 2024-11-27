@@ -105,7 +105,11 @@ export class Tab1Page implements OnInit {
     this.markers.forEach(marker => {
       marker.remove();
     });
+    this.markers = [];
+    this.viviendas = [];
+    this.filterViviendas = [];
     this.obtenerViviendas().subscribe((viviendas: any) => {
+      console.log(viviendas);
       this.viviendas = viviendas;
       this.filterViviendas = viviendas;
       viviendas.forEach((vivienda: any) => {
@@ -123,15 +127,6 @@ export class Tab1Page implements OnInit {
         }
       });
     });
-    /*if (this.map) {
-      const marker = Leaflet.marker([this.viewLat -0.001, this.viewLon -0.001], {icon: Leaflet.icon({
-        iconUrl: '../../assets/markers/casa-with-shadow.png',
-        iconSize: [36, 36],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        })}).addTo(this.map).bindPopup(`<b>Vivienda cercana</b><br>Otra información en HTML`);
-      this.markers.push(marker);
-    }*/
   }
 
   centrarMapa(){
@@ -150,6 +145,8 @@ export class Tab1Page implements OnInit {
       this.viewLon = center.lng;
       this.nearbyMarker();
     }
+    this.viewLat = center.lat;
+    this.viewLon = center.lng;
   }
 
 
@@ -179,6 +176,7 @@ export class Tab1Page implements OnInit {
   //Metodos Fetch
 
   obtenerViviendas(){
+    console.log(this.viewLat, this.viewLon);
     return this.apiCon.getViviendasCercanas(this.viewLat, this.viewLon, this.access_token);
   }
 
