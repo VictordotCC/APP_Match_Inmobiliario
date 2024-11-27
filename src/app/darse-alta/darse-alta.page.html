@@ -1,0 +1,25 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-icon slot="start" style="margin-left: 5%;"name="arrow-back-outline" size="large" [routerLink]="['/login']"></ion-icon>
+    <ion-title>Darse de Alta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="ion-padding">
+    <div>
+      <p>Si te diste de baja, puedes recuperar tu cuenta haciendo click acá e indicando tu correo electrónico:</p>
+    </div>
+    <form [formGroup]="formularioAlta">
+      <ion-item>
+        <ion-label position="floating">Correo Electrónico</ion-label>
+        <ion-input formControlName="correo" class="form-control" ></ion-input>
+      </ion-item>
+      <ion-button id="bRecuperar" expand="block" [disabled]="formularioAlta.invalid" (click)="recuperarCuenta()">
+        Recuperar Cuenta
+      </ion-button>
+      <p>Te enviaremos un correo electrónico con tu código de recuperación</p>
+    </form>
+  </div>
+
+</ion-content>

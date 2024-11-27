@@ -42,7 +42,7 @@
         </ion-item>
       </form>
       <br>
-      <div >
+      <div>
         <ion-button shape="round" color = "primary" [disabled]="formularioLogin.invalid" (click)="ingresar()">
           Iniciar Sesión
         </ion-button>
@@ -55,6 +55,9 @@
   </ion-item>
   <ion-item button (click)="navigateToRecuperarContrasena()">
     <ion-label>Recuperar contraseña</ion-label>
+  </ion-item>
+  <ion-item button (click)="navigateToDarseAlta()">
+    <ion-label>¿Quieres volver? - <strong>Date de Alta</strong></ion-label>
   </ion-item>
 </ion-content>
 

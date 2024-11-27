@@ -1,0 +1,81 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-item>
+      <ion-title style="text-align: center;">Administración de la cuenta</ion-title>
+      <ion-icon slot="start" style="margin-left: 2%; margin: 0%;"name="arrow-back-outline" size="large" [routerLink]="['/preferencias']"></ion-icon>
+      <ion-icon name="notifications-outline" slot="end"></ion-icon>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div>
+    <ion-item>
+      <ion-label>Aquí podrás administrar tu cuenta</ion-label>
+    </ion-item>
+  </div>
+  <div>
+    <ion-item>
+      <ion-avatar slot="start">
+        <img src="{{fotoPerfil}}" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{nombre+' '+ apellido}}</h2>
+        <p>{{user}}</p>
+      </ion-label>
+      <ion-button slot="end" color="danger" (click)="darBaja()">
+        Darse de baja
+      </ion-button>
+    </ion-item>
+    <form [formGroup]="formularioAdmin">
+      <ion-item>
+        <ion-label position="floating">Nombres</ion-label>
+        <ion-input type="text" formControlName="nombre" value="{{nombre}}" [(ngModel)]="nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Apellidos</ion-label>
+        <ion-input type="text" formControlName="apellido" value="{{apellido}}" [(ngModel)]="apellido"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Teléfono</ion-label>
+        <ion-input type="text" formControlName="telefono" value="{{telefono}}" [(ngModel)]="telefono"></ion-input>
+      </ion-item>
+      <!-- VER QUE HACER CON FOTO DE PERFIL
+      <ion-item>
+        <ion-label position="floating">Foto de perfil</ion-label>
+        <ion-input type="file" value="{{fotoPerfil}}" [(ngModel)]="fotoPerfil"></ion-input>
+      </ion-item>-->
+      <ion-button expand="block" [disabled]="formularioAdmin.invalid" (click)="actualizarDatos()">
+        Actualizar Datos
+      </ion-button>
+    </form>
+    <form [formGroup]="formularioCambio">
+      <ion-item>
+        <ion-label position="floating">Nueva Contraseña</ion-label>
+        <ion-input type="password" formControlName="contrasena" class="form-control"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Confirmar Contraseña</ion-label>
+        <ion-input type="password" formControlName="repContrasena" class="form-control"></ion-input>
+      </ion-item>
+      <ion-button id="bCambiar" expand="block" [disabled]="formularioCambio.invalid" (click)="cambiarContrasena()">
+        Cambiar Contraseña
+      </ion-button><ng-container *ngFor = "let validation of validation_messages.contrasena">
+        <div class="error-message" *ngIf="formularioCambio?.get('contrasena')?.hasError(validation.type) && (formularioCambio?.get('contrasena')?.dirty || formularioCambio?.get('contrasena')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngFor = "let validation of validation_messages.repContrasena">
+        <div class="error-message" *ngIf="formularioCambio?.get('repContrasena')?.hasError(validation.type) && (formularioCambio?.get('repContrasena')?.dirty || formularioCambio?.get('repContrasena')?.touched)">
+          {{validation.message}}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="formularioCambio.hasError('areEqual') && formularioCambio.get('repContrasena')?.dirty">
+        <div class="error-message">
+          Las contraseñas no coinciden
+        </div>
+      </ng-container>
+    </form>
+  </div>
+  
+</ion-content>

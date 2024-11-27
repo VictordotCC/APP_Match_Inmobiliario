@@ -129,6 +129,10 @@ export class LoginPage  implements OnInit{
     this.router.navigate(['/recuperar-contrasena']);
   }
 
+  navigateToDarseAlta() {
+    this.router.navigate(['/darse-alta']);
+  }
+
   segmentChanged( event: any){
     const valorSegmento = event.detail.value;
     this.tipoUsuario = valorSegmento;

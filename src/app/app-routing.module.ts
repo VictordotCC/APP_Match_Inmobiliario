@@ -37,6 +37,10 @@ const routes: Routes = [
     path: 'inmueble',
     loadChildren: () => import('./inmueble/inmueble.module').then( m => m.InmueblePageModule)
   },
+  {
+    path: 'darse-alta',
+    loadChildren: () => import('./darse-alta/darse-alta.module').then( m => m.DarseAltaPageModule)
+  },
 
 ];
 @NgModule({

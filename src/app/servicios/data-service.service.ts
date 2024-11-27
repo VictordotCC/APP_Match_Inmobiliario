@@ -322,6 +322,12 @@ export class DataServiceService {
     return this.http.post<any>(url, postData);
   }
 
+  darAlta(correo: string): Observable<any> {
+    const url = this.apiMatch + 'dar-alta';
+    const params = new HttpParams().set('correo', correo);
+    return this.http.get<any>(url, {params});
+  }
+
   //ZONA DE IMAGENES
   //guardar imagenes
   getImagenes(id: string): Observable<any> {

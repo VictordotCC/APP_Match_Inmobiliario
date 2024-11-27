@@ -22,8 +22,8 @@
 <ion-content [fullscreen]="true">
   <ion-item>
     <ion-avatar slot="start">
-      <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-      <!--<img alt="Silhouette of a person's head" src="{{fotoPerfil}}" /> -->
+      <!--<img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />-->
+      <img alt="Silhouette of a person's head" src="{{fotoPerfil}}" />
     </ion-avatar>
     <ion-label>
       <h2>{{nombre+' '+ apellido}}</h2>
@@ -38,7 +38,7 @@
       <ion-label [routerLink]="['/preferencia-usuario']" >Preferencias</ion-label>
     </ion-item>
     <ion-item button>
-      <ion-label [routerLink]="">Administración de la cuenta</ion-label>
+      <ion-label [routerLink]="['administracion']">Administración de la cuenta</ion-label>
     </ion-item>
     <ion-item button>
       <ion-label [routerLink]="['/notificaciones']">Notificaciones</ion-label>

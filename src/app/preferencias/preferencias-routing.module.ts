@@ -7,7 +7,11 @@ const routes: Routes = [
   {
     path: '',
     component: PreferenciasPage
+  },  {
+    path: 'administracion',
+    loadChildren: () => import('./administracion/administracion.module').then( m => m.AdministracionPageModule)
   }
+
 ];
 
 @NgModule({
