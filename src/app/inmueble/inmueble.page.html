@@ -169,19 +169,30 @@
     </ion-row>
   </ion-grid>
   <div>
-    <ion-item>
-      <ion-input fill="solid" type="text"
+    <ion-item lines="none">
+      <ion-label slot="start"> Datos de contacto </ion-label>
+      <ion-chip id="link-modal" color="primary" slot="end">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        <ion-label>Agregar</ion-label>
+      </ion-chip>
+    </ion-item>
+    <!-- Example Link-->
+    <ion-item *ngFor="let link of linksContacto">
+      <ion-input fill="solid" type="text" [readonly]="true"
           label="Link de contacto"
           labelPlacement="floating"
           [clearInput]="true"
-          helperText="ingrese número"
           errorText="dato no válido"
-          (ionChange)="inContacto()"
-          [(ngModel)]="linkContacto"></ion-input>
+          value="{{ link }}">
+      </ion-input>
     </ion-item>
+    <!-- Example End-->
   </div>
   <ion-item>
     <ion-label> Ubicación Geográfica del inmueble</ion-label>
+  </ion-item>
+  <ion-item>
+    <div id="map"></div>
   </ion-item>
   <ion-grid>
     <ion-row>
@@ -209,18 +220,24 @@
   </ion-grid>
 
   <div>
-    <ion-item>
-      <ion-label> URL Imágenes del inmueble </ion-label> </ion-item>
-    <ion-item>
-      <ion-input fill="solid" type="text"  maxlength="500"
-      label="URL"
-      labelPlacement="floating"
-      [clearInput]="true"
-      helperText="ingrese URL"
-      errorText="dato no válido"
-      (ionChange)="fotoVivienda()"
-      [(ngModel)]="urlFotoVivienda"></ion-input>
+    <ion-item lines="none">
+      <ion-label slot="start"> Imágenes del Inmueble </ion-label>
+      <ion-chip id="foto-modal" color="primary" slot="end">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        <ion-label>Agregar</ion-label>
+      </ion-chip>
     </ion-item>
+    <!-- Example Link-->
+    <ion-item *ngFor="let url of urlsFotoVivienda">
+      <ion-input fill="solid" type="text" [readonly]="true"
+          label="URL Imagen"
+          labelPlacement="floating"
+          [clearInput]="true"
+          errorText="dato no válido"
+          value="{{ url }}">
+      </ion-input>
+    </ion-item>
+    <!-- Example End-->
   </div>
   <div>
     <ion-item>
@@ -251,8 +268,60 @@
   <div>
     <ion-item>
       <!--<ion-button slot="start" size="medium" shape="round" (ionClick)="GuardarAjustes()" [routerLink]="['/preferencias']">Guardar Información</ion-button> -->
-      <ion-button slot="start" size="medium" shape="round" (click)="GuardarAjustes()">Guardar Información</ion-button>
+      <ion-button slot="start" size="medium" shape="round" (click)="GuardarVivienda()">Guardar Información</ion-button>
     </ion-item>
   </div>
+
+  <!-- Modal de contacto -->
+  <ion-modal (willDismiss)="closeModal()"
+    trigger="link-modal"
+    [initialBreakpoint]="0.25"
+    [breakpoints]="[0, 0.25]">
+    <ng-template>
+      <ion-content>
+        <ion-item>
+          <ion-label>Ingrese un link de contacto</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-input fill="solid" type="text" [clearInput]="true"
+            label="Link de contacto"
+            labelPlacement="floating"
+            [clearInput]="true"
+            errorText="dato no válido"
+            [(ngModel)]="linkContacto">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-button slot="start" size="medium" shape="round" (click)="addContacto()">Agregar</ion-button>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal de Fotos -->
+  <ion-modal (willDismiss)="closeModal()"
+    trigger="foto-modal"
+    [initialBreakpoint]="0.25"
+    [breakpoints]="[0, 0.25]">
+    <ng-template>
+      <ion-content>
+        <ion-item>
+          <ion-label>Ingrese la url de la imagen</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-input fill="solid" type="text" [clearInput]="true"
+            label="Link de contacto"
+            labelPlacement="floating"
+            [clearInput]="true"
+            errorText="dato no válido"
+            [(ngModel)]="urlFotoVivienda">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-button slot="start" size="medium" shape="round" (click)="addImagen()">Agregar</ion-button>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>

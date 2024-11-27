@@ -31,6 +31,11 @@ export class PreferenciasPage implements OnInit {
     console.log('User:', this.user);
   }
 
+  async onTipoChange(event: any) {
+    this.tipo = event.detail.value;
+    await this.storage.set('userTipoGlobal', this.tipo);
+  }
+
   async showAlert() {
     const alert = await this.alertController.create({
       header: 'Salida',

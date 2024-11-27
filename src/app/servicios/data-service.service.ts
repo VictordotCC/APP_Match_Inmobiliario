@@ -173,12 +173,15 @@ export class DataServiceService {
 
   //Guardar Viviendas
   postVivienda(vivienda: any, access_token: string): Observable<any> {
-    const url = this.apiMatch + 'viviendas';
+    const url = this.apiMatch + 'v_viviendas';
+    const postData = { 
+      vivienda: vivienda 
+    };
     const auth = 'Bearer ' + access_token;
     const headers = new HttpHeaders({
       'Authorization': auth
     });
-    return this.http.post<any>(url, vivienda, {headers: headers}).pipe(
+    return this.http.post<any>(url, postData, {headers: headers}).pipe(
       catchError(err => {
         return err;
       })
@@ -348,6 +351,7 @@ export class DataServiceService {
   }
 
   postImagenes(obj:any, access_token:string): Observable<any> {
+    //FIXME: EL ID SE CREA EN BACKEND
     const url = this.apiMatch + 'imagenes';
     const auth = 'Bearer ' + access_token;
     const headers = new HttpHeaders({
