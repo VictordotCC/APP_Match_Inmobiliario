@@ -72,6 +72,7 @@ export class Tab3Page implements AfterViewInit {
     this.preferencias = await this.storage.get('preferencias');
     this.datosGlobales.preferencias = this.preferencias;
     this.access_token = await this.storage.get('access_token');
+    console.log(this.preferencias)
     //this.notificationsPushService.init(); // Inicializa el servicio de notificaciones
     this.actualizarMatches();
     this.obtenerMatches();
@@ -89,8 +90,19 @@ export class Tab3Page implements AfterViewInit {
         this.updateMaps(ubicacion.lat, ubicacion.lon);
       }
     });
+  }
 
-
+  ionViewDidLeave(){
+    this.maps.forEach((map) => {
+      if (map) {
+        this.destroyMap(map);
+      }
+    });
+    this.showDetails = false;
+    const match_container = document.querySelector('.match-container');
+    if (match_container){
+      match_container.setAttribute('style', 'justify-content: center');
+    }
   }
 
   //GESTOS
@@ -200,13 +212,13 @@ export class Tab3Page implements AfterViewInit {
 
   //MAPA
 
-  initializeMap(mapTag : HTMLElement) {
-    const map = Leaflet.map(mapTag).setView([this.datosGlobales.lat, this.datosGlobales.lon], this.datosGlobales.mapZoom);
+  initializeMap(mapTag : HTMLElement, latitud: number, longitud: number){
+    const map = Leaflet.map(mapTag).setView([latitud, longitud], this.datosGlobales.mapZoom);
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
     this.adduserMarker(map, this.datosGlobales.lat, this.datosGlobales.lon, this.defaultIcon);
-    const marker = Leaflet.marker([this.datosGlobales.lat -0.001, this.datosGlobales.lon -0.001], {icon: Leaflet.icon({ //TODO: obtener lat y lon del domicilio seleccionado
+    const marker = Leaflet.marker([latitud, longitud], {icon: Leaflet.icon({
       iconUrl: '../../assets/markers/casa-with-shadow.png',
       iconSize: [36, 36],
       iconAnchor: [12, 41],
@@ -332,6 +344,9 @@ export class Tab3Page implements AfterViewInit {
     const match_card = ev.closest('.match-card')
     const hidden_info = match_card.querySelector('.hidden-info')
     const mapMatch = match_card.querySelector('#mapMatch') as HTMLElement;
+    const latitud = parseFloat(match_card.getAttribute('latitud')!);
+    const longitud = parseFloat(match_card.getAttribute('longitud')!);
+    console.log(latitud, longitud);
     const info = match_card.querySelector('.info')
     const match_container = match_card.closest('.match-container')
     this.showDetails = !this.showDetails;
@@ -341,7 +356,7 @@ export class Tab3Page implements AfterViewInit {
       info.style.display = 'none';
       match_container.style.justifyContent = 'flex-start';
       setTimeout(() => {
-        this.initializeMap(mapMatch);
+        this.initializeMap(mapMatch, latitud, longitud);
       }, 0);
     } else {
       hidden_info.style.display = 'none';

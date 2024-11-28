@@ -8,7 +8,7 @@
     <ion-list>
       <ion-item>
         <!--<ion-select placeholder="Cambiar Perfil" slot="end" okText="confirme Cambio de perfil" cancelText="Cancelar opción" fill="true" value="Comprador"> -->
-        <ion-select value="Comprador" placeholder="Cambiar Perfil" slot="end" okText="Confirmar" cancelText="Cancelar" fill="true"
+        <ion-select placeholder="Cambiar Perfil" slot="end" okText="Confirmar" cancelText="Cancelar" fill="true"
           [(ngModel)]="tipo" (ionChange)="onTipoChange($event)">
           <ion-select-option value="Comprador">Comprador</ion-select-option>
           <ion-select-option value="Vendedor">Vendedor</ion-select-option>
@@ -63,11 +63,14 @@
   </ion-list>
   <ion-list *ngIf="tipo === 'Vendedor'">
     <ion-list-header>
-      <ion-label><strong>Configuración</strong></ion-label>
+      <ion-label><strong>Acciones</strong></ion-label>
     </ion-list-header>
     <ion-item button >
       <ion-label [routerLink]="['/inmueble']">Ingresar un Inmueble</ion-label>
     </ion-item>
+    <ion-list-header>
+      <ion-label><strong>Configuración</strong></ion-label>
+    </ion-list-header>
     <ion-item button>
       <ion-label [routerLink]="['administracion']">Administración de la cuenta</ion-label>
     </ion-item>

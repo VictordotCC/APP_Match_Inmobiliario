@@ -74,6 +74,7 @@ export class Tab1Page implements OnInit {
       }
     });
   }
+  
   showMapa(){
     this.mostrarMapa = !this.mostrarMapa;
   }

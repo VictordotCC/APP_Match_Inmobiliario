@@ -13,7 +13,7 @@ import * as Leaflet from 'leaflet';
   styleUrls: ['./inmueble.page.scss'],
 })
 export class InmueblePage implements OnInit {
-  opPeracion: string ='Compra'; //para seleccionar el tipo de operacion
+  opPeracion: string ='Venta'; //para seleccionar el tipo de operacion
   opPropiedad: string ='Casa';
   opInmbueble: string = 'Nuevo';
   areaConstruida: number = 0;
@@ -21,21 +21,21 @@ export class InmueblePage implements OnInit {
   areaTotal: number = 0;
   pisos: number = 0;
   valorMontoVivienda: number = 0;
-  checkSubsidio: boolean = false;
+  checkSubsidio: boolean = true;
   subSidio: string[]= ['Ninguno','DS01','DS19','DS49','Arriendo']; //para seleccionar el tipo de subsidio
-  opSubsidio: string = 'Ninguno';
+  opSubsidio: string = 'DS01';
   cantHabitaciones: number = 0;
   cantBanos: number = 0;
   estacionamiento: number = 0;
   bodega: number = 0;
-  linksContacto: string[] = []; ; // ejemplo -> 'https://api.whatsapp.com/send?phone=56999999999&text=Hola,%20me%20interesa%20tu%20propiedad%20en%20venta';
+  linksContacto: string[] = ['www','www2']; ; // ejemplo -> 'https://api.whatsapp.com/send?phone=56999999999&text=Hola,%20me%20interesa%20tu%20propiedad%20en%20venta';
   linkContacto: string = '';
-  inLatitud: number = 0;
-  inLongitud: number = 0;
-  urlsFotoVivienda: string[] = [];
+  inLatitud: number = -33.49999851047739; //TODO: BORRAR
+  inLongitud: number = -70.61637401576264; //TODO: BORRAR
+  urlsFotoVivienda: string[] = ['https://dynamic-media.tacdn.com/media/vr-splice-j/05/dc/2c/dd.jpg', 'https://static01.nyt.com/images/2023/06/08/multimedia/00casabonita-01-vwhc/00casabonita-01-vwhc-articleLarge.jpg'];
   urlFotoVivienda: string = '';
-  nomVivienda: string = '';
-  descripVivienda: string = '';
+  nomVivienda: string = 'a';
+  descripVivienda: string = 'b';
   private access_token: string = '';
   private correo: string = '';
   private viewLat: number = 0;
@@ -62,6 +62,8 @@ export class InmueblePage implements OnInit {
   ionViewDidEnter(){
     if(this.map){
       this.map.remove();
+      this.map = undefined;
+      console.log('Mapa eliminado');
     }
     this.initializeMap();
     this.datosGlobales.ubicacion$.subscribe((ubicacion)=>{
@@ -77,7 +79,7 @@ export class InmueblePage implements OnInit {
     }
     this.viewLat = this.datosGlobales.lat;
     this.viewLon = this.datosGlobales.lon;
-    this.map = Leaflet.map('map').setView([this.viewLat, this.viewLon], 13);
+    this.map = Leaflet.map('map2').setView([this.viewLat, this.viewLon], 13);
     Leaflet.control.scale().addTo(this.map);
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
@@ -193,20 +195,28 @@ export class InmueblePage implements OnInit {
     console.log(this.descripVivienda);
   }
 
-  fotoVivienda(){
-    const imagenes = JSON.stringify(this.urlsFotoVivienda);
-    /*this.apiCon.postImagenes(imagenVivienda, this.access_token).subscribe((data)=>{
-      console.log(data);
-    });*/
-    console.log(this.urlsFotoVivienda);
+  async addWSP(){
+    const telefono = await this.storage.get('userTelefonoGlobal');
+    this.linkContacto = `https://api.whatsapp.com/send?phone=${telefono}&text=Hola,%20me%20interesa%20tu%20propiedad%20en%20${this.opPeracion}`;
   }
 
+
+  fotoVivienda(id_vivienda:string){
+    this.apiCon.postImagenes(id_vivienda, this.urlsFotoVivienda, this.access_token).subscribe(async (data)=>{
+      const alert = await this.alertController.create({
+        header: 'Vivienda Guardada',
+        message: 'La vivienda ha sido guardada correctamente',
+        buttons: ['OK']
+      });
+      await alert.present();
+    });
+  }
 
   GuardarVivienda(){
     console.log('Guardando vivienda...');
     const vivienda = {
       correo : this.correo,
-      tipo_operacion: this.opPeracion == 'Compra' ? false : true,
+      tipo_operacion: this.opPeracion == 'Venta' ? false : true,
       tipo_vivienda: (this.opPropiedad == 'Departamento' ? 0 : this.opPropiedad == 'Casa' ? 1 : 2),
       condicion: this.opInmbueble, //condición del inmueble
       area_construida: this.areaConstruida,
@@ -227,7 +237,7 @@ export class InmueblePage implements OnInit {
     }
     console.log(vivienda);
     this.apiCon.postVivienda(vivienda, this.access_token).subscribe((data)=>{
-      console.log(data);
+      this.fotoVivienda(data.id_vivienda)
     });
     //this.router.navigate(['/preferencias']);
   }

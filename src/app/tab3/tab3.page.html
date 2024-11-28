@@ -13,7 +13,12 @@
 </ion-header>
 <ion-content [fullscreen]="false">
   <div class="match-container">
-    <ion-card #card *ngFor="let match of matches" [attr.id-match]="match.id_match" [attr.id-vivienda] ="match.id_vivienda" class="match-card" (click)="toggleDetails($event.target)">
+    <ion-card #card *ngFor="let match of matches" 
+      [attr.id-match]="match.id_match" 
+      [attr.id-vivienda] ="match.id_vivienda" 
+      [attr.latitud] ="match.latitud"
+      [attr.longitud] ="match.longitud"
+      class="match-card" (click)="toggleDetails($event.target)">
       <div class="slides-container">
         <swiper-container [pagination]="paginationConfig">
           <swiper-slide *ngFor="let imagen of match.imagenes">

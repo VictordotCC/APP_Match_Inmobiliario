@@ -330,7 +330,6 @@ export class PreferenciaUsuarioPage implements OnInit {
       notificaciones: this.notificaciones
     };
 
-
     // Guardar las preferencias del usuario en datos globales
     this.datosGlobales.setPreferencias(this.preferenciaUsuario);
 

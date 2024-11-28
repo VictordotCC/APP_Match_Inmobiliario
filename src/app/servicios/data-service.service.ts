@@ -175,11 +175,12 @@ export class DataServiceService {
   postVivienda(vivienda: any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'v_viviendas';
     const postData = { 
-      vivienda: vivienda 
+      vivienda: vivienda
     };
+    console.log(typeof postData);
     const auth = 'Bearer ' + access_token;
     const headers = new HttpHeaders({
-      'Authorization': auth
+      'Authorization': auth,
     });
     return this.http.post<any>(url, postData, {headers: headers}).pipe(
       catchError(err => {
@@ -350,14 +351,17 @@ export class DataServiceService {
     return this.http.get<any>(url, {params});
   }
 
-  postImagenes(obj:any, access_token:string): Observable<any> {
-    //FIXME: EL ID SE CREA EN BACKEND
+  postImagenes(id_vivienda: string, obj:any, access_token:string): Observable<any> {
     const url = this.apiMatch + 'imagenes';
+    const postData = {
+      id_vivienda: id_vivienda,
+      imagenes: obj
+    };
     const auth = 'Bearer ' + access_token;
     const headers = new HttpHeaders({
       'Authorization': auth
     });
-    return this.http.post<any>(url, obj, {headers: headers}).pipe(
+    return this.http.post<any>(url, postData, {headers: headers}).pipe(
       catchError(err => {
         return err;
       })

@@ -192,7 +192,7 @@
     <ion-label> Ubicación Geográfica del inmueble</ion-label>
   </ion-item>
   <ion-item>
-    <div id="map"></div>
+    <div id="map2"></div>
   </ion-item>
   <ion-grid>
     <ion-row>
@@ -279,7 +279,7 @@
     [breakpoints]="[0, 0.25]">
     <ng-template>
       <ion-content>
-        <ion-item>
+        <ion-item color="light">
           <ion-label>Ingrese un link de contacto</ion-label>
         </ion-item>
         <ion-item>
@@ -290,6 +290,7 @@
             errorText="dato no válido"
             [(ngModel)]="linkContacto">
           </ion-input>
+          <ion-icon name="logo-whatsapp" slot="end" (click)="addWSP()"></ion-icon>
         </ion-item>
         <ion-item>
           <ion-button slot="start" size="medium" shape="round" (click)="addContacto()">Agregar</ion-button>
@@ -305,12 +306,12 @@
     [breakpoints]="[0, 0.25]">
     <ng-template>
       <ion-content>
-        <ion-item>
+        <ion-item color="light">
           <ion-label>Ingrese la url de la imagen</ion-label>
         </ion-item>
         <ion-item>
           <ion-input fill="solid" type="text" [clearInput]="true"
-            label="Link de contacto"
+            label="URL Imagen"
             labelPlacement="floating"
             [clearInput]="true"
             errorText="dato no válido"
