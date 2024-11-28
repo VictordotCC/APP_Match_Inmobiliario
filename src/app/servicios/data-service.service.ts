@@ -171,6 +171,16 @@ export class DataServiceService {
     return this.http.get<any[]>(url, {params, headers});
   }
 
+  getViviendasPublicadas(usuario: string, access_token: string): Observable<any[]> {
+    const url = this.apiMatch + 'v_viviendas';
+    const params = new HttpParams().set('correo', usuario)
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.get<any[]>(url, {params, headers});
+  }
+
   //Guardar Viviendas
   postVivienda(vivienda: any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'v_viviendas';
@@ -223,6 +233,24 @@ export class DataServiceService {
       })
     );
   }
+
+  borrarPublicacion(obj:any, access_token: string): Observable<any> {
+    const url = this.apiMatch + 'v_viviendas';
+    const postData = {
+      id_vivienda: obj.id_vivienda,
+      correo: obj.correo
+    };
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth
+    });
+    return this.http.request('DELETE', url, {body: postData, headers: headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
+  }
+
 
   obtenerPreferencias(access_token: string): Observable<any> {
     const url = this.apiMatch + 'preferencia';

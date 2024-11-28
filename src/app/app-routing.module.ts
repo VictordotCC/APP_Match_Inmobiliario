@@ -41,6 +41,10 @@ const routes: Routes = [
     path: 'darse-alta',
     loadChildren: () => import('./darse-alta/darse-alta.module').then( m => m.DarseAltaPageModule)
   },
+  {
+    path: 'tab4',
+    loadChildren: () => import('./tab4/tab4.module').then( m => m.Tab4PageModule)
+  },
 
 ];
 @NgModule({

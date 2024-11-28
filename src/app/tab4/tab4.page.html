@@ -1,0 +1,319 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-item>
+      <ion-title>
+        Publicaciones
+      </ion-title>
+      <ion-avatar slot="start">
+        <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" [routerLink]="['/preferencias']"/>
+      </ion-avatar>
+      <ion-icon name="notifications-outline" slot="end"></ion-icon>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+<ion-toolbar>
+  <ion-searchbar placeholder="Buscar" (ionChange)="buscar( $event)"></ion-searchbar>
+</ion-toolbar>
+
+<!--- Aquí vamos a poner fuera del contenido esta toolbar con los filtros
+de esta manera no se desplazarán cuando haya que recorrer todas las coincidencias---->
+<ion-toolbar>
+  <ion-item lines="none">
+    <ion-chip color="primary" slot="start" (click)="addInmueble()">
+      <ion-icon name="add-circle"></ion-icon>
+      <ion-label>Nueva Propiedad</ion-label>
+    </ion-chip>
+  </ion-item>
+  <ion-item>
+    <ion-label slot="start">Ordenar por</ion-label>
+    <ion-icon name="options" slot="end"></ion-icon>
+  </ion-item>
+</ion-toolbar>
+<ion-toolbar>
+  <ion-item>
+    <ion-segment value ="Precio"  (ionChange)="segmentPrecMtsHab($event)" #segmento1>
+      <ion-segment-button  value="Precio" id="open-modal2" small (click)="filtroPrecio()">
+        <ion-label>Precio</ion-label>
+      </ion-segment-button>
+      <ion-segment-button  value="Mts" id="open-modal3" small (click)="filtroMetros()">
+        <ion-label>mts</ion-label>
+      </ion-segment-button>
+      <ion-segment-button  value="Habitaciones" id="open-modal4" small (click)="filtroHabitacion()">
+        <ion-label>Habitaciones</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-item>
+</ion-toolbar>
+<ion-toolbar>
+  <ion-item>
+    <ion-segment value="Todos" [(ngModel)]="opcionAll" (ionChange)="segmentVentArriendo($event)" #segmento2>
+      <ion-segment-button value="Todos">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button id="btn-venta" value="Venta" small>
+        <ion-label>Venta</ion-label>
+      </ion-segment-button>
+      <ion-segment-button id="btn-arriendo" value="Arriendo"  small>
+        <ion-label>Arriendo</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-item>
+</ion-toolbar>
+
+<!---Inicio del contenido y muestra de las cards con las viviendas-->
+<ion-content [fullscreen]="true">
+  <ion-list>
+    <!--<ion-item *ngFor="let search of serchVar | filtro:'textBuscar'"> -->
+    <ion-item *ngFor="let vivienda of filterViviendas" >
+      <ion-card>
+        <img class="imagen_casa" [src]="vivienda.imagenes[0].url"/>
+        <ion-card-header>
+          <!-- <img class="imagen_casa" [src]="vivienda.imagenes[0].url"/> -->
+          <ion-card-subtitle>{{ vivienda.tipo_vivienda === 0 ? "Departamento" : vivienda.tipo_vivienda === 1 ? "Casa" : "Otro" }}
+            en {{ vivienda.tipo_operacion === false ? "Venta" : "Arriendo" }}
+          </ion-card-subtitle>
+          <ion-card-subtitle>{{vivienda.precio_uf}} UF</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-title>{{vivienda.nombre_propiedad}}</ion-card-title>
+        <ion-card-subtitle>{{vivienda.condicion}}</ion-card-subtitle>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="4" class="center-content">
+                <ion-icon name="bed"></ion-icon>
+                <ion-label>{{vivienda.habitaciones}}</ion-label>
+              </ion-col>
+              <ion-col size="4" class="center-content">
+                <ion-icon src="assets/icon/toilet.svg"></ion-icon>
+                <ion-label>{{vivienda.banos}}</ion-label>
+              </ion-col>
+              <ion-col size="4" class="center-content">
+                <ion-icon name="cube"></ion-icon>
+                <ion-label>{{vivienda.area_construida}} mts<sup>2</sup></ion-label>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+        <ion-button expand="block" id="open-modal" (click)="openDetalle(vivienda)">Ver detalles</ion-button>
+      </ion-card>
+    </ion-item>
+  </ion-list>
+
+
+    <ion-modal #modal trigger="open-modal" [isOpen]="isModalOpen" (willDismiss)="closeModal()">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>{{detalleVivienda.nombre_propiedad}}</ion-title>
+            <ion-buttons slot="end">
+              <!--
+              <ion-button (click)="modal.dismiss()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+              -->
+              <ion-button (click)="closeModal()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card>
+            <img class="imagen_casa" [src]="detalleVivienda.imagenes[0].url"/>
+            <!-- <img class="imagen_casa" [src]="fotoCasa"/> -->
+            <ion-card-content>
+              <a class="e2e-trusted-url" [href]="fotoCasa" target="_blank"><strong> Link de Contacto </strong></a>
+              <p><strong>{{ detalleVivienda.nombre_propiedad }}</strong></p>
+              <p><strong>{{ detalleVivienda.descripcion }}</strong></p>
+              <p><strong>{{ detalleVivienda.tipo_operacion  === false ? "Venta" : "Arriendo"}}</strong></p>
+              <p><strong>Área Total: </strong> {{ detalleVivienda.area_total }}</p>
+              <p><strong>Pisos: </strong> {{ detalleVivienda.pisos }}</p>
+              <p><strong>Habitaciones: </strong> {{ detalleVivienda.habitaciones }}</p>
+              <p><strong>Precio (UF): </strong> {{ detalleVivienda.precio_uf }}</p>
+              <p><strong>Estacionamientos: </strong> {{ detalleVivienda.estaciona }}</p>
+              <p><strong>Bodegas: </strong> {{ detalleVivienda.bodega }}</p>
+              <p><strong>Antiguedad: </strong> {{ detalleVivienda.antiguedad }}</p>
+              <p><strong>Tipo de Vivienda: </strong>
+                {{ detalleVivienda.tipo_vivienda === 0 ? "Departamento" : detalleVivienda.tipo_vivienda === 1 ? "Casa" : "Otro" }}
+             </p>
+              <p><strong>Condicion: </strong> {{ detalleVivienda.condicion }}</p>
+              <p><strong>Cantidad de Baños: </strong> {{ detalleVivienda.banos }}</p>
+              <p><strong>Área Construida: </strong> {{ detalleVivienda.area_construida }}</p>
+              <p><strong>Tipo Subsidio: </strong> {{ detalleVivienda.tipo_subsidio }}</p>
+              <p>Propiedad publicada el : {{ detalleVivienda.fecha_creacion }}</p>
+              <ion-item >
+                <ion-card-subtitle><strong>Predicción Precio UF final del 2024: {{prediccionPrecio}}</strong></ion-card-subtitle>
+                <canvas #myChart></canvas>
+              </ion-item>
+            </ion-card-content>
+            <ion-button id="eliminar-fav" (click)="borrarPub(detalleVivienda)" expand="block" color="danger"><ion-icon name="trash"></ion-icon> Eliminar Publicación </ion-button>
+          </ion-card>
+
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+
+    <ion-modal #modal2 id= "modal_uf" trigger="open-modal2" [isOpen]="isModalOpen2" (willDismiss)="closeModal2()">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Precio en UF</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal2()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card>
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9999"
+                        maxlength="4"
+                        label="mínimo"
+                        labelPlacement="floating"
+                        helperText="Ingrese un monto valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "inputUfmin"
+                        (ionChange)="ingresoValorViviendaMin($event)"></ion-input>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9999"
+                        maxlength="4"
+                        label="máximo"
+                        labelPlacement="floating"
+                        helperText="Ingrese un monto valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "inputUfmax"
+                        (ionChange)="ingresoValorViviendaMax($event)"></ion-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="filtrarPrecio()">Filtrar</ion-button>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="limpiarFiltro()">Limpiar</ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+
+    <ion-modal #modal3 id="modal_mts" trigger="open-modal3" [isOpen]="isModalOpen3" (willDismiss)="closeModal3()">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Metros Propiedad</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal3()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card>
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9999"
+                        maxlength="4"
+                        label="mínimo"
+                        labelPlacement="floating"
+                        helperText="Ingrese un monto valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "mtsMin"
+                        (ionChange)="ingMtsMin($event)"></ion-input>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9999"
+                        maxlength="4"
+                        label="máximo"
+                        labelPlacement="floating"
+                        helperText="Ingrese un monto valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "mtsMax"
+                        (ionChange)="ingMtsMax($event)"></ion-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="filtrarMetros()">Filtrar</ion-button>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="limpiarFiltro()">Limpiar</ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+    <ion-modal #modal4 id="modal_habitacion" trigger="open-modal4" [isOpen]="isModalOpen4" (willDismiss)="closeModal4()">
+      <ng-template>
+        <ion-content>
+          <ion-toolbar>
+            <ion-title>Cantidad de Habitaciones</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal4()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card>
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12" class="center-content">
+                    <ion-input
+                        type="email"
+                        fill="solid"
+                        type="numeric"
+                        max="9"
+                        maxlength="1"
+                        label="Cant. Habitaciones"
+                        labelPlacement="floating"
+                        helperText="Ingrese un número valido"
+                        errorText="número incorrecto"
+                        [(ngModel)] = "inputHabitacion"
+                        (ionChange)="ingHabitacion($event)"></ion-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="filtrarHabitacion()">Filtrar</ion-button>
+                  </ion-col>
+                  <ion-col size="6" class="center-content">
+                    <ion-button expand="block" (click)="limpiarFiltro()">Limpiar</ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+</ion-content>

@@ -5,15 +5,14 @@ import { Observable} from 'rxjs';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { StorageService } from '../servicios/storage.service';
-import { Chart, registerables } from 'chart.js';
+import { Router } from '@angular/router';
+
 @Component({
-  selector: 'app-tab2',
-  templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss'],
+  selector: 'app-tab4',
+  templateUrl: './tab4.page.html',
+  styleUrls: ['./tab4.page.scss'],
 })
-export class Tab2Page implements OnInit, AfterViewInit  {
-  chart: any; // Add this property to store the chart instance
-  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement>;
+export class Tab4Page implements OnInit {
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
   opcionAll: string = 'Todos';
@@ -39,27 +38,24 @@ export class Tab2Page implements OnInit, AfterViewInit  {
   private access_token: string = '';
   private usuario: string = '';
   prediccionPrecio: number = 0;
-  
+
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService,
-    private sanitizer: DomSanitizer, private alertController: AlertController, private storage: StorageService) {
+    private sanitizer: DomSanitizer, private alertController: AlertController, 
+    private storage: StorageService, private router: Router) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
     this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl,); // Correct property name
-    Chart.register(...registerables); // Registra todos los componentes necesarios para el uso de Chart.js
   }
 
   async ngOnInit() {
     await this.storage.init();
     this.access_token = await this.storage.get('access_token');
     this.usuario = await this.storage.get('userGlobal');
-    this.obtenerFavs();
+    this.obtenerPubs();
 
   }
 
-  ngAfterViewInit() {
-    this.createChart();
-  }
   ionViewDidEnter(){
-    this.obtenerFavs();
+    this.obtenerPubs();
   }
 
   segmentPrecMtsHab(event: CustomEvent){
@@ -126,20 +122,19 @@ export class Tab2Page implements OnInit, AfterViewInit  {
     this.applyFilters();
   }
 
-
-
-  async obtenerFavs(){
-    this.DataService.getViviendasFavoritos(this.usuario, this.access_token).subscribe( data => {
+  async obtenerPubs(){
+    this.DataService.getViviendasPublicadas(this.usuario, this.access_token).subscribe( data => {
       this.viviendas = data;
+      console.log(this.viviendas);
       this.filterViviendas = this.viviendas;
     });
   }
 
-  async borrarFav(vivienda: any){
+  async borrarPub(vivienda: any){
     const fav = {id_vivienda: vivienda.id_vivienda, usuario: this.usuario};
     const alert = await this.alertController.create({
       header: 'Eliminar',
-      message: '¿Desea eliminar la vivienda de favoritos?',
+      message: '¿Desea eliminar la publicación?. Esta acción es irreversible.',
       buttons: [
         {
           text: 'Cancelar',
@@ -148,8 +143,8 @@ export class Tab2Page implements OnInit, AfterViewInit  {
         {
           text: 'Eliminar',
           handler: () => {
-            this.DataService.borrarFavorito(fav, this.access_token).subscribe( data => {
-              this.obtenerFavs();
+            this.DataService.borrarPublicacion(fav, this.access_token).subscribe((data) => {
+              this.obtenerPubs();
               setTimeout(() => {
                 this.closeModal();
               }, 500);
@@ -161,7 +156,10 @@ export class Tab2Page implements OnInit, AfterViewInit  {
     });
     return await alert.present();
   }
-
+  
+  addInmueble(){
+    this.router.navigate(['/inmueble']);
+  }
 
   formatString(str: string){
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -245,56 +243,6 @@ export class Tab2Page implements OnInit, AfterViewInit  {
   predecirPrecio(vivienda: any){
     this.DataService.getPrediccion(vivienda).subscribe( data => {
       this.prediccionPrecio = Math.round(data.prediction);
-      this.updateChart(this.prediccionPrecio); // Call the method to update the chart
-      console.log('predicción en UF:',this.prediccionPrecio);
     });
   }
-
-  async createChart() {
-    if (this.myChart && this.myChart.nativeElement) {
-      const ctx = this.myChart.nativeElement.getContext('2d');
-      if (ctx) {
-        this.chart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['2024', '2025', '2026', '2027'], // Puedes ajustar las etiquetas según tus necesidades
-            datasets: [{
-              label: 'Predicción de Precio',
-              data: [], // Inicialmente vacío
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      } else {
-        console.error('No se pudo obtener el contexto del canvas');
-      }
-    } else {
-      console.error('No se pudo encontrar el elemento canvas');
-    }
-  }
-  updateChart(prediccion: number) {
-    if (this.chart) {
-      this.chart.data.datasets[0].data.push(prediccion);
-      this.chart.update();
-    } else {
-      console.error('El gráfico no está inicializado');
-    }
-  }
-
-
-
 }
-
-
-
-
-
-
