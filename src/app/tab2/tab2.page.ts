@@ -12,8 +12,8 @@ import { Chart, registerables } from 'chart.js';
   styleUrls: ['tab2.page.scss'],
 })
 export class Tab2Page implements OnInit, AfterViewInit  {
-  chart: any; // Add this property to store the chart instance
-  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement>;
+  chart!: any; // Add this property to store the chart instance
+  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement> | undefined; // Add this property to get the canvas element
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
   opcionAll: string = 'Todos';
@@ -38,12 +38,13 @@ export class Tab2Page implements OnInit, AfterViewInit  {
   inputHabitacion: number = 0;
   private access_token: string = '';
   private usuario: string = '';
-  prediccionPrecio: number = 0;
-  
+  prediccionPrecio = {d1:0, d2:0, d3:0, d4:0};
+
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService,
-    private sanitizer: DomSanitizer, private alertController: AlertController, private storage: StorageService) {
-    this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
-    this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl,); // Correct property name
+    private alertController: AlertController, private storage: StorageService) {
+    //private sanitizer: DomSanitizer
+    //this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
+    //this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl,); // Correct property name
     Chart.register(...registerables); // Registra todos los componentes necesarios para el uso de Chart.js
   }
 
@@ -244,23 +245,30 @@ export class Tab2Page implements OnInit, AfterViewInit  {
   //metodo de predicción de precio
   predecirPrecio(vivienda: any){
     this.DataService.getPrediccion(vivienda).subscribe( data => {
-      this.prediccionPrecio = Math.round(data.prediction);
-      this.updateChart(this.prediccionPrecio); // Call the method to update the chart
+      this.prediccionPrecio.d1 = Math.round(data.prediction);
+      if (this.prediccionPrecio.d1 < 0){
+        this.prediccionPrecio.d1 = this.prediccionPrecio.d1 * -1;
+      }
+      this.prediccionPrecio.d2 = parseFloat((this.prediccionPrecio.d1*1.03).toFixed(1));
+      this.prediccionPrecio.d3 = parseFloat((this.prediccionPrecio.d2*1.03).toFixed(1));
+      this.prediccionPrecio.d4 = parseFloat((this.prediccionPrecio.d3*1.03).toFixed(1));
+      this.updateChart(this.prediccionPrecio.d1); // Call the method to update the chart
       console.log('predicción en UF:',this.prediccionPrecio);
     });
   }
 
   async createChart() {
     if (this.myChart && this.myChart.nativeElement) {
+
       const ctx = this.myChart.nativeElement.getContext('2d');
       if (ctx) {
         this.chart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['2024', '2025', '2026', '2027'], // Puedes ajustar las etiquetas según tus necesidades
+            labels: ['2025', '2026', '2027', '2028'], // Puedes ajustar las etiquetas según tus necesidades
             datasets: [{
               label: 'Predicción de Precio',
-              data: [], // Inicialmente vacío
+              data: [this.prediccionPrecio.d1, this.prediccionPrecio.d2, this.prediccionPrecio.d3, this.prediccionPrecio.d4], // Inicialmente vacío
               borderColor: 'rgba(75, 192, 192, 1)',
               borderWidth: 1
             }]

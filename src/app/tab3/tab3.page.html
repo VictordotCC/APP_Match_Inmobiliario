@@ -13,9 +13,9 @@
 </ion-header>
 <ion-content [fullscreen]="false">
   <div class="match-container">
-    <ion-card #card *ngFor="let match of matches" 
-      [attr.id-match]="match.id_match" 
-      [attr.id-vivienda] ="match.id_vivienda" 
+    <ion-card #card *ngFor="let match of matches"
+      [attr.id-match]="match.id_match"
+      [attr.id-vivienda] ="match.id_vivienda"
       [attr.latitud] ="match.latitud"
       [attr.longitud] ="match.longitud"
       class="match-card" (click)="toggleDetails($event.target)">
@@ -71,6 +71,23 @@
           <p>Propiedad publicada el : {{ match.fecha_creacion }}</p>
           <div id="mapMatch" style = "width: 80vw; height: 50vh;"></div>
         </ion-card-content>
+        <div *ngIf="match.tipo_operacion === false ">
+          <ion-item id="pred1" >
+            <p><strong>Posible precio al 2025: {{prediccionPrecio.d1}}</strong></p>
+          </ion-item>
+          <ion-item id="pred2">
+            <p><strong>Posible precio al 2026: {{prediccionPrecio.d2}}</strong></p>
+          </ion-item>
+          <ion-item id="pred3">
+            <p><strong>Posible precio al 2027: {{prediccionPrecio.d3}}</strong></p>
+          </ion-item>
+          <ion-item id="pred4">
+            <p><strong>Posible precio al 2028: {{prediccionPrecio.d4}}</strong></p>
+          </ion-item>
+          <div width="100" height="100">
+            <canvas #myChart ></canvas>
+          </div>
+        </div>
       </ion-card>
       <div class="choice nope">NOPE</div>
       <div class="choice like">LIKE</div>

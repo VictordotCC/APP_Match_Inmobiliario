@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { ActivatedRoute } from '@angular/router';
@@ -6,6 +6,7 @@ import { NavController, AlertController, IonModal } from '@ionic/angular';
 import { DataServiceService } from '../servicios/data-service.service';
 import { StorageService } from '../servicios/storage.service';
 import { addIcons } from 'ionicons';
+import { Chart, registerables } from 'chart.js';
 import {chevronDownCircle,
   chevronForwardCircle,
   chevronUpCircle,
@@ -18,9 +19,10 @@ import {chevronDownCircle,
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit {
+export class Tab1Page implements OnInit, AfterViewInit {
   @ViewChild('modal') modal: IonModal | undefined;
-
+  chart: any; // Add this property to store the chart instance
+  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement> | undefined; // Add this property to get the canvas element
   map: Leaflet.Map | undefined;
   markers: Leaflet.Marker[] = [];
   userMarker: Leaflet.Marker | undefined;
@@ -45,11 +47,12 @@ export class Tab1Page implements OnInit {
   mostrarMapa: boolean = true;
   private access_token: string = '';
   private usuario: string = '';
-
+  prediccionPrecio = {d1:0, d2:0, d3:0, d4:0};
 
   constructor(private datosGlobales: GlobalDataService, private route: ActivatedRoute, public navCtrl: NavController,
     private apiCon: DataServiceService, private alertController: AlertController, private storage: StorageService) {
       addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, colorPalette, document, globe });
+      Chart.register(...registerables); // Registra todos los componentes necesarios para el uso de Chart.js
     }
 
   async ngOnInit() {
@@ -58,6 +61,65 @@ export class Tab1Page implements OnInit {
     this.usuario = await this.storage.get('userGlobal');
     this.obtenerFavoritos();
 
+  }
+  ngAfterViewInit() {
+    this.createChart();
+  }
+
+   //metodo de predicción de precio
+   predecirPrecio(vivienda: any){
+    this.apiCon.getPrediccion(vivienda).subscribe( data => {
+      this.prediccionPrecio.d1 = Math.round(data.prediction);
+      if (this.prediccionPrecio.d1 < 0){
+        this.prediccionPrecio.d1 = this.prediccionPrecio.d1 * -1;
+      }
+      this.prediccionPrecio.d2 = parseFloat((this.prediccionPrecio.d1*1.03).toFixed(1));
+      this.prediccionPrecio.d3 = parseFloat((this.prediccionPrecio.d2*1.03).toFixed(1));
+      this.prediccionPrecio.d4 = parseFloat((this.prediccionPrecio.d3*1.03).toFixed(1));
+      this.updateChart(this.prediccionPrecio.d1); // Call the method to update the chart
+      console.log('predicción en UF:',this.prediccionPrecio);
+    });
+  }
+
+  async createChart() {
+    if (this.myChart && this.myChart.nativeElement) {
+
+      const ctx = this.myChart.nativeElement.getContext('2d');
+      if (ctx) {
+        this.chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['2025', '2026', '2027', '2028'], // Puedes ajustar las etiquetas según tus necesidades
+            datasets: [{
+              label: 'Predicción de Precio',
+              data: [this.prediccionPrecio.d1, this.prediccionPrecio.d2, this.prediccionPrecio.d3, this.prediccionPrecio.d4], // Inicialmente vacío
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      } else {
+        console.error('No se pudo obtener el contexto del canvas');
+      }
+    } else {
+      console.error('No se pudo encontrar el elemento canvas');
+    }
+  }
+
+  updateChart(prediccion: number) {
+    if (this.chart) {
+      this.chart.data.datasets[0].data.push(prediccion);
+      this.chart.update();
+    } else {
+      console.error('El gráfico no está inicializado');
+    }
   }
 
   ionViewDidEnter() {
@@ -74,7 +136,7 @@ export class Tab1Page implements OnInit {
       }
     });
   }
-  
+
   showMapa(){
     this.mostrarMapa = !this.mostrarMapa;
   }
@@ -165,6 +227,7 @@ export class Tab1Page implements OnInit {
     this.detalleVivienda.links_contacto = JSON.parse(viv.links_contacto);
     this.isModalOpen = true;
     this.isFavorite = this.favoritos.some((Fav) => Fav.id_vivienda === this.detalleVivienda.id_vivienda);
+    this.predecirPrecio(viv);
   }
 
   closeModal(){ // Add this method to close the modal

@@ -7,7 +7,7 @@ import { DataServiceService } from '../servicios/data-service.service';
 import { PreferenciaUsuarioService } from '../servicios/preferencia-usuario.service';
 import { StorageService } from '../servicios/storage.service';
 //import { NotificationsPushService } from '../servicios/notifications-push.service'; // Importa el servicio de notificaciones
-
+import { Chart, registerables } from 'chart.js';
 
 
 @Component({
@@ -17,7 +17,8 @@ import { StorageService } from '../servicios/storage.service';
 })
 export class Tab3Page implements AfterViewInit {
   @ViewChildren('card', {read: ElementRef}) cards: QueryList<ElementRef> | undefined;
-
+  chart: any; // Add this property to store the chart instance
+  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement>;
   animations: Animation[] = [];
   gesture : Gesture | undefined;
   animStarted = false;
@@ -43,11 +44,13 @@ export class Tab3Page implements AfterViewInit {
   };
   private access_token = '';
   private usuario = '';
-
+  prediccionPrecio = {d1:0, d2:0, d3:0, d4:0}; //variable para la predicción de precio
   constructor(private datosGlobales: GlobalDataService, private apiCon: DataServiceService,
     private gestureCtrl: GestureController, private animationCtrl: AnimationController,
     private storage: StorageService,
-    /*private notificationsPushService: NotificationsPushService*/ ) { }
+    /*private notificationsPushService: NotificationsPushService*/ ) {
+      Chart.register(...registerables); // Registra todos los componentes necesarios para el uso de Chart.js
+     }
 
   async ionViewDidEnter(){
     this.usuario =  await this.storage.get('userGlobal');
@@ -90,6 +93,60 @@ export class Tab3Page implements AfterViewInit {
         this.updateMaps(ubicacion.lat, ubicacion.lon);
       }
     });
+    this.createChart();
+  }
+   //metodo de predicción de precio
+   predecirPrecio(vivienda: any){
+    this.apiCon.getPrediccion(vivienda).subscribe( data => {
+      this.prediccionPrecio.d1 = Math.round(data.prediction);
+      if (this.prediccionPrecio.d1 < 0){
+        this.prediccionPrecio.d1 = this.prediccionPrecio.d1 * -1;
+      }
+      this.prediccionPrecio.d2 = parseFloat((this.prediccionPrecio.d1*1.03).toFixed(1));
+      this.prediccionPrecio.d3 = parseFloat((this.prediccionPrecio.d2*1.03).toFixed(1));
+      this.prediccionPrecio.d4 = parseFloat((this.prediccionPrecio.d3*1.03).toFixed(1));
+      this.updateChart(this.prediccionPrecio.d1); // Call the method to update the chart
+      console.log('predicción en UF:',this.prediccionPrecio);
+    });
+  }
+  async createChart() {
+    if (this.myChart && this.myChart.nativeElement) {
+
+      const ctx = this.myChart.nativeElement.getContext('2d');
+      if (ctx) {
+        this.chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['2025', '2026', '2027', '2028'], // Puedes ajustar las etiquetas según tus necesidades
+            datasets: [{
+              label: 'Predicción de Precio',
+              data: [this.prediccionPrecio.d1, this.prediccionPrecio.d2, this.prediccionPrecio.d3, this.prediccionPrecio.d4], // Inicialmente vacío
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      } else {
+        console.error('No se pudo obtener el contexto del canvas');
+      }
+    } else {
+      console.error('No se pudo encontrar el elemento canvas');
+    }
+  }
+  updateChart(prediccion: number) {
+    if (this.chart) {
+      this.chart.data.datasets[0].data.push(prediccion);
+      this.chart.update();
+    } else {
+      console.error('El gráfico no está inicializado');
+    }
   }
 
   ionViewDidLeave(){
@@ -323,6 +380,7 @@ export class Tab3Page implements AfterViewInit {
         //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
       }
     });
+    this.predecirPrecio(this.matches[0]);
   }
 
   updateMatch(id_match: string){
