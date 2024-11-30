@@ -147,11 +147,10 @@ de esta manera no se desplazarán cuando haya que recorrer todas las coincidenci
               <ion-item id="pred4">
                 <p><strong>Posible precio al 2028: {{prediccionPrecio.d4}}</strong></p>
               </ion-item>
-              <div width="100" height="100">
-                <canvas #myChart ></canvas>
+              <div class="chart-container">
+                <canvas id="chart"></canvas>
               </div>
             </div>
-
             <ion-button id="eliminar-fav" (click)="borrarFav(detalleVivienda)" expand="block" color="danger"><ion-icon name="trash"></ion-icon> Borrar de Favoritos </ion-button>
           </ion-card>
 

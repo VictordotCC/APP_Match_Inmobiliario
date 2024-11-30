@@ -184,7 +184,7 @@ export class DataServiceService {
   //Guardar Viviendas
   postVivienda(vivienda: any, access_token: string): Observable<any> {
     const url = this.apiMatch + 'v_viviendas';
-    const postData = { 
+    const postData = {
       vivienda: vivienda
     };
     console.log(typeof postData);

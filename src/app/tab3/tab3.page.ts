@@ -380,7 +380,7 @@ export class Tab3Page implements AfterViewInit {
         //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
       }
     });
-    this.predecirPrecio(this.matches[0]);
+    //this.predecirPrecio(this.matches[0]);
   }
 
   updateMatch(id_match: string){

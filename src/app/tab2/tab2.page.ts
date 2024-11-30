@@ -5,15 +5,17 @@ import { Observable} from 'rxjs';
 import { GlobalDataService } from '../servicios/global-data.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { StorageService } from '../servicios/storage.service';
-import { Chart, registerables } from 'chart.js';
+import { Chart,registerables } from 'chart.js';
+//import * as Chart from 'chart.js';
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
 })
 export class Tab2Page implements OnInit, AfterViewInit  {
-  chart!: any; // Add this property to store the chart instance
-  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement> | undefined; // Add this property to get the canvas element
+  chart!: Chart; // Add this property to store the chart instance
+  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement>; // Add this property to get the canvas element
+  //@ViewChild('myChart') myChart!: ElementRef<HTMLCanvasElement> | undefined; // Add this property to get the canvas element
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
   opcionAll: string = 'Todos';
@@ -39,7 +41,7 @@ export class Tab2Page implements OnInit, AfterViewInit  {
   private access_token: string = '';
   private usuario: string = '';
   prediccionPrecio = {d1:0, d2:0, d3:0, d4:0};
-
+  mychart: Chart | undefined; // Add this property to store the chart instance
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService,
     private alertController: AlertController, private storage: StorageService) {
     //private sanitizer: DomSanitizer
@@ -54,10 +56,12 @@ export class Tab2Page implements OnInit, AfterViewInit  {
     this.usuario = await this.storage.get('userGlobal');
     this.obtenerFavs();
 
+
   }
 
   ngAfterViewInit() {
-    this.createChart();
+    //this.createChart();
+    this.makeChart();
   }
   ionViewDidEnter(){
     this.obtenerFavs();
@@ -252,12 +256,43 @@ export class Tab2Page implements OnInit, AfterViewInit  {
       this.prediccionPrecio.d2 = parseFloat((this.prediccionPrecio.d1*1.03).toFixed(1));
       this.prediccionPrecio.d3 = parseFloat((this.prediccionPrecio.d2*1.03).toFixed(1));
       this.prediccionPrecio.d4 = parseFloat((this.prediccionPrecio.d3*1.03).toFixed(1));
-      this.updateChart(this.prediccionPrecio.d1); // Call the method to update the chart
+      this.updateChart(); // Call the method to update the chart
       console.log('predicción en UF:',this.prediccionPrecio);
     });
   }
 
-  async createChart() {
+  makeChart() {
+    if (this.myChart && this.myChart.nativeElement) {
+      const ctx = this.myChart.nativeElement.getContext('2d');
+      if (ctx) {
+        this.chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['2025', '2026', '2027', '2028'],
+            datasets: [{
+              label: 'Predicción de Precio',
+              data: [this.prediccionPrecio.d1, this.prediccionPrecio.d2, this.prediccionPrecio.d3, this.prediccionPrecio.d4],
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      } else {
+        console.error('Unable to get 2D context from canvas');
+      }
+    } else {
+      console.error('Canvas element not found');
+    }
+  }
+  /*
+  createChart() {
     if (this.myChart && this.myChart.nativeElement) {
 
       const ctx = this.myChart.nativeElement.getContext('2d');
@@ -288,9 +323,10 @@ export class Tab2Page implements OnInit, AfterViewInit  {
       console.error('No se pudo encontrar el elemento canvas');
     }
   }
-  updateChart(prediccion: number) {
+    */
+  updateChart() {
     if (this.chart) {
-      this.chart.data.datasets[0].data.push(prediccion);
+      this.chart.data.datasets[0].data = [this.prediccionPrecio.d1, this.prediccionPrecio.d2, this.prediccionPrecio.d3, this.prediccionPrecio.d4];
       this.chart.update();
     } else {
       console.error('El gráfico no está inicializado');

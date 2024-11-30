@@ -6,13 +6,15 @@ import { GlobalDataService } from '../servicios/global-data.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { StorageService } from '../servicios/storage.service';
 import { Router } from '@angular/router';
-
+import { Chart, registerables } from 'chart.js';
 @Component({
   selector: 'app-tab4',
   templateUrl: './tab4.page.html',
   styleUrls: ['./tab4.page.scss'],
 })
-export class Tab4Page implements OnInit {
+export class Tab4Page implements OnInit, AfterViewInit  {
+  chart!: any; // Add this property to store the chart instance
+  @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement> | undefined; // Add this property to get the canvas element
   @ViewChild(IonSegment) segmento1!: IonSegment;
   @ViewChild(IonSegment) segmento2!: IonSegment;
   opcionAll: string = 'Todos';
@@ -37,13 +39,13 @@ export class Tab4Page implements OnInit {
   inputHabitacion: number = 0;
   private access_token: string = '';
   private usuario: string = '';
-  prediccionPrecio: number = 0;
-
+  prediccionPrecio = {d1:0, d2:0, d3:0, d4:0};
   constructor(private DataService: DataServiceService, private datosGlobales: GlobalDataService,
-    private sanitizer: DomSanitizer, private alertController: AlertController, 
+    private sanitizer: DomSanitizer, private alertController: AlertController,
     private storage: StorageService, private router: Router) {
     this.dangerousUrl = this.viviendas[0]?.links_contacto || ''; // Ensure viviendas[0] exists
     this.trustedURL = sanitizer.bypassSecurityTrustUrl(this.dangerousUrl,); // Correct property name
+    Chart.register(...registerables); // Registra todos los componentes necesarios para el uso de Chart.js
   }
 
   async ngOnInit() {
@@ -56,6 +58,9 @@ export class Tab4Page implements OnInit {
 
   ionViewDidEnter(){
     this.obtenerPubs();
+  }
+  ngAfterViewInit() {
+    this.createChart();
   }
 
   segmentPrecMtsHab(event: CustomEvent){
@@ -156,7 +161,7 @@ export class Tab4Page implements OnInit {
     });
     return await alert.present();
   }
-  
+
   addInmueble(){
     this.router.navigate(['/inmueble']);
   }
@@ -239,10 +244,58 @@ export class Tab4Page implements OnInit {
 
   }
 
-  //metodo de predicción de precio
-  predecirPrecio(vivienda: any){
+   //metodo de predicción de precio
+   predecirPrecio(vivienda: any){
     this.DataService.getPrediccion(vivienda).subscribe( data => {
-      this.prediccionPrecio = Math.round(data.prediction);
+      this.prediccionPrecio.d1 = Math.round(data.prediction);
+      if (this.prediccionPrecio.d1 < 0){
+        this.prediccionPrecio.d1 = this.prediccionPrecio.d1 * -1;
+      }
+      this.prediccionPrecio.d2 = parseFloat((this.prediccionPrecio.d1*1.03).toFixed(1));
+      this.prediccionPrecio.d3 = parseFloat((this.prediccionPrecio.d2*1.03).toFixed(1));
+      this.prediccionPrecio.d4 = parseFloat((this.prediccionPrecio.d3*1.03).toFixed(1));
+      this.updateChart(this.prediccionPrecio.d1); // Call the method to update the chart
+      console.log('predicción en UF:',this.prediccionPrecio);
     });
+  }
+
+  async createChart() {
+    if (this.myChart && this.myChart.nativeElement) {
+
+      const ctx = this.myChart.nativeElement.getContext('2d');
+      if (ctx) {
+        this.chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['2025', '2026', '2027', '2028'], // Puedes ajustar las etiquetas según tus necesidades
+            datasets: [{
+              label: 'Predicción de Precio',
+              data: [this.prediccionPrecio.d1, this.prediccionPrecio.d2, this.prediccionPrecio.d3, this.prediccionPrecio.d4], // Inicialmente vacío
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      } else {
+        console.error('No se pudo obtener el contexto del canvas');
+      }
+    } else {
+      console.error('No se pudo encontrar el elemento canvas');
+    }
+  }
+  updateChart(prediccion: number) {
+    if (this.chart) {
+      this.chart.data.datasets[0].data.push(prediccion);
+      this.chart.update();
+    } else {
+      console.error('El gráfico no está inicializado');
+    }
   }
 }
