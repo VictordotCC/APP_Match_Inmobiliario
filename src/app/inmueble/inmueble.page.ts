@@ -34,8 +34,8 @@ export class InmueblePage implements OnInit {
   inLongitud: number = -70.61637401576264; //TODO: BORRAR
   urlsFotoVivienda: string[] = ['https://dynamic-media.tacdn.com/media/vr-splice-j/05/dc/2c/dd.jpg', 'https://static01.nyt.com/images/2023/06/08/multimedia/00casabonita-01-vwhc/00casabonita-01-vwhc-articleLarge.jpg'];
   urlFotoVivienda: string = '';
-  nomVivienda: string = 'a';
-  descripVivienda: string = 'b';
+  nomVivienda: string = 'Casa de Prueba';
+  descripVivienda: string = 'Test de agregar una vivienda';
   private access_token: string = '';
   private correo: string = '';
   private viewLat: number = 0;
