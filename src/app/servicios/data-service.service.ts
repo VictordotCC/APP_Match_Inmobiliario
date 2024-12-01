@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Observable, throwError, forkJoin, from } from 'rxjs';
+import { catchError, retry, switchMap } from 'rxjs/operators';
 
 import { GlobalDataService } from './global-data.service';
 import { StorageService } from './storage.service';
@@ -68,7 +68,18 @@ export class DataServiceService {
     );
   }
 
-  getViviendasApi(preferencias: any, access_token: string): Observable<any> {
+  /*getViviendasApi(): Observable<any> {
+    const preferencias = this.storage.get('preferencias').then((val) => {
+      return val;
+    });
+    const access_token = this.storage.get('access_token').then((val) => {
+      return val;
+    });
+    console.log(preferencias);
+    console.log(access_token);
+    if (!preferencias || !access_token) {
+      return throwError('No hay preferencias o access_token');
+    }
     const url = this.apiMatch + 'viviendas';
     return this.datosGlobales.ubicacion$.pipe(
       switchMap(ubicacionValor => {
@@ -87,6 +98,42 @@ export class DataServiceService {
         );
       })
     );
+  }*/
+
+  getViviendasApi(): Observable<any> {
+    return forkJoin({
+      preferencias: from(this.storage.get('preferencias')),
+      access_token: from(this.storage.get('access_token'))
+    }).pipe(
+      switchMap(({ preferencias, access_token }) => {
+        if (!preferencias || !access_token) {
+          return throwError('No hay preferencias o access_token');
+        }
+        const url = `${this.apiMatch}viviendas`;
+        return this.datosGlobales.ubicacion$.pipe(
+          switchMap(ubicacionValor => {
+            const postData = {
+              preferencias: preferencias,
+              ubicacion: ubicacionValor
+            };
+            const headers = new HttpHeaders({
+              'Authorization': `Bearer ${access_token}`,
+              'Content-Type': 'application/json'
+            });
+            return this.http.post<any>(url, postData, { headers }).pipe(
+              catchError(err => {
+                console.error('Error en la llamada HTTP:', err);
+                return throwError(err);
+              })
+            );
+          })
+        );
+      }),
+      catchError(err => {
+        console.error('Error en getViviendasApi:', err);
+        return throwError(err);
+      })
+    );
   }
 
   getViviendasCercanas(lat: number, lon: number, access_token: string): Observable<any> {
@@ -101,6 +148,7 @@ export class DataServiceService {
           'Authorization': auth
         });
         return this.http.get<any>(url, {params, headers}).pipe(
+          retry(3),
           catchError(err => {
             return err;
           })

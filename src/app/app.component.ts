@@ -6,12 +6,15 @@ import { Capacitor } from '@capacitor/core';
 import { NotificationsPushService } from './servicios/notifications-push.service';
 import { register } from 'swiper/element/bundle';
 import { addIcons } from 'ionicons';
+import { Subscription, fromEvent } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import {chevronDownCircle,
   chevronForwardCircle,
   chevronUpCircle,
   colorPalette,
   document,
   globe} from 'ionicons/icons';
+import { DataServiceService } from './servicios/data-service.service';
 register();
 
 @Component({
@@ -24,9 +27,13 @@ export class AppComponent implements OnInit {
   positionEmmitter: EventEmitter<void> = new EventEmitter();
   clearWatchEmitter: EventEmitter<void> = new EventEmitter();
   watchEmitter: EventEmitter<void> = new EventEmitter();
+  private subscriptions: Subscription[] = [];
+  private lastPosition: { lat: number, lon: number } | null = null;
+
 
   constructor(private platform: Platform, private datosGlobales: GlobalDataService,
-              private notificationsPushService: NotificationsPushService)
+              private notificationsPushService: NotificationsPushService,
+              private apiCon: DataServiceService)
               { this.init();
                 addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, colorPalette, document, globe });
                }
@@ -35,12 +42,22 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.requestLocationPermission();
       this.watchLocation();
-    this.datosGlobales.ubicacion$.subscribe(() => this.getLocation());
-    this.datosGlobales.clearWatch$.subscribe(() => this.clearWatch());
-    this.watchEmitter.subscribe(() => this.watchLocation());
-    });
-    
+      this.subscriptions.push(
+        this.datosGlobales.ubicacion$.pipe(debounceTime(1000)).subscribe(() => this.getLocation())
+      );
+      this.subscriptions.push(
+        this.datosGlobales.clearWatch$.subscribe(() => this.clearWatch())
+      );
+      this.subscriptions.push(
+        this.watchEmitter.subscribe(() => this.watchLocation())
+      );
+    });    
   }
+
+  ngOndestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
   init() {
     if (Capacitor.isNativePlatform()) {
       this.notificationsPushService.init();
@@ -68,16 +85,26 @@ export class AppComponent implements OnInit {
   async getLocation() {
     try {
       const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
-      this.datosGlobales.setUbicacion(position.coords.latitude, position.coords.longitude, position.timestamp);
+      const { latitude, longitude } = position.coords;
+      if (this.lastPosition && this.lastPosition.lat === latitude && this.lastPosition.lon === longitude) {
+        return; // No llamar a setUbicacion si la ubicación no ha cambiado
+      }
+      this.lastPosition = { lat: latitude, lon: longitude };
+      this.datosGlobales.setUbicacion(latitude, longitude, position.timestamp);
     } catch (error) {
       console.error('Error al obtener la ubicación:', error);
     }
+    this.apiCon.getViviendasApi().subscribe((data) => {
+      console.log(data);
+    });
+    console.log('Ubicación actualizada');
   }
 
   watchLocation() {
+    console.log('Iniciando watch');
     this.posWatch = Geolocation.watchPosition({
       enableHighAccuracy: true,
-      timeout: 10000
+      timeout: 1000
       }, (position, err) => {
       if (err) {
         console.error('Error al obtener la ubicación:', err);
@@ -88,17 +115,17 @@ export class AppComponent implements OnInit {
         return;
       }
       this.datosGlobales.setUbicacion(position.coords.latitude, position.coords.longitude, position.timestamp);
-      
+      this.apiCon.getViviendasApi().subscribe((data) => {
+        console.log(data);
+      });
     }).toString();
   }
 
   clearWatch() {
     console.log('Limpiando watch :', this.posWatch);
     if (this.posWatch){
-      console.log('Limpiando watch');
       Geolocation.clearWatch({ id: this.posWatch });
       this.posWatch = null;
-      console.log('this.posWatch:', this.posWatch);
     }
   }
 }

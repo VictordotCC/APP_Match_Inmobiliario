@@ -93,7 +93,7 @@ export class Tab3Page implements AfterViewInit {
         this.updateMaps(ubicacion.lat, ubicacion.lon);
       }
     });
-    this.createChart();
+    //this.createChart();
   }
    //metodo de predicción de precio
    predecirPrecio(vivienda: any){
@@ -105,11 +105,11 @@ export class Tab3Page implements AfterViewInit {
       this.prediccionPrecio.d2 = parseFloat((this.prediccionPrecio.d1*1.03).toFixed(1));
       this.prediccionPrecio.d3 = parseFloat((this.prediccionPrecio.d2*1.03).toFixed(1));
       this.prediccionPrecio.d4 = parseFloat((this.prediccionPrecio.d3*1.03).toFixed(1));
-      this.updateChart(this.prediccionPrecio.d1); // Call the method to update the chart
+      //this.updateChart(this.prediccionPrecio.d1); // Call the method to update the chart
       console.log('predicción en UF:',this.prediccionPrecio);
     });
   }
-  async createChart() {
+  /*async createChart() {
     if (this.myChart && this.myChart.nativeElement) {
 
       const ctx = this.myChart.nativeElement.getContext('2d');
@@ -147,7 +147,7 @@ export class Tab3Page implements AfterViewInit {
     } else {
       console.error('El gráfico no está inicializado');
     }
-  }
+  }*/
 
   ionViewDidLeave(){
     this.maps.forEach((map) => {
@@ -365,10 +365,12 @@ export class Tab3Page implements AfterViewInit {
     console.log('Actualizando matches');
     console.log(this.access_token);
     console.log(this.preferencias);
+    /* Esta logica generaba nuevos matches solo al entrar al tab Descubrir
     this.apiCon.getViviendasApi(this.preferencias, this.access_token).subscribe((data) => {
       console.log(data);
       this.obtenerMatches();
-    });
+    });*/
+    this.obtenerMatches();
   }
 
   obtenerMatches(){
