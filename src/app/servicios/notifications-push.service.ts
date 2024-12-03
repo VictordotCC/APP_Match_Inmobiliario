@@ -29,7 +29,10 @@ export class NotificationsPushService {
       console.log('registro exitoso My token: ' + JSON.stringify(token));
       this.DataService.saveToken(token.value); // Save token in database
       //alert('Registro existoso, My token: ' + token.value);
+
     });
+
+
 
     // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError', (error: any) => {
