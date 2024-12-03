@@ -75,7 +75,7 @@ export class Tab3Page implements AfterViewInit {
     this.preferencias = await this.storage.get('preferencias');
     this.datosGlobales.preferencias = this.preferencias;
     this.access_token = await this.storage.get('access_token');
-    console.log(this.preferencias)
+    console.log('preferencias: ',this.preferencias)
     //this.notificationsPushService.init(); // Inicializa el servicio de notificaciones
     this.actualizarMatches();
     this.obtenerMatches();
@@ -321,7 +321,7 @@ export class Tab3Page implements AfterViewInit {
     // Agregar a favoritos
     this.favoritos = {id_vivienda: id_vivienda, usuario: this.usuario}
     this.guardarFavoritos(this.favoritos).subscribe((data) => {
-      console.log(data);
+      console.log('guardar en favoritos: ',data);
       if (data[1] == 200){
         console.log('Favorito guardado');
         this.updateMatch(id_match!);
@@ -363,8 +363,8 @@ export class Tab3Page implements AfterViewInit {
 
   actualizarMatches(){
     console.log('Actualizando matches');
-    console.log(this.access_token);
-    console.log(this.preferencias);
+    console.log('access token',this.access_token);
+    console.log('preferencias',this.preferencias);
     /* Esta logica generaba nuevos matches solo al entrar al tab Descubrir
     this.apiCon.getViviendasApi(this.preferencias, this.access_token).subscribe((data) => {
       console.log(data);
@@ -376,7 +376,9 @@ export class Tab3Page implements AfterViewInit {
   obtenerMatches(){
     this.apiCon.getMatches(this.preferencias.usuario, this.access_token).subscribe((data) => {
       this.matches = data;
-      console.log(data[0]);
+      console.log('dato del match obtenido: ',data[0]);
+      //this.predecirPrecio(data[0]);
+      this.predecirPrecio(this.matches);
       let filtered = this.matches;
       if (filtered.length > 0){
         //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
@@ -387,7 +389,7 @@ export class Tab3Page implements AfterViewInit {
 
   updateMatch(id_match: string){
     this.apiCon.updateMatch(id_match, this.access_token).subscribe((data) => {
-      console.log(data);
+      console.log('dato luego de actualizar match: ',data);
       let filtered = data;
       if (filtered.length > 0){
         //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);

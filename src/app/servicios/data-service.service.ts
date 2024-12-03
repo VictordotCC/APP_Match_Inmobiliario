@@ -467,5 +467,20 @@ export class DataServiceService {
     );
   }
 
+  //Notificaciones
+  saveToken(access_token: string): Observable<any> {
+    const url = this.apiMatch + 'test-token';
+    const params = new HttpParams().set('correo', this.datosGlobales.userGlobal!);
+    const auth = 'Bearer ' + access_token;
+    const headers = new HttpHeaders({
+      'Authorization': auth,
+      'Content-Type': 'application/json'
+    });
+    return this.http.post<any>(url, {params, headers}).pipe(
+      catchError(err => {
+        return err;
+      })
+    );
+  }
 
 }

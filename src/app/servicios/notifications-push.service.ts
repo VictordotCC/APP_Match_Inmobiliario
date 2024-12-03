@@ -1,12 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { ActionPerformed, PushNotificationSchema, PushNotifications, Token } from '@capacitor/push-notifications';
+import { DataServiceService } from './data-service.service';
 //import { InteractionService } from './interaction.service';
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationsPushService {
   //private interactionService: InteractionService = inject(InteractionService);
-  constructor() { }
+  constructor(
+    private DataService: DataServiceService
+  ) {   }
   init() {
     console.log('Init notifications push service');
     PushNotifications.requestPermissions().then(result => {
@@ -24,7 +27,8 @@ export class NotificationsPushService {
     // On success, we should be able to receive notifications
     PushNotifications.addListener('registration', (token: Token) => {
       console.log('registro exitoso My token: ' + JSON.stringify(token));
-      alert('Registro existoso, My token: ' + token.value);
+      this.DataService.saveToken(token.value); // Save token in database
+      //alert('Registro existoso, My token: ' + token.value);
     });
 
     // Some issue with our setup and push will not work
