@@ -91,29 +91,10 @@ export class LoginPage  implements OnInit{
           this.preferencias.contactado = data.preferencias.contactado;
           this.preferencias.notificaciones = data.preferencias.notificaciones;
           await this.storage.set('preferencias', this.preferencias);
-          //TODO: Eliminar lo que sigue al implementar lectura de prefs desde Storage
-          /*
-          this.datosGlobales.preferencias.usuario = this.datosGlobales.userGlobal;
-          this.datosGlobales.preferencias.busqueda_automatica = data.preferencias.busqueda_automatica;
-          this.datosGlobales.preferencias.distancia = data.preferencias.distancia;
-          this.datosGlobales.preferencias.tipo_operacion = data.preferencias.tipo_operacion;
-          this.datosGlobales.preferencias.tipo_vivienda = data.preferencias.tipo_vivienda;
-          this.datosGlobales.preferencias.condicion = data.preferencias.condicion;
-          this.datosGlobales.preferencias.area_total = data.preferencias.area_total;
-          this.datosGlobales.preferencias.pisos = data.preferencias.pisos;
-          this.datosGlobales.preferencias.area_construida = data.preferencias.area_construida
-          this.datosGlobales.preferencias.antiguedad = data.preferencias.antiguedad;
-          this.datosGlobales.preferencias.tipo_valor = data.preferencias.tipo_valor;
-          this.datosGlobales.preferencias.precio_minimo = data.preferencias.precio_minimo;
-          this.datosGlobales.preferencias.precio_maximo = data.preferencias.precio_maximo;
-          this.datosGlobales.preferencias.tipo_subsidio = data.preferencias.tipo_subsidio;
-          this.datosGlobales.preferencias.habitaciones = data.preferencias.habitaciones;
-          this.datosGlobales.preferencias.banos = data.preferencias.banos;
-          this.datosGlobales.preferencias.estaciona = data.preferencias.estaciona;
-          this.datosGlobales.preferencias.bodega = data.preferencias.bodega;
-          this.datosGlobales.preferencias.contactado = data.preferencias.contactado;
-          this.datosGlobales.preferencias.notificaciones = data.preferencias.notificaciones;
-          */
+          const token = await this.storage.get('push_token');
+          this.apiCon.saveToken(data.access_token, token ).subscribe(async (data: any) => {
+            console.log('Token guardado');
+          });
           this.router.navigate(['/tabs']);
         });
       });
@@ -218,7 +199,10 @@ export class LoginPage  implements OnInit{
           this.preferencias.contactado = data.preferencias.contactado;
           this.preferencias.notificaciones = data.preferencias.notificaciones;
           await this.storage.set('preferencias', this.preferencias);
-          console.log('token despues', await this.storage.get('access_token'));
+          const token = await this.storage.get('push_token');
+          this.apiCon.saveToken(data.access_token, token ).subscribe(async (data: any) => {
+            console.log('Token guardado');
+          });
           this.router.navigate(['/tabs']);
         });
         //this.navCtrl.navigateForward(['/tabs']);

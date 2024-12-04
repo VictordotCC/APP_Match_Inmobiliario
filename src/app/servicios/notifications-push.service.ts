@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ActionPerformed, PushNotificationSchema, PushNotifications, Token } from '@capacitor/push-notifications';
 import { DataServiceService } from './data-service.service';
+import { StorageService } from './storage.service';
 //import { InteractionService } from './interaction.service';
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { DataServiceService } from './data-service.service';
 export class NotificationsPushService {
   //private interactionService: InteractionService = inject(InteractionService);
   constructor(
-    private DataService: DataServiceService
+    private DataService: DataServiceService, private storage: StorageService
   ) {   }
   init() {
     console.log('Init notifications push service');
@@ -25,9 +26,11 @@ export class NotificationsPushService {
   }
   private addListener() {
     // On success, we should be able to receive notifications
-    PushNotifications.addListener('registration', (token: Token) => {
+    PushNotifications.addListener('registration', async (token: Token) => {
       console.log('registro exitoso My token: ' + JSON.stringify(token));
-      this.DataService.saveToken(token.value); // Save token in database
+      await this.storage.init();
+      await this.storage.set('push_token', token.value);
+      //this.DataService.saveToken(token.value); // Save token in database
       //alert('Registro existoso, My token: ' + token.value);
 
     });

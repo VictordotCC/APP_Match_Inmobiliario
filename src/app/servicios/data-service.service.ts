@@ -468,16 +468,17 @@ export class DataServiceService {
   }
 
   //Notificaciones
-  saveToken(access_token: string): Observable<any> {
+  saveToken(access_token: string, push_token: string): Observable<any> {
     const url = this.apiMatch + 'save-token';
-    const token = access_token;
-    const params = new HttpParams().set('correo', this.datosGlobales.userGlobal!);
     const auth = 'Bearer ' + access_token;
     const headers = new HttpHeaders({
       'Authorization': auth,
-      'Content-Type': 'application/json'
     });
-    return this.http.post<any>(url,token,{params, headers}).pipe(
+    const postData = {
+      'token': push_token,
+      'correo': this.datosGlobales.userGlobal
+    }
+    return this.http.post<any>(url,postData,{headers: headers}).pipe(
       catchError(err => {
         return err;
       })
