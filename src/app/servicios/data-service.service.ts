@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
 import { Observable, throwError, forkJoin, from } from 'rxjs';
-import { catchError, retry, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, retry, switchMap } from 'rxjs/operators';
 
 import { GlobalDataService } from './global-data.service';
 import { StorageService } from './storage.service';
@@ -12,9 +12,10 @@ import { StorageService } from './storage.service';
 })
 export class DataServiceService {
   //apiML ='http://127.0.0.1:5050/'
-  apiMatch = 'http://127.0.0.1:5000/';
+  //apiMatch = 'http://127.0.0.1:5000/';
   apiML = 'https://apipreciovivienda.onrender.com/';
-  //apiMatch = 'https://api-match-inmobiliario.onrender.com/';
+  apiMatch = 'https://api-match-inmobiliario.onrender.com/';
+  //apiMatch = 'https://cautious-halibut-9w57979qv5jc7q9r-5000.app.github.dev/'; //CODESPACES API
   apiViviendasUrl = '../../assets/Data/viviendas.json';
   apiImagenesUrl = '../../assets/Data/imagenes.json';
   httpOptions = {
@@ -138,7 +139,7 @@ export class DataServiceService {
 
   getViviendasCercanas(lat: number, lon: number, access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas_cercanas';
-    return this.datosGlobales.ubicacion$.pipe(
+    return this.datosGlobales.ubicacion$.pipe(debounceTime(1000),
       switchMap(ubicacionValor => {
         const params = new HttpParams()
           .set('lat', lat.toString())
@@ -478,6 +479,8 @@ export class DataServiceService {
       'token': push_token,
       'correo': this.datosGlobales.userGlobal
     }
+    console.log('save-token Post push token', push_token);
+    console.log('save-token access_token', access_token);
     return this.http.post<any>(url,postData,{headers: headers}).pipe(
       catchError(err => {
         return err;

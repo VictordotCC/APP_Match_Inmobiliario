@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
       this.requestLocationPermission();
       this.watchLocation();
       this.subscriptions.push(
-        this.datosGlobales.ubicacion$.pipe(debounceTime(1000)).subscribe(() => this.getLocation())
+        this.datosGlobales.ubicacion$.pipe(debounceTime(10000)).subscribe(() => this.getLocation())
       );
       this.subscriptions.push(
         this.datosGlobales.clearWatch$.subscribe(() => this.clearWatch())

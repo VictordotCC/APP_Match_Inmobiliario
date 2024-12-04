@@ -92,7 +92,7 @@ export class LoginPage  implements OnInit{
           this.preferencias.notificaciones = data.preferencias.notificaciones;
           await this.storage.set('preferencias', this.preferencias);
           const token = await this.storage.get('push_token');
-          this.apiCon.saveToken(data.access_token, token ).subscribe(async (data: any) => {
+          this.apiCon.saveToken(this.access_token, token ).subscribe(async (data: any) => {
             console.log('Token guardado');
           });
           this.router.navigate(['/tabs']);
@@ -200,7 +200,7 @@ export class LoginPage  implements OnInit{
           this.preferencias.notificaciones = data.preferencias.notificaciones;
           await this.storage.set('preferencias', this.preferencias);
           const token = await this.storage.get('push_token');
-          this.apiCon.saveToken(data.access_token, token ).subscribe(async (data: any) => {
+          this.apiCon.saveToken(this.access_token, token ).subscribe(async (data: any) => {
             console.log('Token guardado');
           });
           this.router.navigate(['/tabs']);
