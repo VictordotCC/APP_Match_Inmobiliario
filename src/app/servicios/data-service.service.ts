@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams  } from '@angular/common/http';
 import { Observable, throwError, forkJoin, from } from 'rxjs';
-import { catchError, debounceTime, retry, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, mergeMap, retry, switchMap } from 'rxjs/operators';
 
 import { GlobalDataService } from './global-data.service';
 import { StorageService } from './storage.service';
@@ -106,11 +106,15 @@ export class DataServiceService {
       preferencias: from(this.storage.get('preferencias')),
       access_token: from(this.storage.get('access_token'))
     }).pipe(
+      debounceTime(1000),
+      distinctUntilChanged((prev, curr) => {
+        return prev.preferencias === curr.preferencias && prev.access_token === curr.access_token;
+      }),
       switchMap(({ preferencias, access_token }) => {
         if (!preferencias || !access_token) {
           return throwError('No hay preferencias o access_token');
         }
-        const url = `${this.apiMatch}viviendas`;
+        const url = this.apiMatch + 'viviendas';
         return this.datosGlobales.ubicacion$.pipe(
           switchMap(ubicacionValor => {
             const postData = {
@@ -139,7 +143,11 @@ export class DataServiceService {
 
   getViviendasCercanas(lat: number, lon: number, access_token: string): Observable<any> {
     const url = this.apiMatch + 'viviendas_cercanas';
-    return this.datosGlobales.ubicacion$.pipe(debounceTime(1000),
+    return this.datosGlobales.ubicacion$.pipe(
+      debounceTime(1000),
+      distinctUntilChanged((prev, curr) => {
+        return prev.lat === curr.lat && prev.lon === curr.lon;
+      }),
       switchMap(ubicacionValor => {
         const params = new HttpParams()
           .set('lat', lat.toString())
@@ -151,7 +159,7 @@ export class DataServiceService {
         return this.http.get<any>(url, {params, headers}).pipe(
           retry(3),
           catchError(err => {
-            return err;
+            return throwError(err);
           })
         );
       })

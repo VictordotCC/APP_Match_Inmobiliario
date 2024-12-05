@@ -17,7 +17,7 @@ import { Chart, registerables } from 'chart.js';
 })
 export class Tab3Page implements AfterViewInit {
   @ViewChildren('card', {read: ElementRef}) cards: QueryList<ElementRef> | undefined;
-  chart: any; // Add this property to store the chart instance
+  //chart: any; // Add this property to store the chart instance
   @ViewChild('myChart', { static: false }) myChart!: ElementRef<HTMLCanvasElement>;
   animations: Animation[] = [];
   gesture : Gesture | undefined;
@@ -52,7 +52,7 @@ export class Tab3Page implements AfterViewInit {
       Chart.register(...registerables); // Registra todos los componentes necesarios para el uso de Chart.js
      }
 
-  async ionViewDidEnter(){
+  async ionViewWillEnter(){
     this.usuario =  await this.storage.get('userGlobal');
     await this.storage.init();
     this.preferencias = await this.storage.get('preferencias');
@@ -376,13 +376,15 @@ export class Tab3Page implements AfterViewInit {
   obtenerMatches(){
     this.apiCon.getMatches(this.preferencias.usuario, this.access_token).subscribe((data) => {
       this.matches = data;
+      console.log('matches obtenidos: ',data.length);
+      console.log('matches ObtenerMatches: ', this.matches.length);
+      console.log('cards: ',this.cards);
+      console.log('cardlist: ',this.cardlist);
       console.log('dato del match obtenido: ',data[0]);
       //this.predecirPrecio(data[0]);
-      this.predecirPrecio(this.matches);
-      let filtered = this.matches;
-      if (filtered.length > 0){
-        //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
-      }
+      data.forEach((match: any) => {
+        this.predecirPrecio(match);
+      });
     });
     //this.predecirPrecio(this.matches[0]);
   }
@@ -390,10 +392,10 @@ export class Tab3Page implements AfterViewInit {
   updateMatch(id_match: string){
     this.apiCon.updateMatch(id_match, this.access_token).subscribe((data) => {
       console.log('dato luego de actualizar match: ',data);
-      let filtered = data;
-      if (filtered.length > 0){
-        //this.notificationsPushService.sendNotification('Match encontrado', `Se encontraron ${filtered.length} viviendas que coinciden con tus criterios de búsqueda.`);
-      }
+      this.matches = data;
+      console.log('matches obtenidos updateMatch: ',this.matches.length);
+      console.log('cards: ',this.cards);
+      console.log('cardlist: ',this.cardlist);
     });
   }
 
