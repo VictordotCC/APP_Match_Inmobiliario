@@ -13,6 +13,7 @@ import { StorageService } from './storage.service';
 export class DataServiceService {
   //apiML ='http://127.0.0.1:5050/'
   //apiMatch = 'http://127.0.0.1:5000/';
+  //apiMatch = "http://192.168.0.7/" //Mac Ip
   apiML = 'https://apipreciovivienda.onrender.com/';
   apiMatch = 'https://api-match-inmobiliario.onrender.com/';
   //apiMatch = 'https://cautious-halibut-9w57979qv5jc7q9r-5000.app.github.dev/'; //CODESPACES API
