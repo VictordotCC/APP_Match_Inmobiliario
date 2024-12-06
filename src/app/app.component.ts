@@ -82,11 +82,29 @@ export class AppComponent implements OnInit {
     }
   }
 
+  calcularDistancia(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const toRad = (value: number) => value * Math.PI / 180;
+    const R = 6371e3; // Radio de la Tierra en metros
+    const φ1 = toRad(lat1);
+    const φ2 = toRad(lat2);
+    const Δφ = toRad(lat2 - lat1);
+    const Δλ = toRad(lon2 - lon1);
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c; // en metros
+    return distance;
+  }
+
   async getLocation() {
     try {
       const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
       const { latitude, longitude } = position.coords;
-      if (this.lastPosition && this.lastPosition.lat === latitude && this.lastPosition.lon === longitude) {
+      const distancia = this.calcularDistancia(latitude, longitude, this.lastPosition!.lat, this.lastPosition!.lon);
+      if (distancia < 100) {
         return; // No llamar a setUbicacion si la ubicación no ha cambiado
       }
       this.lastPosition = { lat: latitude, lon: longitude };
@@ -115,9 +133,9 @@ export class AppComponent implements OnInit {
         return;
       }
       this.datosGlobales.setUbicacion(position.coords.latitude, position.coords.longitude, position.timestamp);
-      this.apiCon.getViviendasApi().subscribe((data) => {
+      /*this.apiCon.getViviendasApi().subscribe((data) => {
         console.log(data);
-      });
+      });*/
     }).toString();
   }
 

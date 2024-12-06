@@ -81,6 +81,23 @@ export class Tab1Page implements OnInit, AfterViewInit {
     });
   }
 
+  calcularDistancia(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const toRad = (value: number) => value * Math.PI / 180;
+    const R = 6371e3; // Radio de la Tierra en metros
+    const φ1 = toRad(lat1);
+    const φ2 = toRad(lat2);
+    const Δφ = toRad(lat2 - lat1);
+    const Δλ = toRad(lon2 - lon1);
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c; // en metros
+    return distance;
+  }
+
   /*async createChart() {
     if (this.myChart && this.myChart.nativeElement) {
 
@@ -130,6 +147,10 @@ export class Tab1Page implements OnInit, AfterViewInit {
     this.initializeMap();
     this.datosGlobales.ubicacion$.subscribe((ubicacion) => {
       if (ubicacion) {
+        const distancia = this.calcularDistancia(this.viewLat, this.viewLon, ubicacion.lat, ubicacion.lon);
+        if (distancia < 100) {
+          return;
+        }
         this.map?.setView([ubicacion.lat, ubicacion.lon])//, this.datosGlobales.mapZoom);
         this.adduserMarker(ubicacion.lat, ubicacion.lon, this.defaultIcon);
         this.nearbyMarker();
@@ -172,7 +193,6 @@ export class Tab1Page implements OnInit, AfterViewInit {
     this.viviendas = [];
     this.filterViviendas = [];
     this.obtenerViviendas().subscribe((viviendas: any) => {
-      console.log(viviendas);
       this.viviendas = viviendas;
       this.filterViviendas = viviendas;
       viviendas.forEach((vivienda: any) => {

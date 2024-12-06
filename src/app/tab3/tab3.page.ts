@@ -65,6 +65,7 @@ export class Tab3Page implements AfterViewInit {
       await this.storage.set('preferencias', this.preferencias);
       this.actualizarMatches();
       this.obtenerMatches();
+      return;
     }
     this.obtenerMatches();
   }
@@ -78,7 +79,7 @@ export class Tab3Page implements AfterViewInit {
     console.log('preferencias: ',this.preferencias)
     //this.notificationsPushService.init(); // Inicializa el servicio de notificaciones
     this.actualizarMatches();
-    this.obtenerMatches();
+    //this.obtenerMatches();
     this.maps.forEach((map) => {
       if (map) {
         this.destroyMap(map);
@@ -375,6 +376,10 @@ export class Tab3Page implements AfterViewInit {
 
   obtenerMatches(){
     this.apiCon.getMatches(this.preferencias.usuario, this.access_token).subscribe((data) => {
+      if (this.matches.length == data.length){
+        console.log('No hay nuevos matches');
+        return;
+      }
       this.matches = data;
       console.log('matches obtenidos: ',data.length);
       console.log('matches ObtenerMatches: ', this.matches.length);
